@@ -1,0 +1,6 @@
+{
+  "name": "DJI Store EU",
+  "description": "Enterprise-grade eCommerce platform and official DJI reseller architecture for Europe.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

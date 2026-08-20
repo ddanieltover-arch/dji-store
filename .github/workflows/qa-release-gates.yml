@@ -1,0 +1,25 @@
+name: qa-release-gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test -- --coverage
+      - run: npm run lint
+
+  canary-note:
+    runs-on: ubuntu-latest
+    needs: unit
+    steps:
+      - run: echo "Promote canary 5% → 25% → 100% after QG-01–QG-06. Rollback target < 5 minutes."
