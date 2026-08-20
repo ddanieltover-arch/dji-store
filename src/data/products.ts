@@ -2,6 +2,7 @@ import { Product } from '../types';
 import { OFFICIAL_STORE_EXPANSION } from './officialStoreCatalog';
 import { WAVE2_OFFICIAL_EXPANSION } from './wave2OfficialCatalog';
 import { NAV_CATALOG_EXPANSION } from './catalog/navCatalog';
+import { WAVE4_OFFICIAL_EXPANSION } from './wave4OfficialCatalog';
 
 export const DJI_PRODUCTS: Product[] = [
   {
@@ -819,5 +820,6 @@ export const DJI_PRODUCTS: Product[] = [
   },
   ...OFFICIAL_STORE_EXPANSION,
   ...WAVE2_OFFICIAL_EXPANSION,
-  ...NAV_CATALOG_EXPANSION
+  ...NAV_CATALOG_EXPANSION,
+  ...WAVE4_OFFICIAL_EXPANSION
 ];

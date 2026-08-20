@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Package,
   Truck,
@@ -31,7 +31,8 @@ import {
   Award,
   Gift,
   Users,
-  Plane
+  Plane,
+  BriefcaseBusiness
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import {
@@ -51,6 +52,7 @@ import { DocumentModal, DocumentType } from './DocumentModal';
 import { LoyaltyPortalTab } from './loyalty/LoyaltyPortalTab';
 import { ReferralsFlightClubTab } from './loyalty/ReferralsFlightClubTab';
 import { RecommendationsTab } from './loyalty/RecommendationsTab';
+import { BusinessAccountPortal } from './enterprise/BusinessAccountPortal';
 
 export const CustomerAccountPortal: React.FC = () => {
   const {
@@ -76,6 +78,12 @@ export const CustomerAccountPortal: React.FC = () => {
   } = useStore();
 
   const [activeTab, setActiveTabState] = useState<AccountTab>(accountActiveTab || 'dashboard');
+
+  useEffect(() => {
+    if (accountActiveTab && accountActiveTab !== activeTab) {
+      setActiveTabState(accountActiveTab);
+    }
+  }, [accountActiveTab]);
 
   const setActiveTab = (tab: AccountTab) => {
     setActiveTabState(tab);
@@ -349,6 +357,7 @@ export const CustomerAccountPortal: React.FC = () => {
           { id: 'returns_rma', label: `Returns & RMA (${rmas.length})`, icon: RotateCcw },
           { id: 'downloads', label: 'Downloads & Compliance Docs', icon: FileText },
           { id: 'b2b_tax', label: 'B2B & Tax Exemption (VIES)', icon: Building2 },
+          { id: 'business', label: 'Business Portal', icon: BriefcaseBusiness },
           { id: 'notifications', label: `Notifications (${notifications.length})`, icon: Bell },
           { id: 'settings', label: 'Saved Addresses & Settings', icon: Settings }
         ].map((tab) => {
@@ -1475,6 +1484,8 @@ export const CustomerAccountPortal: React.FC = () => {
           </div>
         </div>
       )}
+
+      {activeTab === 'business' && <BusinessAccountPortal />}
 
       {/* ============================================================ */}
       {/* TAB 8: NOTIFICATIONS & COMMUNICATIONS INBOX */}

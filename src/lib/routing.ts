@@ -1,4 +1,4 @@
-import { ViewMode } from '../types';
+import { AccountTab, ViewMode } from '../types';
 import { DJI_PRODUCTS } from '../data/products';
 
 const VIEW_PATHS: Partial<Record<ViewMode, string>> = {
@@ -19,7 +19,11 @@ const VIEW_PATHS: Partial<Record<ViewMode, string>> = {
   'qa-ops': '/ops/qa',
   'launch-ops': '/ops/launch',
   'blueprint-ops': '/ops/blueprint',
-  'pim-ops': '/ops/pim'
+  'pim-ops': '/ops/pim',
+  'merch-ops': '/ops/merchandising',
+  'personalization-ops': '/ops/personalization',
+  'lifecycle-ops': '/ops/lifecycle',
+  'enterprise-ops': '/ops/enterprise'
 };
 
 export function pathFromStore(args: {
@@ -27,6 +31,7 @@ export function pathFromStore(args: {
   selectedProductId?: string;
   selectedCategory?: string;
   selectedPlpSeries?: string | null;
+  accountActiveTab?: AccountTab;
 }): string {
   const { viewMode } = args;
 
@@ -43,6 +48,10 @@ export function pathFromStore(args: {
       : base;
   }
 
+  if (viewMode === 'account' && args.accountActiveTab === 'business') {
+    return '/account/business';
+  }
+
   return VIEW_PATHS[viewMode] || '/';
 }
 
@@ -54,6 +63,7 @@ export function storeFromPath(
   selectedProductId?: string;
   selectedCategory?: string;
   selectedPlpSeries?: string | null;
+  accountActiveTab?: AccountTab;
 } {
   const series = new URLSearchParams(search).get('series');
   const path = (pathname.replace(/\/+$/, '') || '/') as string;
@@ -79,6 +89,10 @@ export function storeFromPath(
 
   if (path === '/event/best-sellers' || path === '/best-sellers') {
     return { viewMode: 'best-sellers' };
+  }
+
+  if (path === '/account/business') {
+    return { viewMode: 'account', accountActiveTab: 'business' };
   }
 
   const match = Object.entries(VIEW_PATHS).find(([, mapped]) => mapped === path);

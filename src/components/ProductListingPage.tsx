@@ -20,6 +20,10 @@ import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
 import { Product, EasaClass } from '../types';
+import { rankCatalog, buildCommerceSignals } from '../lib/merch/wave5Merchandising';
+import { initializeInventoryFromCatalog } from '../lib/pim/wave1Execution';
+import { buildPersonalizedPlp, personalizeRanking } from '../lib/personalization/wave6Personalization';
+import { PersonalizationContext } from '../types/wave6Personalization';
 
 export const ProductListingPage: React.FC = () => {
   const {
@@ -33,7 +37,11 @@ export const ProductListingPage: React.FC = () => {
     toggleCompare,
     isInCompare,
     currency,
-    setViewMode
+    setViewMode,
+    wishlist,
+    compareList,
+    locale,
+    cart
   } = useStore();
 
   // Filters State
@@ -64,30 +72,51 @@ export const ProductListingPage: React.FC = () => {
 
   // Filtering Logic
   const filteredProducts = useMemo(() => {
+    const inventory = initializeInventoryFromCatalog(DJI_PRODUCTS);
+    const rankings = rankCatalog(buildCommerceSignals(DJI_PRODUCTS, inventory));
+    const ctx: PersonalizationContext = {
+      sessionId: 'plp-session',
+      locale,
+      viewedProducts: compareList,
+      searchedTerms: [],
+      cartProductIds: cart.map((c) => c.productId),
+      wishlistProductIds: wishlist,
+      compareProductIds: compareList,
+      ownedProductIds: []
+    };
+    const personalized = buildPersonalizedPlp(
+      DJI_PRODUCTS,
+      ctx,
+      personalizeRanking(
+        DJI_PRODUCTS,
+        ctx,
+        new Set(rankings.map((r) => r.productId))
+      ),
+      selectedCategory === 'all' ? 'all' : (selectedCategory as Product['category'])
+    );
+    const scoreOf = (id: string) =>
+      personalized.decisions.find((r) => r.productId === id)?.score ??
+      rankings.find((r) => r.productId === id)?.score ??
+      0;
+
     return DJI_PRODUCTS.filter((product) => {
-      // Category filter
       if (selectedCategory !== 'all' && product.category !== selectedCategory) {
         return false;
       }
-      // Series filter
       if (selectedSeries.length > 0 && !selectedSeries.includes(product.series)) {
         return false;
       }
-      // EASA Class filter
       if (selectedEasaClasses.length > 0) {
         if (!product.easaClass || !selectedEasaClasses.includes(product.easaClass)) {
           return false;
         }
       }
-      // Price filter
       if (product.basePriceEur > maxPrice) {
         return false;
       }
-      // Flight time filter
       if (minFlightTime > 0 && (!product.flightTimeMinutes || product.flightTimeMinutes < minFlightTime)) {
         return false;
       }
-      // In stock
       if (inStockOnly && !product.variants.some((v) => v.inStock && v.stockQuantity > 0)) {
         return false;
       }
@@ -97,9 +126,21 @@ export const ProductListingPage: React.FC = () => {
       if (sortBy === 'price-desc') return b.basePriceEur - a.basePriceEur;
       if (sortBy === 'rating') return b.rating - a.rating;
       if (sortBy === 'flight-time') return (b.flightTimeMinutes || 0) - (a.flightTimeMinutes || 0);
-      return 0; // featured default
+      return scoreOf(b.id) - scoreOf(a.id);
     });
-  }, [selectedCategory, selectedSeries, selectedEasaClasses, maxPrice, minFlightTime, inStockOnly, sortBy]);
+  }, [
+    selectedCategory,
+    selectedSeries,
+    selectedEasaClasses,
+    maxPrice,
+    minFlightTime,
+    inStockOnly,
+    sortBy,
+    locale,
+    wishlist,
+    compareList,
+    cart
+  ]);
 
   const resetFilters = () => {
     setSelectedSeries([]);

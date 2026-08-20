@@ -203,6 +203,9 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [selectedPlpSeries, setSelectedPlpSeries] = useState<string | null>(
     boot.selectedPlpSeries ?? null
   );
+  const [accountActiveTab, setAccountActiveTab] = useState<AccountTab>(
+    boot.accountActiveTab || 'dashboard'
+  );
   const skippingPush = useRef(false);
 
   const setViewMode = (mode: ViewMode) => {
@@ -217,6 +220,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       if (next.selectedProductId) setSelectedProductId(next.selectedProductId);
       if (next.selectedCategory) setSelectedCategory(next.selectedCategory);
       setSelectedPlpSeries(next.selectedPlpSeries ?? null);
+      if (next.accountActiveTab) setAccountActiveTab(next.accountActiveTab);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -231,13 +235,14 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       viewMode,
       selectedProductId,
       selectedCategory,
-      selectedPlpSeries
+      selectedPlpSeries,
+      accountActiveTab
     });
     const current = `${window.location.pathname}${window.location.search}`;
     if (current !== next) {
       window.history.pushState({ viewMode }, '', next);
     }
-  }, [viewMode, selectedProductId, selectedCategory, selectedPlpSeries]);
+  }, [viewMode, selectedProductId, selectedCategory, selectedPlpSeries, accountActiveTab]);
 
   // i18n
   const [locale, setLocale] = useState<Locale>('en');
@@ -414,8 +419,6 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       return INITIAL_B2B_QUOTES;
     }
   });
-
-  const [accountActiveTab, setAccountActiveTab] = useState<AccountTab>('dashboard');
 
   // Phase 9: CRM, Loyalty, CDP & Marketing Automation States
   const [customers, setCustomers] = useState<CustomerProfile[]>(() => {

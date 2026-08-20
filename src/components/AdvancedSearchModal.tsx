@@ -17,6 +17,7 @@ import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
 import { performIntelligentSearch } from '../data/searchSynonyms';
 import { formatPrice } from '../data/currency';
+import { personalizedSearch } from '../lib/personalization/wave6Personalization';
 
 export const AdvancedSearchModal: React.FC = () => {
   const {
@@ -27,7 +28,11 @@ export const AdvancedSearchModal: React.FC = () => {
     navigateToPdp,
     navigateToPlp,
     currency,
-    logSearchEvent
+    logSearchEvent,
+    wishlist,
+    compareList,
+    locale,
+    cart
   } = useStore();
 
   const [localQuery, setLocalQuery] = useState(searchQuery);
@@ -39,7 +44,30 @@ export const AdvancedSearchModal: React.FC = () => {
     }
   }, [isSearchOpen]);
 
-  const searchOutcome = performIntelligentSearch(localQuery, DJI_PRODUCTS);
+  const baseOutcome = performIntelligentSearch(localQuery, DJI_PRODUCTS);
+  const personalized = personalizedSearch(
+    DJI_PRODUCTS,
+    {
+      sessionId: 'search-session',
+      locale,
+      viewedProducts: compareList,
+      searchedTerms: localQuery ? [localQuery] : [],
+      cartProductIds: cart.map((c) => c.productId),
+      wishlistProductIds: wishlist,
+      compareProductIds: compareList,
+      ownedProductIds: []
+    },
+    localQuery
+  );
+  const orderedResults = personalized.exactMatch
+    ? personalized.productIds.map((id) => DJI_PRODUCTS.find((p) => p.id === id)!).filter(Boolean)
+    : personalized.productIds
+        .map((id) => DJI_PRODUCTS.find((p) => p.id === id))
+        .filter((p): p is (typeof DJI_PRODUCTS)[number] => Boolean(p));
+  const searchOutcome = {
+    ...baseOutcome,
+    results: orderedResults.length ? orderedResults : baseOutcome.results
+  };
 
   const handleSelectProduct = (productId: string) => {
     logSearchEvent(localQuery, searchOutcome.results.length, productId);

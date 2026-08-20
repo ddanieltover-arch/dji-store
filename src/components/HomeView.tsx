@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ShieldCheck,
   Truck,
@@ -14,13 +14,17 @@ import {
   ArrowRight,
   Flame,
   Star,
-  ExternalLink
+  ExternalLink,
+  Sparkles
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
 import { Product } from '../types';
 import { HomeHeroCarousel } from './home/HomeHeroCarousel';
+import { runWave5Merchandising } from '../lib/merch/wave5Merchandising';
+import { runWave6Personalization } from '../lib/personalization/wave6Personalization';
+import { PersonalizationContext } from '../types/wave6Personalization';
 
 export const HomeView: React.FC = () => {
   const {
@@ -34,7 +38,11 @@ export const HomeView: React.FC = () => {
     setQuickViewProduct,
     currency,
     setViewMode,
-    addToast
+    addToast,
+    wishlist,
+    compareList,
+    locale,
+    cart
   } = useStore();
 
   // Drone Matcher Quiz State
@@ -74,8 +82,36 @@ export const HomeView: React.FC = () => {
     });
   };
 
-  // Featured Products
-  const featuredProducts = DJI_PRODUCTS.filter((p) => p.isFeatured);
+  // Featured Products — Wave 5 homepage merchandising (manual overrides + AI rank)
+  // Personalized "Recommended for you" — Wave 6 (wishlist/compare/cart session signals)
+  const { featuredProducts, recommendedForYou, localeHint } = useMemo(() => {
+    const plan = runWave5Merchandising(DJI_PRODUCTS).homepage;
+    const fromSlots = plan.featured
+      .map((id) => DJI_PRODUCTS.find((p) => p.id === id))
+      .filter((p): p is Product => Boolean(p));
+    const featured = fromSlots.length ? fromSlots : DJI_PRODUCTS.filter((p) => p.isFeatured);
+    const ctx: PersonalizationContext = {
+      sessionId: 'storefront-session',
+      locale,
+      currency,
+      viewedProducts: compareList,
+      searchedTerms: [],
+      cartProductIds: cart.map((c) => c.productId),
+      wishlistProductIds: wishlist,
+      compareProductIds: compareList,
+      ownedProductIds: []
+    };
+    const w6 = runWave6Personalization(DJI_PRODUCTS, ctx);
+    const recommended = w6.homepage.slots.recommended_for_you
+      .map((d) => DJI_PRODUCTS.find((p) => p.id === d.productId))
+      .filter((p): p is Product => Boolean(p))
+      .slice(0, 4);
+    return {
+      featuredProducts: featured,
+      recommendedForYou: recommended,
+      localeHint: w6.homepage.localeSuggestion
+    };
+  }, [locale, currency, wishlist, compareList, cart]);
 
   return (
     <div className="w-full space-y-16 lg:space-y-24 pb-20">
@@ -220,6 +256,36 @@ export const HomeView: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {localeHint && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-blue-200 bg-blue-50/80 px-4 py-3 text-sm text-blue-900">
+            Suggestion: switch to {localeHint.locale.toUpperCase()} for {localeHint.country || 'your region'} — {localeHint.reason}. No automatic redirect.
+          </div>
+        </section>
+      )}
+
+      {recommendedForYou.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 text-violet-700 font-bold text-xs uppercase tracking-wider mb-2">
+            <Sparkles className="w-4 h-4" /> Recommended for you
+          </div>
+          <h2 className="text-2xl font-extrabold text-[#1D1D1F] tracking-tight mb-6">Based on your session</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {recommendedForYou.map((product) => (
+              <button
+                key={product.id}
+                type="button"
+                onClick={() => navigateToPdp(product.id)}
+                className="text-left bg-white rounded-2xl border border-gray-200 p-3 hover:border-violet-300"
+              >
+                <div className="font-bold text-sm text-gray-900 truncate">{product.modelName}</div>
+                <div className="text-xs text-gray-500">{formatPrice(product.basePriceEur, currency)}</div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 3. Featured Products Showcase (Merchandised Grid) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

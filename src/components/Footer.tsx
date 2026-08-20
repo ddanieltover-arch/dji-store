@@ -296,6 +296,38 @@ export const Footer: React.FC = () => {
                   📦 PIM, Catalog Sync & Product Intelligence
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => setViewMode('merch-ops')}
+                  className="hover:text-white text-rose-400 font-semibold transition-colors"
+                >
+                  📣 Merchandising, Pricing & Conversion
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setViewMode('personalization-ops')}
+                  className="hover:text-white text-violet-400 font-semibold transition-colors"
+                >
+                  ✨ Personalization & Locale Experience
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setViewMode('lifecycle-ops')}
+                  className="hover:text-white text-teal-400 font-semibold transition-colors"
+                >
+                  💚 Lifecycle, Retention & Loyalty
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setViewMode('enterprise-ops')}
+                  className="hover:text-white text-sky-400 font-semibold transition-colors"
+                >
+                  🏢 Enterprise Sales & B2B
+                </button>
+              </li>
             </ul>
           </div>
         </div>

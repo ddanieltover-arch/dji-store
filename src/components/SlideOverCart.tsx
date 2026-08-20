@@ -14,6 +14,9 @@ import {
 import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../data/currency';
 import { DJI_PRODUCTS } from '../data/products';
+import { buildOptimizedBundles, inventoryAwareFlags, buildCommerceSignals } from '../lib/merch/wave5Merchandising';
+import { initializeInventoryFromCatalog } from '../lib/pim/wave1Execution';
+import { buildPersonalizedCart } from '../lib/personalization/wave6Personalization';
 
 export const SlideOverCart: React.FC = () => {
   const {
@@ -27,7 +30,9 @@ export const SlideOverCart: React.FC = () => {
     freeShippingProgress,
     currency,
     setViewMode,
-    addToCart
+    addToCart,
+    locale,
+    wishlist
   } = useStore();
 
   if (!isCartOpen) return null;
@@ -35,8 +40,45 @@ export const SlideOverCart: React.FC = () => {
   const isFreeShipping = cartSubtotalEur >= freeShippingThresholdEur;
   const remainingForFreeShipping = Math.max(0, freeShippingThresholdEur - cartSubtotalEur);
 
-  // Recommended accessories for cross-sell
-  const accessories = DJI_PRODUCTS.filter((p) => p.category === 'accessories').slice(0, 2);
+  const inventory = initializeInventoryFromCatalog(DJI_PRODUCTS);
+  const flags = inventoryAwareFlags(DJI_PRODUCTS, buildCommerceSignals(DJI_PRODUCTS, inventory));
+  const cartProductIds = cart.map((c) => c.productId);
+  const personalizedCart = buildPersonalizedCart(
+    DJI_PRODUCTS,
+    {
+      sessionId: 'cart-session',
+      locale,
+      viewedProducts: [],
+      searchedTerms: [],
+      cartProductIds,
+      wishlistProductIds: wishlist,
+      compareProductIds: [],
+      ownedProductIds: []
+    },
+    freeShippingThresholdEur
+  );
+  const bundleCrossSellIds = buildOptimizedBundles(DJI_PRODUCTS)
+    .filter((b) => cartProductIds.includes(b.productId))
+    .flatMap((b) => b.accessoryIds);
+  const fromPersonalization = [
+    ...personalizedCart.missingEssentials,
+    ...personalizedCart.carePlans,
+    ...personalizedCart.accessories
+  ].map((d) => d.productId);
+  const accessories = [...new Set([...fromPersonalization, ...bundleCrossSellIds])]
+    .map((id) => DJI_PRODUCTS.find((p) => p.id === id))
+    .filter((p): p is (typeof DJI_PRODUCTS)[number] => Boolean(p) && !cartProductIds.includes(p.id))
+    .filter((p) => flags.find((f) => f.productId === p.id)?.promote)
+    .slice(0, 2);
+  const fallbackAccessories =
+    accessories.length > 0
+      ? accessories
+      : DJI_PRODUCTS.filter((p) => p.category === 'accessories' && flags.find((f) => f.productId === p.id)?.promote).slice(
+          0,
+          2
+        );
+  const crossSell = accessories.length ? accessories : fallbackAccessories;
+  const shippingNudge = personalizedCart.shippingNudge;
 
   const handleCheckoutClick = () => {
     setIsCartOpen(false);
@@ -79,6 +121,7 @@ export const SlideOverCart: React.FC = () => {
                   </span>
                   <span>Add {formatPrice(remainingForFreeShipping, currency)} more</span>
                 </div>
+                {shippingNudge && <p className="text-[10px] text-blue-700 font-medium">{shippingNudge}</p>}
                 <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-blue-600 transition-all duration-500 rounded-full"
@@ -167,13 +210,13 @@ export const SlideOverCart: React.FC = () => {
             )}
 
             {/* Quick Cross-Sells in Cart */}
-            {cart.length > 0 && accessories.length > 0 && (
+            {cart.length > 0 && crossSell.length > 0 && (
               <div className="pt-4 border-t border-gray-100 space-y-2">
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
                   Recommended Add-ons:
                 </span>
                 <div className="space-y-2">
-                  {accessories.map((acc) => (
+                  {crossSell.map((acc) => (
                     <div
                       key={acc.id}
                       className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-gray-200 text-xs"

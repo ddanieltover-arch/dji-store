@@ -20,6 +20,10 @@ import { QualityEngineeringCenter } from './components/qa/QualityEngineeringCent
 import { LaunchCommandCenter } from './components/launch/LaunchCommandCenter';
 import { EnterpriseBlueprintCenter } from './components/blueprint/EnterpriseBlueprintCenter';
 import { ProductIntelligenceWorkstation } from './components/pim/ProductIntelligenceWorkstation';
+import { MerchandisingWorkstation } from './components/merch/MerchandisingWorkstation';
+import { PersonalizationWorkstation } from './components/personalization/PersonalizationWorkstation';
+import { LifecycleWorkstation } from './components/lifecycle/LifecycleWorkstation';
+import { EnterpriseSalesWorkstation } from './components/enterprise/EnterpriseSalesWorkstation';
 import { GdprConsentModal } from './components/security/GdprConsentModal';
 import { SlideOverCart } from './components/SlideOverCart';
 import { AdvancedSearchModal } from './components/AdvancedSearchModal';
@@ -86,6 +90,10 @@ const MainLayout: React.FC = () => {
         {viewMode === 'launch-ops' && <LaunchCommandCenter />}
         {viewMode === 'blueprint-ops' && <EnterpriseBlueprintCenter />}
         {viewMode === 'pim-ops' && <ProductIntelligenceWorkstation />}
+        {viewMode === 'merch-ops' && <MerchandisingWorkstation />}
+        {viewMode === 'personalization-ops' && <PersonalizationWorkstation />}
+        {viewMode === 'lifecycle-ops' && <LifecycleWorkstation />}
+        {viewMode === 'enterprise-ops' && <EnterpriseSalesWorkstation />}
       </div>
 
       {/* Global Slide-Over Shopping Bag Drawer */}

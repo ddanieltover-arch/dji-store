@@ -16,7 +16,11 @@ import {
   Rocket,
   Award,
   ChevronDown,
-  Database
+  Database,
+  Megaphone,
+  Sparkles,
+  HeartHandshake,
+  BriefcaseBusiness
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { Locale, CurrencyCode, ViewMode } from '../types';
@@ -287,7 +291,11 @@ export const Navbar: React.FC = () => {
                       { mode: 'qa-ops' as const, label: 'QA / Release', icon: FlaskConical },
                       { mode: 'launch-ops' as const, label: 'Go-Live', icon: Rocket },
                       { mode: 'blueprint-ops' as const, label: 'Blueprint / Cert', icon: Award },
-                      { mode: 'pim-ops' as const, label: 'PIM / Sync', icon: Database }
+                      { mode: 'pim-ops' as const, label: 'PIM / Sync', icon: Database },
+                      { mode: 'merch-ops' as const, label: 'Merchandising', icon: Megaphone },
+                      { mode: 'personalization-ops' as const, label: 'Personalization', icon: Sparkles },
+                      { mode: 'lifecycle-ops' as const, label: 'Lifecycle', icon: HeartHandshake },
+                      { mode: 'enterprise-ops' as const, label: 'Enterprise Sales', icon: BriefcaseBusiness }
                     ] as const
                   ).map((item) => (
                     <button

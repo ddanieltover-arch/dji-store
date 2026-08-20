@@ -179,6 +179,10 @@ export type ViewMode =
   | 'launch-ops'
   | 'blueprint-ops'
   | 'pim-ops'
+  | 'merch-ops'
+  | 'personalization-ops'
+  | 'lifecycle-ops'
+  | 'enterprise-ops'
   | 'best-sellers';
 
 export interface ToastMessage {
@@ -602,6 +606,7 @@ export type AccountTab =
   | 'returns_rma'
   | 'downloads'
   | 'b2b_tax'
+  | 'business'
   | 'notifications'
   | 'settings';
 

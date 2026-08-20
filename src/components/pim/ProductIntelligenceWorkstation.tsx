@@ -20,6 +20,8 @@ import { CATEGORY_ACQUISITION_MATRIX, SPEC_MAPPING_FRAMEWORK, WAVE2_NEXTJS_INTEG
 import { WAVE2_APPROVAL_WORKFLOW, WAVE2_INVENTORY_STRATEGY, WAVE2_ROLLOUT } from '../../data/wave2AcquisitionData';
 import { WAVE3_NEXTJS_INTEGRATION, runWave3Intelligence } from '../../lib/pim/wave3Intelligence';
 import { WAVE3_ROLLOUT } from '../../data/wave3IntelligenceData';
+import { WAVE4_NEXTJS_INTEGRATION, runWave4Expansion } from '../../lib/pim/wave4Expansion';
+import { WAVE4_ROLLOUT } from '../../data/wave4ExpansionData';
 import { WAVE1_APPROVAL_SOP, WAVE1_QUEUE_SEED, WAVE1_ROLLOUT } from '../../data/wave1ExecutionData';
 import { INITIAL_DEPOT_STOCK } from '../../data/warehouses';
 import { DJI_OFFICIAL_STORE_CONNECTOR, trustDecisionForChange } from '../../lib/pim/officialStoreConnector';
@@ -36,6 +38,7 @@ type Tab =
   | 'wave1'
   | 'wave2'
   | 'wave3'
+  | 'wave4'
   | 'health'
   | 'sources'
   | 'discovery'
@@ -63,6 +66,7 @@ export const ProductIntelligenceWorkstation: React.FC = () => {
   const seoPacks = useMemo(() => populateSeoForCatalog(DJI_PRODUCTS), []);
   const wave2 = useMemo(() => runWave2Acquisition(DJI_PRODUCTS), []);
   const wave3 = useMemo(() => runWave3Intelligence(DJI_PRODUCTS), []);
+  const wave4 = useMemo(() => runWave4Expansion(DJI_PRODUCTS), []);
   const [wave3Module, setWave3Module] = useState<
     'content' | 'faqs' | 'relationships' | 'compatibility' | 'comparisons' | 'graph' | 'seo' | 'quality'
   >('quality');
@@ -98,6 +102,7 @@ export const ProductIntelligenceWorkstation: React.FC = () => {
             ['wave1', 'Wave 1 execution'],
             ['wave2', 'Wave 2 acquisition'],
             ['wave3', 'Wave 3 intelligence'],
+            ['wave4', 'Wave 4 population'],
             ['health', 'Catalog health'],
             ['sources', 'Reference registry'],
             ['discovery', 'Discovery'],
@@ -411,6 +416,100 @@ export const ProductIntelligenceWorkstation: React.FC = () => {
                   {s.id} {s.action} — {s.owner} ({s.gate})
                 </p>
               ))}
+            </div>
+          </div>
+        )}
+
+        {tab === 'wave4' && (
+          <div className="space-y-4">
+            <div className={`rounded-2xl p-4 border ${wave4.certification.certified ? 'border-emerald-500/40' : 'border-amber-500/40'}`}>
+              <div className="font-black text-lg">
+                {wave4.certification.certified
+                  ? 'DJI STORE EU — WAVE 4 CATALOG EXPANSION CERTIFIED'
+                  : 'WAVE 4 NOT CERTIFIED — thresholds evaluated from live catalog'}
+              </div>
+              <p className="text-slate-400 mt-1">
+                {DJI_PRODUCTS.length} SKUs in DJI_PRODUCTS · universe {wave4.discovery.length} · pipeline{' '}
+                {wave4.stages.join(' → ')}
+              </p>
+              <p className="text-slate-500 mt-1">{WAVE4_NEXTJS_INTEGRATION.note}</p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {(
+                [
+                  ['Official store coverage', wave4.coverage.catalogCoveragePct],
+                  ['Category coverage', wave4.certification.categoryCoveragePct],
+                  ['Variant / inventory', wave4.coverage.inventoryCoveragePct],
+                  ['Media', wave4.coverage.mediaCoveragePct],
+                  ['Specs', wave4.coverage.specCoveragePct],
+                  ['SEO', wave4.coverage.seoCoveragePct],
+                  ['Wave 3 IQ', wave4.coverage.wave3IntelligenceCoveragePct],
+                  ['Catalog health', wave4.certification.catalogHealth]
+                ] as const
+              ).map(([k, v]) => (
+                <div key={k} className="bg-[#151C22] border border-slate-800 rounded-xl p-4">
+                  <div className="text-slate-500 uppercase text-xs">{k}</div>
+                  <div className="text-2xl font-black text-sky-300">{v}</div>
+                </div>
+              ))}
+            </div>
+            <div className="grid md:grid-cols-3 gap-3">
+              <div className="bg-[#151C22] border border-slate-800 rounded-xl p-4">
+                <div className="font-bold mb-1">Pending approvals</div>
+                <div className="text-2xl font-black text-amber-300">{wave4.queue.pendingApprovals}</div>
+              </div>
+              <div className="bg-[#151C22] border border-slate-800 rounded-xl p-4">
+                <div className="font-bold mb-1">Failed jobs</div>
+                <div className="text-2xl font-black">{wave4.queue.failedJobs}</div>
+              </div>
+              <div className="bg-[#151C22] border border-slate-800 rounded-xl p-4">
+                <div className="font-bold mb-1">DLQ</div>
+                <div className="text-2xl font-black">{wave4.queue.dlq}</div>
+              </div>
+            </div>
+            <div>
+              <div className="font-bold mb-2">Category coverage matrix</div>
+              {wave4.categories.map((c) => (
+                <div key={c.id} className="bg-[#151C22] border border-slate-800 rounded-xl p-3 flex justify-between gap-2">
+                  <span>
+                    {c.label} · <span className="font-mono text-sky-200">{c.storeUrl}</span>
+                  </span>
+                  <span>
+                    {c.skuCount} SKUs · {c.populationStatus}/{c.certificationStatus}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div>
+              <div className="font-bold mb-2">SKU lifecycle (sample)</div>
+              {wave4.discovery.slice(0, 12).map((d) => (
+                <p key={d.slug} className="text-slate-400">
+                  {d.modelName} → {d.mappedProductId ?? 'unmapped'} · {d.lifecycle}
+                </p>
+              ))}
+            </div>
+            {wave4.pending.length > 0 && (
+              <div>
+                <div className="font-bold mb-2">New SKU governance (pending)</div>
+                {wave4.pending.slice(0, 8).map((p) => (
+                  <p key={p.id} className="text-amber-200/80">
+                    {p.modelName} — {p.reason} ({p.status})
+                  </p>
+                ))}
+              </div>
+            )}
+            <div>
+              <div className="font-bold mb-2">Rollout W4-R0 … R7</div>
+              {WAVE4_ROLLOUT.map((s) => (
+                <p key={s.id} className="text-sm">
+                  {s.id} {s.action} — {s.owner} ({s.gate})
+                </p>
+              ))}
+            </div>
+            <div className="bg-[#151C22] border border-slate-800 rounded-xl p-4 text-slate-500 space-y-1">
+              <p>{WAVE4_NEXTJS_INTEGRATION.appAdmin}</p>
+              <p>Supabase: {WAVE4_NEXTJS_INTEGRATION.supabase}</p>
+              <p>Pipeline: {WAVE4_NEXTJS_INTEGRATION.pipeline}</p>
             </div>
           </div>
         )}
