@@ -8,6 +8,7 @@ import {
   ShoppingBag,
   CheckCircle2,
   ChevronRight,
+  ChevronDown,
   Package,
   Layers,
   Award,
@@ -85,14 +86,19 @@ export const ProductDetailPage: React.FC = () => {
   }, []);
 
   const galleryImages = useMemo(() => {
-    const official = (product.images.gallery || []).filter((src) => src.startsWith('http'));
-    if (official.length >= 3) {
-      return [...new Set(official)];
+    const gallery = (product.images.gallery || []).filter(Boolean);
+    const variantHero = activeVariant?.imageUrl;
+
+    if (variantHero && !gallery.includes(variantHero)) {
+      return [variantHero, ...gallery];
     }
 
-    const variantHero = activeVariant?.imageUrl;
+    if (gallery.length > 0) {
+      return [...new Set(gallery)];
+    }
+
     const hero = variantHero || product.images.hero || product.images.cutout;
-    return [hero, product.images.cutout, ...(product.images.gallery || []), product.images.hero].filter(
+    return [hero, product.images.cutout, product.images.hero].filter(
       (src, index, arr) => src && arr.indexOf(src) === index
     );
   }, [product, activeVariant]);
@@ -251,36 +257,65 @@ export const ProductDetailPage: React.FC = () => {
               </div>
 
               {/* Combo Package Selector */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <span className="text-xs font-bold text-gray-900 uppercase tracking-wider block">
                   Select Package Configuration:
                 </span>
-                <div className="space-y-2.5">
-                  {product.variants.map((v) => (
-                    <button
-                      key={v.id}
-                      onClick={() => setSelectedVariantId(v.id)}
-                      className={`w-full p-4 rounded-2xl border text-left transition-all flex items-start justify-between ${
-                        selectedVariantId === v.id
-                          ? 'border-[#E30613] bg-red-50/40 ring-1 ring-[#E30613]'
-                          : 'border-gray-200 hover:border-gray-300 bg-white'
-                      }`}
+                {product.variants.length > 1 ? (
+                  <div className="space-y-2">
+                    {product.variants.map((v) => {
+                      const selected = v.id === selectedVariantId;
+                      return (
+                        <button
+                          key={v.id}
+                          type="button"
+                          onClick={() => setSelectedVariantId(v.id)}
+                          className={`w-full flex items-center gap-3 p-3 rounded-2xl border text-left transition-colors ${
+                            selected
+                              ? 'border-[#E30613] bg-red-50/40'
+                              : 'border-gray-200 bg-white hover:border-gray-300'
+                          }`}
+                        >
+                          {v.imageUrl && (
+                            <img
+                              src={v.imageUrl}
+                              alt=""
+                              className="w-14 h-14 rounded-xl object-contain bg-white border border-gray-100 shrink-0"
+                            />
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-bold text-[#1D1D1F] truncate">{v.comboName}</div>
+                            <div className="text-xs text-gray-500">
+                              {formatPrice(v.priceEur, currency)} · {v.stockQuantity} Units
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <select
+                      id="package-config-select"
+                      value={selectedVariantId}
+                      onChange={(e) => setSelectedVariantId(e.target.value)}
+                      className="w-full appearance-none p-4 pr-10 rounded-2xl border border-gray-200 bg-white text-sm font-bold text-[#1D1D1F] focus:outline-none focus:border-[#E30613] focus:ring-1 focus:ring-[#E30613] cursor-pointer transition-colors hover:border-gray-300"
                     >
-                      <div className="space-y-1">
-                        <div className="font-bold text-sm text-[#1D1D1F]">{v.comboName}</div>
-                        {v.tagline && <p className="text-xs text-gray-500">{v.tagline}</p>}
-                      </div>
-                      <div className="text-right shrink-0 pl-3">
-                        <div className="font-extrabold text-sm text-[#1D1D1F]">
-                          {formatPrice(v.priceEur, currency)}
-                        </div>
-                        <span className="text-[10px] text-emerald-600 font-semibold">
-                          {v.stockQuantity} Units
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                      {product.variants.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          {v.comboName} — {formatPrice(v.priceEur, currency)} ({v.stockQuantity} Units)
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  </div>
+                )}
+                {activeVariant.tagline && (
+                  <p className="text-xs text-gray-500">{activeVariant.tagline}</p>
+                )}
+                <span className="text-[10px] text-emerald-600 font-semibold block">
+                  {activeVariant.stockQuantity} Units in stock
+                </span>
               </div>
 
               {/* Itemized BOM (In the Box) */}

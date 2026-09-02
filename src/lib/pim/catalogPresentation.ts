@@ -1,9 +1,14 @@
 import { Product, ProductVariant } from '../../types';
-import { OfficialUsdPriceCache, applyUsdPricingToProduct, combosForProduct } from '../pricing/applyUsdPricing';
-import { OfficialStoreMediaCache } from './fetchOfficialStoreMedia';
-import { DatabaseMediaCache, hasDatabaseGallery } from './databaseMediaCache';
-import { isLocalPlaceholderUrl, isStorefrontImageUrl } from './productListingImage';
+import type { OfficialStoreMediaCache } from './fetchOfficialStoreMedia';
+import {
+  DatabaseMediaCache,
+  hasDatabaseMedia,
+  isDatabaseAssetUrl,
+  isExternalCdnUrl
+} from './databaseMediaCache';
+import { resolveVariantImageUrl } from './comboSlugResolver';
 import { usdToCompareAtEur, usdToSaleEur } from '../pricing/usdPricing';
+import { OfficialUsdPriceCache, applyUsdPricingToProduct, combosForProduct } from '../pricing/applyUsdPricing';
 
 const DEDICATED_COMBO_SLUG =
   /-(fly-more-combo|fly-smart-combo|creator-combo|standard-combo|sport-bundle|solar-car|car-power-combo|transmission-combo|tx-rx|combo-lite|combo-plus)(-|$)/i;
@@ -52,7 +57,11 @@ function comboVariantName(title: string): string {
   return title.replace(/^DJI\s+/i, '').trim();
 }
 
-function expandVariantsFromCache(product: Product, combos: { title: string; usd: number }[]): Product {
+function expandVariantsFromCache(
+  product: Product,
+  combos: { title: string; usd: number }[],
+  databaseMediaCache?: DatabaseMediaCache
+): Product {
   const seenUsd = new Set<number>();
   const seenEur = new Set<number>();
   const primary = combosForProduct(product, combos)
@@ -73,7 +82,13 @@ function expandVariantsFromCache(product: Product, combos: { title: string; usd:
     inStock: true,
     stockQuantity: 24,
     includedItems: [combo.title, '2-Year Official EU Warranty'],
-    imageUrl: product.images.cutout
+    imageUrl:
+      resolveVariantImageUrl({
+        productSlug: product.slug,
+        comboTitle: combo.title,
+        databaseMediaCache,
+        fallback: product.images.cutout
+      }) || product.images.cutout
   }));
 
   const cheapest = variants[0];
@@ -87,59 +102,15 @@ function expandVariantsFromCache(product: Product, combos: { title: string; usd:
   };
 }
 
-function listingCoverFromSources(
-  product: Product,
-  officialCover?: string,
-  dbCutout?: string,
-  dbHero?: string
-): { cutout: string; hero: string } {
-  const remoteDbCutout = isStorefrontImageUrl(dbCutout) ? dbCutout : undefined;
-  const remoteDbHero = isStorefrontImageUrl(dbHero) ? dbHero : undefined;
-  const seedCutout =
-    isStorefrontImageUrl(product.images.cutout) && !isLocalPlaceholderUrl(product.images.cutout)
-      ? product.images.cutout
-      : undefined;
-  const seedHero =
-    isStorefrontImageUrl(product.images.hero) && !isLocalPlaceholderUrl(product.images.hero)
-      ? product.images.hero
-      : undefined;
-  const galleryCdn = product.images.gallery?.find(
-    (url) => isStorefrontImageUrl(url) && !isLocalPlaceholderUrl(url)
-  );
-
-  const listingCover =
-    officialCover || remoteDbCutout || remoteDbHero || seedCutout || seedHero || galleryCdn;
-
-  return {
-    cutout: listingCover || product.images.cutout,
-    hero: listingCover || product.images.hero
-  };
-}
-
-function galleryPaths(
-  product: Product,
-  media?: { coverOriginal?: string; coverLarge?: string; carouselGallery?: string[] }
-): Product['images'] {
-  const cdnCover = media?.coverOriginal || media?.coverLarge;
-  const carousel = media?.carouselGallery?.filter(Boolean) ?? [];
-  const listing = listingCoverFromSources(product, cdnCover);
-
-  if (carousel.length >= 3) {
-    return {
-      cutout: listing.cutout,
-      hero: listing.hero || carousel[0],
-      gallery: carousel
-    };
-  }
-
+/** Local bundled PNGs — never hotlink the reference CDN. */
+function localFallbackImages(product: Product): Product['images'] {
+  const cutout = `/products/${product.id}-cutout.png`;
   const g2 = `/products/${product.id}-gallery-2.png`;
   const g3 = `/products/${product.id}-gallery-3.png`;
-  const gallery = [...new Set([cdnCover, listing.cutout, g2, g3].filter(Boolean))] as string[];
-
   return {
-    cutout: listing.cutout,
-    hero: listing.hero || cdnCover || listing.cutout,
-    gallery: gallery.length >= 3 ? gallery : [...gallery, g2, g3].filter((v, i, a) => a.indexOf(v) === i)
+    cutout,
+    hero: cutout,
+    gallery: [cutout, g2, g3]
   };
 }
 
@@ -150,27 +121,31 @@ function applyMediaGallery(
 ): Product {
   const dbMedia = databaseMediaCache?.[product.slug];
   const media = mediaCache[product.slug];
-  const officialCover = media?.coverOriginal || media?.coverLarge;
-  const listing = listingCoverFromSources(
-    product,
-    officialCover,
-    dbMedia?.cutout,
-    dbMedia?.hero
-  );
-  const images = hasDatabaseGallery(dbMedia)
+
+  const images = hasDatabaseMedia(dbMedia)
     ? {
-        cutout: listing.cutout,
-        hero: listing.hero,
+        cutout: dbMedia!.cutout || dbMedia!.hero || dbMedia!.gallery![0],
+        hero: dbMedia!.hero || dbMedia!.gallery![0],
         gallery: dbMedia!.gallery!
       }
-    : galleryPaths(product, media);
+    : localFallbackImages(product);
+
   const variants = product.variants.map((v) => ({
     ...v,
-    imageUrl: v.imageUrl || images.cutout || images.hero
+    imageUrl:
+      resolveVariantImageUrl({
+        productSlug: product.slug,
+        comboTitle: v.comboName,
+        databaseMediaCache,
+        fallback: images.cutout || images.hero
+      }) ||
+      (isDatabaseAssetUrl(v.imageUrl) ? v.imageUrl : undefined) ||
+      images.cutout ||
+      images.hero
   }));
 
   const productMedia: Product['media'] = {};
-  if (media?.intro?.videoUrl) {
+  if (media?.intro?.videoUrl && !isExternalCdnUrl(media.intro.videoUrl)) {
     productMedia.intro = media.intro;
   }
 
@@ -182,12 +157,16 @@ function applyMediaGallery(
   };
 }
 
-function applyPricingAndVariants(product: Product, usdCache: OfficialUsdPriceCache): Product {
+function applyPricingAndVariants(
+  product: Product,
+  usdCache: OfficialUsdPriceCache,
+  databaseMediaCache?: DatabaseMediaCache
+): Product {
   const entry = usdCache[product.slug];
   if (!entry?.combos?.length) return product;
 
   if (shouldExpandVariants(product, entry.combos) || shouldResyncVariantsFromCache(product, entry.combos)) {
-    return expandVariantsFromCache(product, entry.combos);
+    return expandVariantsFromCache(product, entry.combos, databaseMediaCache);
   }
 
   return applyUsdPricingToProduct(product, entry);
@@ -201,7 +180,7 @@ export interface CatalogPresentationOptions {
 
 export function applyCatalogPresentation(products: Product[], options: CatalogPresentationOptions): Product[] {
   return products.map((product) => {
-    const priced = applyPricingAndVariants(product, options.usdCache);
+    const priced = applyPricingAndVariants(product, options.usdCache, options.databaseMediaCache);
     return applyMediaGallery(priced, options.mediaCache, options.databaseMediaCache);
   });
 }

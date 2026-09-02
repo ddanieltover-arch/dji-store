@@ -36,7 +36,8 @@ import {
   Gift,
   Zap,
   Settings,
-  Boxes
+  Boxes,
+  LogOut
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
@@ -49,6 +50,7 @@ import { CdpIntelligenceConsole } from './crm/CdpIntelligenceConsole';
 import { MarketingAutomationCenter } from './crm/MarketingAutomationCenter';
 import { LoyaltyRewardsAdmin } from './crm/LoyaltyRewardsAdmin';
 import { AdminOrderEditModal } from './admin/AdminOrderEditModal';
+import { useAuth } from '../context/AuthContext';
 
 type AdminSection = 'orders' | 'products' | 'settings';
 
@@ -107,6 +109,7 @@ export const AdminDashboard: React.FC = () => {
     rejectCatalogDiff,
     navigateToPdp
   } = useStore();
+  const { user, logout } = useAuth();
 
   const [activeSection, setActiveSection] = useState<AdminSection>('orders');
   const [activeTab, setActiveTab] = useState<AdminSubTab>('orders');
@@ -188,12 +191,29 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          {user && (
+            <p className="text-[11px] text-gray-400 sm:mr-2 truncate max-w-[200px]" title={user.email}>
+              {user.email}
+            </p>
+          )}
           <button
+            type="button"
             onClick={() => setViewMode('home')}
             className="px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-xs border border-gray-700 transition-colors"
           >
             ← Exit to Storefront
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              await logout();
+              setViewMode('home');
+            }}
+            className="px-4 py-2 rounded-xl bg-gray-900 hover:bg-red-950 text-red-300 font-semibold text-xs border border-red-900/50 transition-colors inline-flex items-center justify-center gap-1.5"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Sign out
           </button>
         </div>
       </div>

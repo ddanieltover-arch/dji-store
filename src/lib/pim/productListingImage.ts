@@ -1,59 +1,61 @@
 import type { Product } from '../../types';
-import type { OfficialStoreMediaCache } from './fetchOfficialStoreMedia';
-import officialStoreMediaCacheJson from '../../data/officialStoreMediaCache.json';
+import productDatabaseMediaCacheJson from '../../data/productDatabaseMediaCache.json';
+import {
+  DatabaseMediaCache,
+  databaseListingImage,
+  isDatabaseAssetUrl,
+  isExternalCdnUrl
+} from './databaseMediaCache';
 
-const officialStoreMediaCache = officialStoreMediaCacheJson as OfficialStoreMediaCache;
+const databaseMediaCache = productDatabaseMediaCacheJson as DatabaseMediaCache;
 
-/** Remote URL suitable for `<img src>` in the Vite storefront (excludes localhost ingested assets). */
+/** URL is served from our own database asset API. */
+export { isDatabaseAssetUrl, isExternalCdnUrl } from './databaseMediaCache';
+
+/** Remote reference CDN — must not be used in the storefront. */
 export function isStorefrontImageUrl(url?: string): boolean {
   if (!url) return false;
-  if (url.startsWith('https://')) return true;
-  if (url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1')) return false;
-  return url.startsWith('http://');
+  if (isDatabaseAssetUrl(url)) return true;
+  if (isExternalCdnUrl(url)) return false;
+  if (url.startsWith('/api/assets/')) return true;
+  if (url.startsWith('https://')) return false;
+  if (url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1')) {
+    return isDatabaseAssetUrl(url);
+  }
+  return false;
 }
 
-/** Missing bundled PNG paths under /products/ — not valid listing images. */
+/** Missing bundled PNG paths under /products/ — fallback until ingest completes. */
 export function isLocalPlaceholderUrl(url?: string): boolean {
   if (!url) return false;
   return url.startsWith('/products/') || url.startsWith('/images/');
 }
 
-export function officialListingCoverForSlug(slug: string): string | undefined {
-  const entry = officialStoreMediaCache[slug];
-  const cover = entry?.coverOriginal || entry?.coverLarge;
-  return isStorefrontImageUrl(cover) ? cover : undefined;
-}
-
-function firstStorefrontGalleryUrl(gallery?: string[]): string | undefined {
-  return gallery?.find((url) => isStorefrontImageUrl(url) && !isLocalPlaceholderUrl(url));
-}
-
 /**
- * Official white-background SPU cover used on store.dji.com category grids.
- * Resolves in order: media cache by slug → remote cutout/hero → remote gallery frame.
+ * Product card / cart thumbnail.
+ * Priority: database-ingested asset → local bundled cutout. Never the reference CDN.
  */
 export function productListingImage(
-  product: Pick<Product, 'images' | 'slug'>
+  product: Pick<Product, 'images' | 'slug' | 'id'>
 ): string {
-  const official = officialListingCoverForSlug(product.slug);
-  if (official) return official;
+  const fromDb = databaseListingImage(product.slug, databaseMediaCache);
+  if (fromDb) return fromDb;
 
-  const { cutout, hero, gallery } = product.images;
+  const { cutout, hero } = product.images;
 
-  if (isStorefrontImageUrl(cutout) && !isLocalPlaceholderUrl(cutout)) return cutout;
-  if (isStorefrontImageUrl(hero) && !isLocalPlaceholderUrl(hero)) return hero;
+  if (isDatabaseAssetUrl(cutout)) return cutout;
+  if (isDatabaseAssetUrl(hero)) return hero;
+  if (cutout && !isExternalCdnUrl(cutout)) return cutout;
+  if (hero && !isExternalCdnUrl(hero)) return hero;
 
-  const galleryCdn = firstStorefrontGalleryUrl(gallery);
-  if (galleryCdn) return galleryCdn;
-
-  return cutout || hero;
+  return `/products/${product.id}-cutout.png`;
 }
 
-/** True when the listing helper resolves to a loadable CDN URL. */
-export function hasStorefrontListingImage(product: Pick<Product, 'images' | 'slug'>): boolean {
-  return isStorefrontImageUrl(productListingImage(product));
+/** True when the listing resolves to a database asset (not a local placeholder). */
+export function hasStorefrontListingImage(product: Pick<Product, 'images' | 'slug' | 'id'>): boolean {
+  return isDatabaseAssetUrl(productListingImage(product));
 }
 
-export function getOfficialStoreMediaCache(): OfficialStoreMediaCache {
-  return officialStoreMediaCache;
+export function getDatabaseMediaCache(): DatabaseMediaCache {
+  return databaseMediaCache;
 }

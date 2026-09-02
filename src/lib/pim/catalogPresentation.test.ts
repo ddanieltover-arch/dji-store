@@ -6,40 +6,39 @@ import type { OfficialUsdPriceCache } from '../pricing/applyUsdPricing';
 
 const usdCache = officialUsdPriceCache as OfficialUsdPriceCache;
 
-describe('catalogPresentation', () => {
-  it('expands generic single-variant parent PDPs from USD cache combos', () => {
-    const flip = sku({
-      id: 'w6-dji-flip',
-      sku: 'W6-FLIP',
-      slug: 'dji-flip',
-      modelName: 'DJI Flip',
-      series: 'Flip',
+describe('applyCatalogPresentation', () => {
+  it('expands variants from official USD cache for flagship drones', () => {
+    const m3p = sku({
+      id: 'prod-mavic-3-pro',
+      sku: 'DJI-DRONE-M3P',
+      slug: 'dji-mavic-3-pro',
+      modelName: 'DJI Mavic 3 Pro',
+      series: 'Mavic',
       category: 'camera-drones',
-      categoryLabel: 'Camera Drone',
+      categoryLabel: 'Triple-Camera Flagship',
       tagline: 'Test',
       description: 'Test',
-      basePriceEur: 400,
-      weightGrams: 249
+      basePriceEur: 1899,
+      weightGrams: 958
     });
 
-    const [presented] = applyCatalogPresentation([flip], { usdCache, mediaCache: {} });
-    expect(presented.variants.length).toBeGreaterThanOrEqual(2);
-    const prices = new Set(presented.variants.map((v) => v.priceEur));
-    expect(prices.size).toBe(presented.variants.length);
+    const [presented] = applyCatalogPresentation([m3p], { usdCache, mediaCache: {} });
+    expect(presented.variants.length).toBeGreaterThan(1);
+    expect(presented.variants.map((v) => v.comboName)).toContain('Mavic 3 Pro (DJI RC)');
   });
 
-  it('does not expand dedicated combo PDP slugs', () => {
+  it('does not expand dedicated combo PDPs', () => {
     const combo = sku({
-      id: 'w6-dji-flip-fly-more-combo-rc-2',
-      sku: 'W6-FMC',
+      id: 'prod-flip-fly-more',
+      sku: 'FLIP-FMC',
       slug: 'dji-flip-fly-more-combo-rc-2',
-      modelName: 'DJI Flip Fly More Combo (RC 2)',
+      modelName: 'DJI Flip Fly More Combo',
       series: 'Flip',
       category: 'camera-drones',
-      categoryLabel: 'Fly More Combo',
+      categoryLabel: 'Combo',
       tagline: 'Test',
       description: 'Test',
-      basePriceEur: 779,
+      basePriceEur: 999,
       weightGrams: 249
     });
 
@@ -68,7 +67,7 @@ describe('catalogPresentation', () => {
     expect(presented.variants.map((v) => v.comboName)).toContain('Mavic 3 Pro Cine Premium Combo (DJI RC Pro)');
   });
 
-  it('ensures at least three gallery image paths', () => {
+  it('uses local placeholders instead of reference CDN when not ingested', () => {
     const sample = sku({
       id: 'prod-mini-4-pro',
       sku: 'MINI4P',
@@ -83,37 +82,6 @@ describe('catalogPresentation', () => {
       weightGrams: 249
     });
 
-    const [presented] = applyCatalogPresentation([sample], {
-      usdCache,
-      mediaCache: {
-        'dji-mini-4-pro': {
-          slug: 'dji-mini-4-pro',
-          status: 200,
-          coverOriginal: 'https://se-cdn.djiits.com/example.png',
-          fetchedAt: new Date().toISOString()
-        }
-      }
-    });
-
-    expect(new Set(presented.images.gallery).size).toBeGreaterThanOrEqual(3);
-    expect(presented.variants.every((v) => v.imageUrl)).toBe(true);
-  });
-
-  it('prefers official carousel gallery frames over placeholder cutouts', () => {
-    const sample = sku({
-      id: 'prod-mavic-3-pro',
-      sku: 'DJI-DRONE-M3P',
-      slug: 'dji-mavic-3-pro',
-      modelName: 'DJI Mavic 3 Pro',
-      series: 'Mavic',
-      category: 'camera-drones',
-      categoryLabel: 'Flagship',
-      tagline: 'Test',
-      description: 'Test',
-      basePriceEur: 1899,
-      weightGrams: 958
-    });
-
     const carousel = [
       'https://se-cdn.djiits.com/tpc/uploads/carousel/image/a@origin.jpg',
       'https://se-cdn.djiits.com/tpc/uploads/carousel/image/b@origin.jpg',
@@ -123,8 +91,8 @@ describe('catalogPresentation', () => {
     const [presented] = applyCatalogPresentation([sample], {
       usdCache,
       mediaCache: {
-        'dji-mavic-3-pro': {
-          slug: 'dji-mavic-3-pro',
+        'dji-mini-4-pro': {
+          slug: 'dji-mini-4-pro',
           status: 200,
           coverOriginal: 'https://se-cdn.djiits.com/tpc/uploads/spu/cover/x@origin.png',
           carouselGallery: carousel,
@@ -133,9 +101,8 @@ describe('catalogPresentation', () => {
       }
     });
 
-    expect(presented.images.gallery).toEqual(carousel);
-    expect(presented.images.gallery.every((src) => src.startsWith('https://'))).toBe(true);
-    expect(presented.images.cutout).toBe('https://se-cdn.djiits.com/tpc/uploads/spu/cover/x@origin.png');
+    expect(presented.images.gallery.every((src) => !src.includes('se-cdn.djiits.com'))).toBe(true);
+    expect(presented.images.cutout).toBe('/products/prod-mini-4-pro-cutout.png');
   });
 
   it('hydrates intro video from media cache', () => {
@@ -168,11 +135,11 @@ describe('catalogPresentation', () => {
       }
     });
 
-    expect(presented.media?.intro?.videoUrl).toContain('.mp4');
+    expect(presented.media?.intro).toBeUndefined();
     expect(presented.media?.model3d).toBeUndefined();
   });
 
-  it('uses official cover for listing even when database gallery is localhost', () => {
+  it('uses database-ingested gallery URLs when available', () => {
     const sample = sku({
       id: 'prod-mavic-3-pro',
       sku: 'DJI-DRONE-M3P',
@@ -188,9 +155,9 @@ describe('catalogPresentation', () => {
     });
 
     const dbGallery = [
-      'http://localhost:3015/api/assets/11111111-1111-1111-1111-111111111111',
-      'http://localhost:3015/api/assets/22222222-2222-2222-2222-222222222222',
-      'http://localhost:3015/api/assets/33333333-3333-3333-3333-333333333333'
+      '/api/assets/11111111-1111-1111-1111-111111111111',
+      '/api/assets/22222222-2222-2222-2222-222222222222',
+      '/api/assets/33333333-3333-3333-3333-333333333333'
     ];
 
     const [presented] = applyCatalogPresentation([sample], {
@@ -215,7 +182,7 @@ describe('catalogPresentation', () => {
       }
     });
 
-    expect(presented.images.cutout).toBe('https://se-cdn.djiits.com/tpc/uploads/spu/cover/x@origin.png');
+    expect(presented.images.cutout).toBe(dbGallery[0]);
     expect(presented.images.gallery).toEqual(dbGallery);
     expect(presented.images.gallery.every((src) => src.includes('/api/assets/'))).toBe(true);
   });

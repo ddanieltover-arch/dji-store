@@ -15,7 +15,8 @@
     "test:watch": "vitest --config vitest.config.ts",
     "pricing:fetch": "tsx scripts/fetch-official-usd-prices.ts",
     "pricing:sync": "tsx scripts/sync-usd-price-cache.ts",
-    "media:ingest": "tsx --tsconfig production/tsconfig.json production/scripts/ingest-product-media.ts"
+    "media:ingest": "tsx --tsconfig production/tsconfig.json production/scripts/ingest-product-media.ts",
+    "media:ingest:priority": "tsx --tsconfig production/tsconfig.json production/scripts/ingest-product-media.ts --priority"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

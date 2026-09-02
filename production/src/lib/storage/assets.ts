@@ -125,7 +125,7 @@ export async function ingestAssetFromUrl(sourceUrl: string, fileName?: string): 
   return ingestUploadedFile({
     data: buffer,
     contentType: contentType ?? undefined,
-    fileName: fileName ?? absoluteUrl.split('/').pop(),
+    fileName: fileName ?? absoluteUrl.split('?')[0].split('/').pop(),
     allowPdf: true
   });
 }
@@ -206,5 +206,10 @@ export async function fetchAsset(id: string): Promise<{ data: Buffer; contentTyp
 export function assetPublicUrl(assetId: string): string {
   const site = process.env.NEXT_PUBLIC_SITE_URL ?? '';
   const base = site.replace(/\/$/, '');
-  return `${base}/api/assets/${assetId}`;
+  return base ? `${base}${assetServePath(assetId)}` : assetServePath(assetId);
+}
+
+/** Relative path served by /api/assets/[id] — safe for catalog cache and Vite proxy. */
+export function assetServePath(assetId: string): string {
+  return `/api/assets/${assetId}`;
 }

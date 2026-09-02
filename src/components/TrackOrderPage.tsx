@@ -13,11 +13,10 @@ import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../data/currency';
 
 export const TrackOrderPage: React.FC = () => {
-  const { orders, currency, setViewMode, activeOrderNumber } = useStore();
-  const currentOrder = orders.find((o) => o.orderNumber === activeOrderNumber) || (orders.length > 0 ? orders[0] : null);
-  const [searchQuery, setSearchQuery] = useState(currentOrder ? currentOrder.orderNumber : '');
-  const [searchedOrder, setSearchedOrder] = useState<any>(currentOrder);
-  const [hasSearched, setHasSearched] = useState(!!currentOrder);
+  const { orders, activeOrderNumber } = useStore();
+  const [searchQuery, setSearchQuery] = useState(activeOrderNumber ?? '');
+  const [searchedOrder, setSearchedOrder] = useState<(typeof orders)[number] | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
