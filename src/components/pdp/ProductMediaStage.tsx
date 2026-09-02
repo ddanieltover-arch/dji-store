@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Images, Play } from 'lucide-react';
 import type { Product } from '../../types';
+import { resolveMediaUrl } from '../../lib/pim/resolveMediaUrl';
 
 type MediaTab = 'photos' | 'intro';
 
@@ -19,6 +20,26 @@ export const ProductMediaStage: React.FC<ProductMediaStageProps> = ({
 
   const [activeTab, setActiveTab] = useState<MediaTab>('photos');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [brokenUrls, setBrokenUrls] = useState<Set<string>>(() => new Set());
+
+  const fallbackImage = `/products/${product.id}-cutout.png`;
+
+  const displayUrl = useCallback(
+    (rawUrl?: string) => {
+      const resolved = resolveMediaUrl(rawUrl) ?? rawUrl ?? fallbackImage;
+      return brokenUrls.has(resolved) ? fallbackImage : resolved;
+    },
+    [brokenUrls, fallbackImage]
+  );
+
+  const handleImageError = useCallback((url: string) => {
+    setBrokenUrls((prev) => {
+      if (prev.has(url)) return prev;
+      const next = new Set(prev);
+      next.add(url);
+      return next;
+    });
+  }, []);
 
   const tabButtonClass = (tab: MediaTab) => {
     const active = activeTab === tab;
@@ -35,9 +56,10 @@ export const ProductMediaStage: React.FC<ProductMediaStageProps> = ({
         <div className="flex items-center justify-center bg-white">
           {activeTab === 'photos' && (
             <img
-              src={galleryImages[selectedImageIndex] || product.images.hero}
+              src={displayUrl(galleryImages[selectedImageIndex] || product.images.hero)}
               alt={product.modelName}
               className="block w-auto h-auto max-w-full max-h-[min(520px,70vh)] object-contain"
+              onError={(e) => handleImageError(e.currentTarget.src)}
             />
           )}
 
@@ -82,7 +104,12 @@ export const ProductMediaStage: React.FC<ProductMediaStageProps> = ({
                   : 'border-gray-200 hover:border-gray-300 opacity-70 hover:opacity-100'
               }`}
             >
-              <img src={img} alt="" className="w-full h-full object-contain" />
+              <img
+                src={displayUrl(img)}
+                alt=""
+                className="w-full h-full object-contain"
+                onError={(e) => handleImageError(e.currentTarget.src)}
+              />
             </button>
           ))}
         </div>

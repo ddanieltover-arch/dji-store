@@ -6,6 +6,7 @@ import {
   isDatabaseAssetUrl,
   isExternalCdnUrl
 } from './databaseMediaCache';
+import { resolveMediaUrl } from './resolveMediaUrl';
 
 const databaseMediaCache = productDatabaseMediaCacheJson as DatabaseMediaCache;
 
@@ -39,12 +40,12 @@ export function productListingImage(
   product: Pick<Product, 'images' | 'slug' | 'id'>
 ): string {
   const fromDb = databaseListingImage(product.slug, databaseMediaCache);
-  if (fromDb) return fromDb;
+  if (fromDb) return resolveMediaUrl(fromDb) ?? fromDb;
 
   const { cutout, hero } = product.images;
 
-  if (isDatabaseAssetUrl(cutout)) return cutout;
-  if (isDatabaseAssetUrl(hero)) return hero;
+  if (isDatabaseAssetUrl(cutout)) return resolveMediaUrl(cutout) ?? cutout;
+  if (isDatabaseAssetUrl(hero)) return resolveMediaUrl(hero) ?? hero;
   if (cutout && !isExternalCdnUrl(cutout)) return cutout;
   if (hero && !isExternalCdnUrl(hero)) return hero;
 

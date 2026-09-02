@@ -68,6 +68,14 @@ npm run media:ingest -- --limit=50
 
 Writes `src/data/productDatabaseMediaCache.json` and serves images at `/api/assets/[id]`.
 
+For **static Vite deploys** (djii.eu on Vercel without the Next.js API), export assets to `public/media/assets/`:
+
+```bash
+npm run media:export
+```
+
+This writes static files and `src/data/staticAssetManifest.json`. Run after `media:ingest`, then rebuild and redeploy the storefront.
+
 ## Rules
 
 - No `DJI_PRODUCTS` import in production storefront when `DATA_MODE=production`

@@ -7,6 +7,7 @@ import {
   isExternalCdnUrl
 } from './databaseMediaCache';
 import { resolveVariantImageUrl } from './comboSlugResolver';
+import { resolveMediaUrl, resolveMediaUrls } from './resolveMediaUrl';
 import { usdToCompareAtEur, usdToSaleEur } from '../pricing/usdPricing';
 import { OfficialUsdPriceCache, applyUsdPricingToProduct, combosForProduct } from '../pricing/applyUsdPricing';
 
@@ -124,22 +125,24 @@ function applyMediaGallery(
 
   const images = hasDatabaseMedia(dbMedia)
     ? {
-        cutout: dbMedia!.cutout || dbMedia!.hero || dbMedia!.gallery![0],
-        hero: dbMedia!.hero || dbMedia!.gallery![0],
-        gallery: dbMedia!.gallery!
+        cutout: resolveMediaUrl(dbMedia!.cutout || dbMedia!.hero || dbMedia!.gallery![0])!,
+        hero: resolveMediaUrl(dbMedia!.hero || dbMedia!.gallery![0])!,
+        gallery: resolveMediaUrls(dbMedia!.gallery!)
       }
     : localFallbackImages(product);
 
   const variants = product.variants.map((v) => ({
     ...v,
     imageUrl:
-      resolveVariantImageUrl({
-        productSlug: product.slug,
-        comboTitle: v.comboName,
-        databaseMediaCache,
-        fallback: images.cutout || images.hero
-      }) ||
-      (isDatabaseAssetUrl(v.imageUrl) ? v.imageUrl : undefined) ||
+      resolveMediaUrl(
+        resolveVariantImageUrl({
+          productSlug: product.slug,
+          comboTitle: v.comboName,
+          databaseMediaCache,
+          fallback: images.cutout || images.hero
+        })
+      ) ||
+      (isDatabaseAssetUrl(v.imageUrl) ? resolveMediaUrl(v.imageUrl) : v.imageUrl) ||
       images.cutout ||
       images.hero
   }));
