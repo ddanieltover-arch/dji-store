@@ -22,7 +22,7 @@ export const WAVE2_OFFICIAL_EXPANSION: Product[] = [
   sku({
     id: 'prod-osmo-mobile-7p',
     sku: 'DJI-OSMO-M7P',
-    slug: 'dji-osmo-mobile-7p',
+    slug: 'osmo-mobile-7p',
     modelName: 'DJI Osmo Mobile 7P',
     series: 'Mobile',
     category: 'handheld',
@@ -158,7 +158,7 @@ export const WAVE2_OFFICIAL_EXPANSION: Product[] = [
   sku({
     id: 'prod-osmo-nano',
     sku: 'DJI-OSMO-NANO',
-    slug: 'dji-osmo-nano',
+    slug: 'osmo-nano',
     modelName: 'DJI Osmo Nano',
     series: 'Action',
     category: 'handheld',

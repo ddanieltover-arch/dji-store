@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../data/currency';
+import { productListingImage } from '../lib/pim/productListingImage';
 import { DJI_PRODUCTS } from '../data/products';
 import { buildOptimizedBundles, inventoryAwareFlags, buildCommerceSignals } from '../lib/merch/wave5Merchandising';
 import { initializeInventoryFromCatalog } from '../lib/pim/wave1Execution';
@@ -79,6 +80,11 @@ export const SlideOverCart: React.FC = () => {
         );
   const crossSell = accessories.length ? accessories : fallbackAccessories;
   const shippingNudge = personalizedCart.shippingNudge;
+
+  const handleViewCartClick = () => {
+    setIsCartOpen(false);
+    setViewMode('cart');
+  };
 
   const handleCheckoutClick = () => {
     setIsCartOpen(false);
@@ -160,7 +166,7 @@ export const SlideOverCart: React.FC = () => {
                   className="flex items-start gap-4 p-3.5 rounded-2xl bg-gray-50 border border-gray-200/80"
                 >
                   <img
-                    src={item.product.images.cutout || item.product.images.hero}
+                    src={productListingImage(item.product)}
                     alt={item.product.modelName}
                     className="w-16 h-16 object-contain bg-white rounded-xl p-1 border border-gray-200 shrink-0"
                   />
@@ -223,7 +229,7 @@ export const SlideOverCart: React.FC = () => {
                     >
                       <div className="flex items-center gap-2 truncate mr-2">
                         <img
-                          src={acc.images.cutout || acc.images.hero}
+                          src={productListingImage(acc)}
                           alt={acc.modelName}
                           className="w-8 h-8 object-contain shrink-0"
                         />
@@ -255,10 +261,6 @@ export const SlideOverCart: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex justify-between text-[11px] text-gray-500">
-                  <span>Included European VAT (19%)</span>
-                  <span>{formatPrice(cartSubtotalEur * 0.19, currency)}</span>
-                </div>
-                <div className="flex justify-between text-[11px] text-gray-500">
                   <span>DHL Express Shipping</span>
                   <span className={isFreeShipping ? 'text-emerald-600 font-bold' : ''}>
                     {isFreeShipping ? 'FREE' : formatPrice(19.0, currency)}
@@ -273,6 +275,16 @@ export const SlideOverCart: React.FC = () => {
               </div>
 
               <button
+                type="button"
+                onClick={handleViewCartClick}
+                className="w-full py-3.5 px-6 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-900 font-bold text-sm tracking-wide transition-all flex items-center justify-center gap-2"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                View Cart
+              </button>
+
+              <button
+                type="button"
                 onClick={handleCheckoutClick}
                 className="w-full py-4 px-6 rounded-xl bg-[#E30613] hover:bg-[#c20510] text-white font-bold text-sm tracking-wide transition-all shadow-lg shadow-red-900/20 active:scale-98 flex items-center justify-center gap-2"
               >

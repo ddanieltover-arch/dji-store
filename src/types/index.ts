@@ -3,6 +3,32 @@ export type CurrencyCode = 'EUR' | 'USD' | 'GBP' | 'CHF';
 
 export type EasaClass = 'C0 (<249g)' | 'C1' | 'C2' | 'Open Category';
 
+export interface ProductModel3DSource {
+  title: string;
+  url: string;
+  cameraOrbit?: string;
+  environmentImage?: string;
+  exposure?: string;
+  minCameraOrbit?: string;
+  maxCameraOrbit?: string;
+  maxFieldOfView?: string;
+}
+
+export interface ProductMedia3D {
+  sources: ProductModel3DSource[];
+  poster?: string;
+}
+
+export interface ProductIntroVideo {
+  videoUrl: string;
+  posterUrl?: string;
+}
+
+export interface ProductMedia {
+  intro?: ProductIntroVideo;
+  model3d?: ProductMedia3D;
+}
+
 export interface ProductVariant {
   id: string;
   sku: string;
@@ -13,6 +39,8 @@ export interface ProductVariant {
   includedItems: string[];
   inStock: boolean;
   stockQuantity: number;
+  /** Optional variant-specific hero for PDP gallery switching. */
+  imageUrl?: string;
 }
 
 export interface ProductSpecGroup {
@@ -73,6 +101,8 @@ export interface Product {
     gallery: string[];
     cutout: string;
   };
+  /** Official store gallery media — photos, intro video, and interactive 3D models. */
+  media?: ProductMedia;
   variants: ProductVariant[];
   specifications: ProductSpecGroup[];
   features: {
@@ -138,6 +168,8 @@ export interface PlacedOrder {
   paymentDetails?: {
     senderIban?: string;
     receiptFileName?: string;
+    receiptAssetId?: string;
+    receiptAssetUrl?: string;
     cryptoTxHash?: string;
     cryptoAddress?: string;
   };
@@ -183,7 +215,14 @@ export type ViewMode =
   | 'personalization-ops'
   | 'lifecycle-ops'
   | 'enterprise-ops'
-  | 'best-sellers';
+  | 'service-ops'
+  | 'knowledge-ops'
+  | 'mobile-ops'
+  | 'migration-ops'
+  | 'best-sellers'
+  | 'content'
+  | 'login'
+  | 'signup';
 
 export interface ToastMessage {
   id: string;
@@ -607,6 +646,7 @@ export type AccountTab =
   | 'downloads'
   | 'b2b_tax'
   | 'business'
+  | 'service'
   | 'notifications'
   | 'settings';
 

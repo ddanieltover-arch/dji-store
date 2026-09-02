@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
+import { productListingImage } from '../lib/pim/productListingImage';
 import { useStore } from '../context/StoreContext';
 import { Product } from '../types';
 
@@ -82,7 +83,7 @@ export const BestSellersPage: React.FC = () => {
                 className="bg-[#F5F5F7] rounded-2xl aspect-[4/3] flex items-center justify-center px-10 w-full lg:w-1/2"
               >
                 <img
-                  src={product.images.cutout || product.images.hero}
+                  src={productListingImage(product)}
                   alt={product.modelName}
                   className="max-h-[78%] max-w-[80%] object-contain"
                 />
@@ -124,7 +125,7 @@ export const BestSellersPage: React.FC = () => {
               >
                 <div className="bg-[#F5F5F7] rounded-xl aspect-square flex items-center justify-center mb-3 px-6">
                   <img
-                    src={product.images.cutout || product.images.hero}
+                    src={productListingImage(product)}
                     alt=""
                     className="max-h-[75%] max-w-[80%] object-contain group-hover:scale-[1.03] transition-transform"
                   />

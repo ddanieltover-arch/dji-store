@@ -314,7 +314,7 @@ export const NAV_CATALOG_EXPANSION: Product[] = [
   sku({
     id: 'refurb-pocket-3',
     sku: 'DJI-REF-POCKET3',
-    slug: 'dji-osmo-pocket-3-refurbished',
+    slug: 'osmo-pocket-3-refurbished',
     modelName: 'Osmo Pocket 3 (Official Refurbished)',
     series: 'Refurbished',
     category: 'refurbished',

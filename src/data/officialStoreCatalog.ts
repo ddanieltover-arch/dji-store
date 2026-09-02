@@ -1,32 +1,47 @@
-import { Product } from '../types';
+import { Product, ProductVariant } from '../types';
+import { eurPricesFromUsd, usdToSaleEur } from '../lib/pricing/usdPricing';
 
-const GALLERY = [
-  'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=1200&q=80'
-];
+type SkuVariantInput = ProductVariant & { priceUsd?: number };
 
-export function sku(partial: Omit<Product, 'images' | 'variants' | 'features' | 'specifications' | 'rating' | 'reviewCount'> & Partial<Pick<Product, 'images' | 'variants' | 'features' | 'specifications' | 'rating' | 'reviewCount'>>): Product {
+export type SkuInput = Omit<Product, 'images' | 'variants' | 'features' | 'specifications' | 'rating' | 'reviewCount'> &
+  Partial<Pick<Product, 'images' | 'variants' | 'features' | 'specifications' | 'rating' | 'reviewCount'>> & {
+    basePriceUsd?: number;
+    variants?: SkuVariantInput[];
+  };
+
+function resolveVariantPricing(variant: SkuVariantInput): ProductVariant {
+  const { priceUsd, ...rest } = variant;
+  if (priceUsd != null) {
+    return { ...rest, priceEur: usdToSaleEur(priceUsd) };
+  }
+  return rest;
+}
+
+function resolveSkuPricing(partial: SkuInput): Pick<Product, 'basePriceEur' | 'compareAtPriceEur'> {
+  if (partial.basePriceUsd == null) {
+    return { basePriceEur: partial.basePriceEur, compareAtPriceEur: partial.compareAtPriceEur };
+  }
+  const derived = eurPricesFromUsd(partial.basePriceUsd);
+  return {
+    basePriceEur: partial.basePriceEur ?? derived.basePriceEur,
+    compareAtPriceEur: partial.compareAtPriceEur ?? derived.compareAtPriceEur
+  };
+}
+
+export function sku(partial: SkuInput): Product {
+  const pricing = resolveSkuPricing(partial);
+  const resolvedVariants = partial.variants?.map(resolveVariantPricing);
+  const { basePriceUsd: _basePriceUsd, variants: _variants, ...rest } = partial;
+  const cutout = `/products/${partial.id}-cutout.png`;
+  const gallery = [cutout, `/products/${partial.id}-gallery-2.png`, `/products/${partial.id}-gallery-3.png`];
   return {
     rating: 4.7,
     reviewCount: 64,
     images: {
-      hero: `/products/${partial.id}-cutout.png`,
-      cutout: `/products/${partial.id}-cutout.png`,
-      gallery: [`/products/${partial.id}-cutout.png`, ...GALLERY]
+      hero: cutout,
+      cutout,
+      gallery
     },
-    variants: [
-      {
-        id: `var-${partial.id}-std`,
-        sku: `${partial.sku}-STD`,
-        comboName: 'Standard',
-        priceEur: partial.basePriceEur,
-        weightGrams: partial.weightGrams,
-        inStock: true,
-        stockQuantity: 28,
-        includedItems: [partial.modelName, '2-Year Official EU Warranty']
-      }
-    ],
     features: [
       {
         title: 'Official DJI Store EU',
@@ -42,7 +57,20 @@ export function sku(partial: Omit<Product, 'images' | 'variants' | 'features' | 
         ]
       }
     ],
-    ...partial
+    ...rest,
+    ...pricing,
+    variants: resolvedVariants ?? [
+      {
+        id: `var-${partial.id}-std`,
+        sku: `${partial.sku}-STD`,
+        comboName: 'Standard',
+        priceEur: pricing.basePriceEur,
+        weightGrams: partial.weightGrams,
+        inStock: true,
+        stockQuantity: 28,
+        includedItems: [partial.modelName, '2-Year Official EU Warranty']
+      }
+    ]
   };
 }
 
@@ -183,29 +211,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
     weightGrams: 958,
     cameraSensor: '4/3 Hasselblad + Dual Tele',
     maxVideoRes: '5.1K/50fps',
-    transmissionRangeKm: 15,
-    variants: [
-      {
-        id: 'var-m3p-std',
-        sku: 'DJI-M3P-STD',
-        comboName: 'Standard',
-        priceEur: 1899,
-        weightGrams: 958,
-        inStock: true,
-        stockQuantity: 12,
-        includedItems: ['Mavic 3 Pro', 'RC-N1', '1 battery']
-      },
-      {
-        id: 'var-m3p-cine',
-        sku: 'DJI-M3P-CINE',
-        comboName: 'Cine',
-        priceEur: 4199,
-        weightGrams: 958,
-        inStock: true,
-        stockQuantity: 4,
-        includedItems: ['Mavic 3 Pro Cine', '1TB SSD', 'ProRes']
-      }
-    ]
+    transmissionRangeKm: 15
   }),
   sku({
     id: 'prod-avata',
@@ -267,7 +273,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
   sku({
     id: 'prod-osmo-mobile-7',
     sku: 'DJI-OSMO-M7',
-    slug: 'dji-osmo-mobile-7',
+    slug: 'osmo-mobile-7',
     modelName: 'DJI Osmo Mobile 7',
     series: 'Mobile',
     category: 'handheld',
@@ -281,7 +287,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
   sku({
     id: 'prod-osmo-360',
     sku: 'DJI-OSMO-360',
-    slug: 'dji-osmo-360',
+    slug: 'osmo-360',
     modelName: 'DJI Osmo 360',
     series: 'Osmo360',
     category: 'handheld',
@@ -297,7 +303,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
   sku({
     id: 'prod-osmo-action-4',
     sku: 'DJI-OSMO-A4',
-    slug: 'dji-osmo-action-4',
+    slug: 'osmo-action-4',
     modelName: 'DJI Osmo Action 4',
     series: 'Action',
     category: 'handheld',

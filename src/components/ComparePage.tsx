@@ -11,6 +11,7 @@ import {
 import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
+import { productListingImage } from '../lib/pim/productListingImage';
 import { generateComparison } from '../lib/pim/wave3Intelligence';
 
 export const ComparePage: React.FC = () => {
@@ -97,7 +98,7 @@ export const ComparePage: React.FC = () => {
                         <X className="w-4 h-4" />
                       </button>
                       <img
-                        src={product.images.cutout || product.images.hero}
+                        src={productListingImage(product)}
                         alt={product.modelName}
                         className="h-28 w-auto object-contain mx-auto"
                       />

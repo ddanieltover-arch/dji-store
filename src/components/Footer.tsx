@@ -1,14 +1,99 @@
 import React from 'react';
-import { ShieldCheck, Truck, CreditCard, RefreshCw, Mail, ExternalLink, Award } from 'lucide-react';
+import { ShieldCheck, Truck, CreditCard, Award } from 'lucide-react';
 import { BrandLogo } from './brand/BrandLogo';
 import { useStore } from '../context/StoreContext';
+import { hrefFromStoreLink, type StoreLinkHref } from '../lib/routing';
+
+type FooterLink = StoreLinkHref & { label: string };
+
+const PRODUCT_LINKS: FooterLink[] = [
+  { label: 'Camera Drones', kind: 'plp', category: 'camera-drones' },
+  { label: 'Handheld', kind: 'plp', category: 'handheld' },
+  { label: 'Education & Industry', kind: 'plp', category: 'professional' },
+  { label: 'Service', kind: 'view', mode: 'account' },
+  { label: 'Accessories', kind: 'plp', category: 'accessories' }
+];
+
+const SUPPORT_LINKS: FooterLink[] = [
+  { label: 'Payment Methods', kind: 'content', slug: 'payment-methods' },
+  { label: 'Order Information', kind: 'content', slug: 'order-information' },
+  { label: 'Shipping & Delivery', kind: 'content', slug: 'shipping-fees' },
+  { label: 'Return Policy', kind: 'content', slug: 'return-policy' },
+  { label: 'Technical Support', kind: 'content', slug: 'technical-support' },
+  { label: 'Repair Services', kind: 'content', slug: 'repair-services' },
+  { label: 'After-Sales Service Policies', kind: 'content', slug: 'after-sales-policies' }
+];
+
+const PROGRAM_LINKS: FooterLink[] = [
+  { label: 'Store EU Credit', kind: 'content', slug: 'store-credit' },
+  { label: 'Official Refurbished', kind: 'refurbished' },
+  { label: 'Store EU App', kind: 'content', slug: 'store-app' }
+];
+
+const EXPLORE_LINKS: FooterLink[] = [
+  { label: 'Pilot Gallery', kind: 'content', slug: 'pilot-gallery' },
+  { label: 'Community Forum', kind: 'content', slug: 'community' },
+  { label: 'Buying Guides', kind: 'content', slug: 'buying-guides' },
+  { label: 'Fly Safe', kind: 'content', slug: 'fly-safe' },
+  { label: 'Flying Tips', kind: 'content', slug: 'flying-tips' }
+];
+
+const COMPANY_LINKS: FooterLink[] = [
+  { label: 'Who We Are', kind: 'content', slug: 'who-we-are' },
+  { label: 'Contact Us', kind: 'content', slug: 'contact' },
+  { label: 'Careers', kind: 'content', slug: 'careers' },
+  { label: 'Flagship Stores', kind: 'content', slug: 'flagship-stores' }
+];
+
+function FooterLinkList({ title, links }: { title: string; links: FooterLink[] }) {
+  const { navigateToContent, navigateToPlp, setViewMode, setAccountActiveTab } = useStore();
+
+  const handleClick = (link: FooterLink, event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    switch (link.kind) {
+      case 'content':
+        navigateToContent(link.slug);
+        break;
+      case 'plp':
+        navigateToPlp(link.category, link.series);
+        break;
+      case 'refurbished':
+        navigateToPlp('refurbished');
+        break;
+      case 'view':
+        if (link.mode === 'account') setAccountActiveTab('dashboard');
+        setViewMode(link.mode);
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <div>
+      <h4 className="text-white font-semibold text-xs tracking-wider uppercase mb-3">{title}</h4>
+      <ul className="space-y-2 text-xs">
+        {links.map((link) => (
+          <li key={link.label}>
+            <a
+              href={hrefFromStoreLink(link)}
+              onClick={(event) => handleClick(link, event)}
+              className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export const Footer: React.FC = () => {
-  const { setViewMode, navigateToPlp } = useStore();
+  const { navigateToContent } = useStore();
 
   return (
     <footer className="bg-[#111113] text-gray-400 text-sm border-t border-gray-800">
-      {/* Top Value Proposition Row */}
       <div className="border-b border-gray-800/80 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -19,7 +104,7 @@ export const Footer: React.FC = () => {
               <div>
                 <h4 className="text-white font-semibold text-sm">2-Year Official EU Warranty</h4>
                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  Full statutory 24-month European warranty with certified DJI authorized technicians.
+                  Full statutory 24-month European warranty with certified authorized technicians.
                 </p>
               </div>
             </div>
@@ -29,9 +114,9 @@ export const Footer: React.FC = () => {
                 <Truck className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-white font-semibold text-sm">24h-48h DHL Express</h4>
+                <h4 className="text-white font-semibold text-sm">24h–48h European Express</h4>
                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  Fast dispatched from our Frankfurt and Amsterdam central European logistics hubs.
+                  Dispatched from Frankfurt and Amsterdam via DHL, FedEx, DPD, GLS & partners.
                 </p>
               </div>
             </div>
@@ -41,9 +126,9 @@ export const Footer: React.FC = () => {
                 <CreditCard className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-white font-semibold text-sm">Official SEPA & Crypto</h4>
+                <h4 className="text-white font-semibold text-sm">SEPA & Web3 Crypto</h4>
                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  German corporate bank wire (Deutsche Bank AG) and instant zero-fee Web3 crypto settlement.
+                  Official bank wire settlement plus 5% off cryptocurrency checkout.
                 </p>
               </div>
             </div>
@@ -55,7 +140,7 @@ export const Footer: React.FC = () => {
               <div>
                 <h4 className="text-white font-semibold text-sm">EASA European Compliance</h4>
                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  100% compliant with EU Regulation 2019/947 and 2019/945 for Class C0, C1 and C2 flight.
+                  CE-certified aircraft aligned with EU Regulations 2019/947 and 2019/945.
                 </p>
               </div>
             </div>
@@ -63,288 +148,41 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Footer Links */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-          {/* Col 1: Brand Info */}
-          <div className="col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <BrandLogo variant="light" className="h-8" />
-            </div>
-            <p className="text-xs text-gray-400 max-w-sm leading-relaxed">
-              Official European commercial distribution portal for DJI consumer, professional cinema, and enterprise aerial systems. All products feature factory OEM serial numbers and European CE certifications.
-            </p>
-            <div className="pt-2 text-xs text-gray-500 space-y-1">
-              <p>🏢 Distribution Hub: Frankfurt CargoCity Süd, 60549 Frankfurt am Main, Germany</p>
-              <p>🏛️ European VAT Reg: DE349882109 • EORI: DE884210992</p>
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
+          <FooterLinkList title="Products" links={PRODUCT_LINKS} />
+          <FooterLinkList title="Help & Support" links={SUPPORT_LINKS} />
+          <FooterLinkList title="Programs" links={PROGRAM_LINKS} />
+          <FooterLinkList title="Explore" links={EXPLORE_LINKS} />
+        </div>
+
+        <div className="mt-10 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-6 flex-wrap">
+            <BrandLogo variant="light" className="h-7" />
+            {COMPANY_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={hrefFromStoreLink(link)}
+                onClick={(event) => {
+                  event.preventDefault();
+                  if (link.kind === 'content') navigateToContent(link.slug);
+                }}
+                className="text-xs text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
 
-          {/* Col 2: Products */}
-          <div>
-            <h4 className="text-white font-semibold text-xs tracking-wider uppercase mb-3">
-              Drone Systems
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <button
-                  onClick={() => navigateToPlp('camera-drones')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI Mavic 4 Pro (8K Flagship)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigateToPlp('camera-drones')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI Air 3S (Dual 1-Inch)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigateToPlp('camera-drones')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI Mini 4 Pro (&lt;249g C0)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigateToPlp('camera-drones')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI Avata 2 (FPV Motion)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigateToPlp('professional')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI Inspire 3 (8K Cinema RAW)
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Handheld & Accessories */}
-          <div>
-            <h4 className="text-white font-semibold text-xs tracking-wider uppercase mb-3">
-              Gimbals & Power
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <button
-                  onClick={() => navigateToPlp('handheld')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI Osmo Pocket 3
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigateToPlp('handheld')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI Osmo Action 5 Pro
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigateToPlp('accessories')}
-                  className="hover:text-white transition-colors"
-                >
-                  Intelligent Flight Batteries
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigateToPlp('accessories')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI RC 2 Display Remote
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => navigateToPlp('accessories')}
-                  className="hover:text-white transition-colors"
-                >
-                  DJI Care Refresh Protection
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 4: European Support & Tools */}
-          <div>
-            <h4 className="text-white font-semibold text-xs tracking-wider uppercase mb-3">
-              Customer & Operations
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <button
-                  onClick={() => setViewMode('account')}
-                  className="hover:text-white text-blue-400 font-medium transition-colors"
-                >
-                  👤 Customer Account & Orders
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('account')}
-                  className="hover:text-white transition-colors"
-                >
-                  🛡️ Warranty & Care Claims
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('account')}
-                  className="hover:text-white transition-colors"
-                >
-                  🔄 14-Day Returns & RMA
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('track-order')}
-                  className="hover:text-white transition-colors"
-                >
-                  📦 Live DHL Shipment Tracking
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('easa-guide')}
-                  className="hover:text-white text-emerald-400 font-medium transition-colors"
-                >
-                  🇪🇺 EASA Flight Class Guide
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('compare')}
-                  className="hover:text-white transition-colors"
-                >
-                  ⚖️ Side-by-Side Model Compare
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('admin')}
-                  className="hover:text-white text-[#E30613] font-medium transition-colors"
-                >
-                  ⚙️ Admin Operations Console
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('ai-operations')}
-                  className="hover:text-white text-purple-400 font-semibold transition-colors flex items-center gap-1"
-                >
-                  ✨ AI Operations & Command Center
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('security-ops')}
-                  className="hover:text-white text-emerald-400 font-semibold transition-colors"
-                >
-                  🛡 Security, GDPR & Disaster Recovery
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('sre-ops')}
-                  className="hover:text-white text-cyan-400 font-semibold transition-colors"
-                >
-                  ⚡ SRE, Performance & Edge Reliability
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('qa-ops')}
-                  className="hover:text-white text-orange-400 font-semibold transition-colors"
-                >
-                  🧪 QA, Testing & Release Engineering
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('launch-ops')}
-                  className="hover:text-white text-rose-400 font-semibold transition-colors"
-                >
-                  🚀 Go-Live, Cutover & Hypercare
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('blueprint-ops')}
-                  className="hover:text-white text-amber-400 font-semibold transition-colors"
-                >
-                  📜 Master Blueprint & Certification
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('pim-ops')}
-                  className="hover:text-white text-sky-400 font-semibold transition-colors"
-                >
-                  📦 PIM, Catalog Sync & Product Intelligence
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('merch-ops')}
-                  className="hover:text-white text-rose-400 font-semibold transition-colors"
-                >
-                  📣 Merchandising, Pricing & Conversion
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('personalization-ops')}
-                  className="hover:text-white text-violet-400 font-semibold transition-colors"
-                >
-                  ✨ Personalization & Locale Experience
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('lifecycle-ops')}
-                  className="hover:text-white text-teal-400 font-semibold transition-colors"
-                >
-                  💚 Lifecycle, Retention & Loyalty
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setViewMode('enterprise-ops')}
-                  className="hover:text-white text-sky-400 font-semibold transition-colors"
-                >
-                  🏢 Enterprise Sales & B2B
-                </button>
-              </li>
-            </ul>
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
+            <span className="bg-gray-800 px-2 py-1 rounded text-gray-300 font-semibold">SEPA Wire</span>
+            <span className="bg-gray-800 px-2 py-1 rounded text-emerald-400 font-semibold">USDT · BTC · ETH</span>
           </div>
         </div>
 
-        {/* Bottom Legal & Payment Badges */}
-        <div className="mt-12 pt-6 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-          <div>
-            © 2026 DJI Store EU (djii.eu). All rights reserved. Authorized European Distribution Network.
-          </div>
-
-          {/* Payment Method Badges */}
-          <div className="flex items-center space-x-3 text-gray-400 text-[11px]">
-            <span className="bg-gray-800 px-2 py-1 rounded text-white font-semibold">SEPA Direct Wire</span>
-            <span className="bg-gray-800 px-2 py-1 rounded text-emerald-400 font-semibold">USDT (TRC20 / ERC20)</span>
-            <span className="bg-gray-800 px-2 py-1 rounded text-amber-400 font-semibold">Bitcoin (BTC)</span>
-            <span className="bg-gray-800 px-2 py-1 rounded text-blue-400 font-semibold">Ethereum (ETH)</span>
-          </div>
+        <div className="mt-6 text-[11px] text-gray-500 space-y-1">
+          <p>🏢 Frankfurt CargoCity Süd, 60549 Frankfurt am Main, Germany · EORI: DE884210992</p>
+          <p>© 2026 DJI Store EU (djii.eu). Authorized European Distribution Network.</p>
         </div>
       </div>
     </footer>

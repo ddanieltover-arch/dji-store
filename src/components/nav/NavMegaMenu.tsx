@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { ChevronRight, X } from 'lucide-react';
 import { MegaPanelConfig, resolveMegaGroup } from '../../data/megaMenu';
 import { formatPrice } from '../../data/currency';
+import { productListingImage } from '../../lib/pim/productListingImage';
 import { useStore } from '../../context/StoreContext';
 import { ViewMode } from '../../types';
 
@@ -127,7 +128,7 @@ export const NavMegaMenu: React.FC<NavMegaMenuProps> = ({ panel, labelledBy, onC
                   >
                     <div className="bg-[#F5F5F7] rounded-lg aspect-square flex items-center justify-center overflow-hidden mb-2 px-4 py-5">
                       <img
-                        src={product.images.cutout || product.images.hero}
+                        src={productListingImage(product)}
                         alt=""
                         className="max-h-full max-w-[85%] object-contain group-hover:scale-[1.03] transition-transform"
                       />

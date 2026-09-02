@@ -3,9 +3,13 @@ import { Wave1RolloutStep } from '../types/wave1Execution';
 import { MerchSlot } from '../types/wave5Merchandising';
 
 export const WAVE5_MANUAL_OVERRIDES: { productId: string; position: number; slot: MerchSlot; boost: number }[] = [
-  { productId: 'prod-mavic-4-pro', position: 1, slot: 'featured', boost: 95 },
-  { productId: 'prod-air-3s', position: 2, slot: 'featured', boost: 80 },
-  { productId: 'prod-mini-4-pro', position: 3, slot: 'seasonal', boost: 70 }
+  { productId: 'prod-osmo-action-5-pro', position: 1, slot: 'featured', boost: 96 },
+  { productId: 'prod-rs-4-mini', position: 2, slot: 'featured', boost: 92 },
+  { productId: 'prod-osmo-action-4', position: 3, slot: 'featured', boost: 88 },
+  { productId: 'prod-power-500', position: 4, slot: 'seasonal', boost: 85 },
+  { productId: 'prod-mavic-4-pro', position: 5, slot: 'featured', boost: 95 },
+  { productId: 'prod-air-3s', position: 6, slot: 'featured', boost: 80 },
+  { productId: 'prod-mini-4-pro', position: 7, slot: 'seasonal', boost: 70 }
 ];
 
 export const WAVE5_SIGNAL_OVERRIDES: Partial<Record<string, Partial<ProductCommerceSignals>>> = {

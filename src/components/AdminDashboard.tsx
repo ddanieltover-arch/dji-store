@@ -11,6 +11,7 @@ import {
   Search,
   Eye,
   Edit,
+  Trash2,
   RotateCcw,
   Sparkles,
   TrendingUp,
@@ -33,7 +34,9 @@ import {
   Award,
   Send,
   Gift,
-  Zap
+  Zap,
+  Settings,
+  Boxes
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
@@ -45,11 +48,45 @@ import { PlacedOrder, ReturnRequest } from '../types';
 import { CdpIntelligenceConsole } from './crm/CdpIntelligenceConsole';
 import { MarketingAutomationCenter } from './crm/MarketingAutomationCenter';
 import { LoyaltyRewardsAdmin } from './crm/LoyaltyRewardsAdmin';
+import { AdminOrderEditModal } from './admin/AdminOrderEditModal';
+
+type AdminSection = 'orders' | 'products' | 'settings';
+
+type AdminSubTab =
+  | 'orders'
+  | 'returns_rma'
+  | 'inventory_wms'
+  | 'reviews_moderation'
+  | 'sync_engine'
+  | 'search_intelligence'
+  | 'cdp_crm'
+  | 'automation_campaigns'
+  | 'loyalty_program';
+
+const TAB_SECTION: Record<AdminSubTab, AdminSection> = {
+  orders: 'orders',
+  returns_rma: 'orders',
+  inventory_wms: 'products',
+  reviews_moderation: 'products',
+  sync_engine: 'products',
+  search_intelligence: 'settings',
+  cdp_crm: 'settings',
+  automation_campaigns: 'settings',
+  loyalty_program: 'settings'
+};
+
+const DEFAULT_SUB_TAB: Record<AdminSection, AdminSubTab> = {
+  orders: 'orders',
+  products: 'inventory_wms',
+  settings: 'search_intelligence'
+};
 
 export const AdminDashboard: React.FC = () => {
   const {
     orders,
     updateOrderStatus,
+    updateOrder,
+    deleteOrder,
     advanceOrderStatus,
     verifyOrderPayment,
     rmas,
@@ -71,20 +108,12 @@ export const AdminDashboard: React.FC = () => {
     navigateToPdp
   } = useStore();
 
-  const [activeTab, setActiveTab] = useState<
-    | 'orders'
-    | 'returns_rma'
-    | 'inventory_wms'
-    | 'reviews_moderation'
-    | 'sync_engine'
-    | 'search_intelligence'
-    | 'cdp_crm'
-    | 'automation_campaigns'
-    | 'loyalty_program'
-  >('orders');
+  const [activeSection, setActiveSection] = useState<AdminSection>('orders');
+  const [activeTab, setActiveTab] = useState<AdminSubTab>('orders');
 
   const [orderFilter, setOrderFilter] = useState<'all' | 'payment_verifying' | 'confirmed' | 'dispatched'>('all');
   const [searchOrder, setSearchOrder] = useState('');
+  const [editingOrder, setEditingOrder] = useState<PlacedOrder | null>(null);
   const [reviewFilter, setReviewFilter] = useState<'all' | 'pending_moderation' | 'approved' | 'rejected'>('all');
 
   // Document Modal state
@@ -115,6 +144,30 @@ export const AdminDashboard: React.FC = () => {
     if (reviewFilter !== 'all' && r.status !== reviewFilter) return false;
     return true;
   });
+
+  const selectSection = (section: AdminSection) => {
+    setActiveSection(section);
+    setActiveTab(DEFAULT_SUB_TAB[section]);
+  };
+
+  const selectSubTab = (tab: AdminSubTab) => {
+    setActiveTab(tab);
+    setActiveSection(TAB_SECTION[tab]);
+  };
+
+  const mainNavClass = (section: AdminSection) =>
+    `flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-2xl text-sm font-extrabold transition-all ${
+      activeSection === section
+        ? 'bg-[#E30613] text-white shadow-lg shadow-red-900/25 scale-[1.02]'
+        : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+    }`;
+
+  const subNavClass = (tab: AdminSubTab) =>
+    `px-3.5 py-2 rounded-xl text-[11px] font-semibold transition-all flex items-center gap-1.5 ${
+      activeTab === tab
+        ? 'bg-[#1D1D1F] text-white shadow-xs'
+        : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-transparent hover:border-gray-200'
+    }`;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -194,112 +247,98 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 pb-3">
-        <button
-          onClick={() => setActiveTab('orders')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'orders'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          Orders & Payment Verification ({orders.length})
-        </button>
+      {/* Primary navigation — Orders · Products · Settings */}
+      <div className="space-y-3">
+        <div className="grid grid-cols-3 gap-3">
+          <button type="button" onClick={() => selectSection('orders')} className={mainNavClass('orders')}>
+            <Package className="w-5 h-5" />
+            Orders
+            {pendingOrders.length > 0 && (
+              <span
+                className={`ml-1 text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                  activeSection === 'orders' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
+                }`}
+              >
+                {pendingOrders.length}
+              </span>
+            )}
+          </button>
+          <button type="button" onClick={() => selectSection('products')} className={mainNavClass('products')}>
+            <Boxes className="w-5 h-5" />
+            Products
+            {pendingReviews.length > 0 && (
+              <span
+                className={`ml-1 text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                  activeSection === 'products' ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-800'
+                }`}
+              >
+                {pendingReviews.length}
+              </span>
+            )}
+          </button>
+          <button type="button" onClick={() => selectSection('settings')} className={mainNavClass('settings')}>
+            <Settings className="w-5 h-5" />
+            Settings
+          </button>
+        </div>
 
-        <button
-          onClick={() => setActiveTab('returns_rma')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'returns_rma'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <RotateCcw className="w-3.5 h-3.5 text-rose-500" />
-          RMA & Returns Processing ({rmas.filter((r) => r.status === 'requested').length} Pending)
-        </button>
+        {/* Section sub-navigation */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-3">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-1 pb-2">
+            {activeSection === 'orders' && 'Order management'}
+            {activeSection === 'products' && 'Catalog & inventory'}
+            {activeSection === 'settings' && 'Store configuration'}
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            {activeSection === 'orders' && (
+              <>
+                <button type="button" onClick={() => selectSubTab('orders')} className={subNavClass('orders')}>
+                  Payment verification ({orders.length})
+                </button>
+                <button type="button" onClick={() => selectSubTab('returns_rma')} className={subNavClass('returns_rma')}>
+                  <RotateCcw className="w-3 h-3 text-rose-500" />
+                  RMA & returns ({rmas.filter((r) => r.status === 'requested').length})
+                </button>
+              </>
+            )}
 
-        <button
-          onClick={() => setActiveTab('inventory_wms')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'inventory_wms'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          Multi-Depot WMS Logistics ({EUROPEAN_WAREHOUSES.length} Depots)
-        </button>
+            {activeSection === 'products' && (
+              <>
+                <button type="button" onClick={() => selectSubTab('inventory_wms')} className={subNavClass('inventory_wms')}>
+                  WMS logistics ({EUROPEAN_WAREHOUSES.length} depots)
+                </button>
+                <button type="button" onClick={() => selectSubTab('reviews_moderation')} className={subNavClass('reviews_moderation')}>
+                  Reviews ({pendingReviews.length} pending)
+                </button>
+                <button type="button" onClick={() => selectSubTab('sync_engine')} className={subNavClass('sync_engine')}>
+                  <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
+                  Catalog ingestion
+                </button>
+              </>
+            )}
 
-        <button
-          onClick={() => setActiveTab('reviews_moderation')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'reviews_moderation'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          Pilot Reviews Moderation ({pendingReviews.length} new)
-        </button>
-
-        <button
-          onClick={() => setActiveTab('sync_engine')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'sync_engine'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-amber-400' : ''}`} />
-          Dynamic Reference Ingestion Engine
-        </button>
-
-        <button
-          onClick={() => setActiveTab('search_intelligence')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'search_intelligence'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-          Search Synonyms & Typo Engine
-        </button>
-
-        <button
-          onClick={() => setActiveTab('cdp_crm')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'cdp_crm'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <Users className="w-3.5 h-3.5 text-blue-500" />
-          CDP & Customer Intelligence (84k)
-        </button>
-
-        <button
-          onClick={() => setActiveTab('automation_campaigns')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'automation_campaigns'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <Send className="w-3.5 h-3.5 text-purple-500" />
-          Marketing Automation & Triggers
-        </button>
-
-        <button
-          onClick={() => setActiveTab('loyalty_program')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'loyalty_program'
-              ? 'bg-[#1D1D1F] text-white shadow-xs'
-              : 'bg-white text-gray-600 hover:bg-gray-100'
-          }`}
-        >
-          <Award className="w-3.5 h-3.5 text-amber-500" />
-          DJI Pilot Loyalty & Tier Engine
-        </button>
+            {activeSection === 'settings' && (
+              <>
+                <button type="button" onClick={() => selectSubTab('search_intelligence')} className={subNavClass('search_intelligence')}>
+                  <Sparkles className="w-3 h-3 text-blue-500" />
+                  Search & synonyms
+                </button>
+                <button type="button" onClick={() => selectSubTab('cdp_crm')} className={subNavClass('cdp_crm')}>
+                  <Users className="w-3 h-3 text-blue-500" />
+                  Customer intelligence
+                </button>
+                <button type="button" onClick={() => selectSubTab('automation_campaigns')} className={subNavClass('automation_campaigns')}>
+                  <Send className="w-3 h-3 text-purple-500" />
+                  Marketing automation
+                </button>
+                <button type="button" onClick={() => selectSubTab('loyalty_program')} className={subNavClass('loyalty_program')}>
+                  <Award className="w-3 h-3 text-amber-500" />
+                  Loyalty program
+                </button>
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* TAB 1: ORDERS & WIRE VERIFICATION */}
@@ -363,11 +402,6 @@ export const AdminDashboard: React.FC = () => {
                   <tr key={order.orderNumber} className="hover:bg-gray-50/80">
                     <td className="p-4">
                       <span className="font-mono font-bold text-gray-900 block">{order.orderNumber}</span>
-                      {order.allocation && (
-                        <span className="text-[10px] bg-blue-50 text-blue-700 font-bold px-1.5 py-0.5 rounded">
-                          {order.allocation.warehouseCode} • Bin {order.allocation.binLocation}
-                        </span>
-                      )}
                     </td>
                     <td className="p-4">
                       <span className="font-bold text-gray-900 block">
@@ -441,28 +475,30 @@ export const AdminDashboard: React.FC = () => {
                         )}
                       </div>
 
-                      {/* Documents Dropdown Quick Trigger */}
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1 flex-wrap">
                         <button
-                          onClick={() => setActiveDoc({ type: 'vat_invoice', data: order })}
-                          className="px-2 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 text-[10px] font-semibold"
-                          title="Generate Official VAT Invoice"
+                          type="button"
+                          onClick={() => setEditingOrder(order)}
+                          className="px-2 py-0.5 rounded bg-blue-50 hover:bg-blue-100 text-blue-800 text-[10px] font-semibold inline-flex items-center gap-1"
+                          title="Edit order details"
                         >
-                          📄 Invoice
+                          <Edit className="w-3 h-3" /> Edit
                         </button>
                         <button
-                          onClick={() => setActiveDoc({ type: 'packing_slip', data: order })}
-                          className="px-2 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 text-[10px] font-semibold"
-                          title="Generate Warehouse Picking & Packing Slip"
+                          type="button"
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                `Delete order ${order.orderNumber}? This cannot be undone.`
+                              )
+                            ) {
+                              deleteOrder(order.orderNumber);
+                            }
+                          }}
+                          className="px-2 py-0.5 rounded bg-rose-50 hover:bg-rose-100 text-rose-700 text-[10px] font-semibold inline-flex items-center gap-1"
+                          title="Delete order"
                         >
-                          📦 Slip
-                        </button>
-                        <button
-                          onClick={() => setActiveDoc({ type: 'shipping_label', data: order })}
-                          className="px-2 py-0.5 rounded bg-amber-50 hover:bg-amber-100 text-amber-800 text-[10px] font-semibold"
-                          title="Generate DHL Express Air Waybill Label"
-                        >
-                          🏷️ DHL Label
+                          <Trash2 className="w-3 h-3" /> Delete
                         </button>
                       </div>
                     </td>
@@ -1039,6 +1075,14 @@ export const AdminDashboard: React.FC = () => {
           documentType={activeDoc.type}
           data={activeDoc.data}
           onClose={() => setActiveDoc(null)}
+        />
+      )}
+
+      {editingOrder && (
+        <AdminOrderEditModal
+          order={editingOrder}
+          onClose={() => setEditingOrder(null)}
+          onSave={updateOrder}
         />
       )}
     </div>

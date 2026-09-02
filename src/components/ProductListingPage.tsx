@@ -19,6 +19,7 @@ import {
 import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
+import { productListingImage } from '../lib/pim/productListingImage';
 import { Product, EasaClass } from '../types';
 import { rankCatalog, buildCommerceSignals } from '../lib/merch/wave5Merchandising';
 import { initializeInventoryFromCatalog } from '../lib/pim/wave1Execution';
@@ -473,7 +474,7 @@ export const ProductListingPage: React.FC = () => {
                     className="p-6 cursor-pointer flex items-center justify-center relative overflow-hidden group/img"
                   >
                     <img
-                      src={product.images.cutout || product.images.hero}
+                      src={productListingImage(product)}
                       alt={product.modelName}
                       className="h-44 object-contain transition-transform duration-500 group-hover/img:scale-105"
                     />
@@ -535,7 +536,7 @@ export const ProductListingPage: React.FC = () => {
                   className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col sm:flex-row items-center gap-6 hover:shadow-md transition-all"
                 >
                   <img
-                    src={product.images.cutout || product.images.hero}
+                    src={productListingImage(product)}
                     alt={product.modelName}
                     onClick={() => navigateToPdp(product.id)}
                     className="w-36 h-36 object-contain cursor-pointer shrink-0"

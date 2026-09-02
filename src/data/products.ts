@@ -3,8 +3,19 @@ import { OFFICIAL_STORE_EXPANSION } from './officialStoreCatalog';
 import { WAVE2_OFFICIAL_EXPANSION } from './wave2OfficialCatalog';
 import { NAV_CATALOG_EXPANSION } from './catalog/navCatalog';
 import { WAVE4_OFFICIAL_EXPANSION } from './wave4OfficialCatalog';
+import { WAVE5_OFFICIAL_EXPANSION } from './wave5OfficialCatalog';
+import { WAVE6_OFFICIAL_EXPANSION } from './wave6OfficialCatalog';
+import officialUsdPriceCache from './officialUsdPriceCache.json';
+import officialStoreMediaCache from './officialStoreMediaCache.json';
+import productDatabaseMediaCache from './productDatabaseMediaCache.json';
+import { applyUsdPricingToProducts } from '../lib/pricing/applyUsdPricing';
+import type { OfficialUsdPriceCache } from '../lib/pricing/applyUsdPricing';
+import { applyCatalogPresentation } from '../lib/pim/catalogPresentation';
+import type { OfficialStoreMediaCache } from '../lib/pim/fetchOfficialStoreMedia';
+import type { DatabaseMediaCache } from '../lib/pim/databaseMediaCache';
+import { applyWave6EnrichmentToCatalog } from '../lib/pim/wave6CategoryExpansion';
 
-export const DJI_PRODUCTS: Product[] = [
+const RAW_DJI_PRODUCTS_SEED: Product[] = [
   {
     id: 'prod-mavic-4-pro',
     sku: 'DJI-DRONE-M4P',
@@ -31,14 +42,9 @@ export const DJI_PRODUCTS: Product[] = [
     isBestSeller: true,
     isNew: true,
     images: {
-      hero: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1400&q=80',
+      hero: '/products/prod-mavic-4-pro-cutout.png',
       cutout: '/products/prod-mavic-4-pro-cutout.png',
-      gallery: [
-        'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1521405924368-64c5b84bec60?auto=format&fit=crop&w=1200&q=80'
-      ]
+      gallery: ['/products/prod-mavic-4-pro-cutout.png']
     },
     variants: [
       {
@@ -177,12 +183,9 @@ export const DJI_PRODUCTS: Product[] = [
     isFeatured: true,
     isBestSeller: true,
     images: {
-      hero: 'https://images.unsplash.com/photo-1521405924368-64c5b84bec60?auto=format&fit=crop&w=1400&q=80',
+      hero: '/products/prod-air-3s-cutout.png',
       cutout: '/products/prod-air-3s-cutout.png',
-      gallery: [
-        'https://images.unsplash.com/photo-1521405924368-64c5b84bec60?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=1200&q=80'
-      ]
+      gallery: ['/products/prod-air-3s-cutout.png']
     },
     variants: [
       {
@@ -283,12 +286,9 @@ export const DJI_PRODUCTS: Product[] = [
     isFeatured: true,
     isBestSeller: true,
     images: {
-      hero: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=1400&q=80',
+      hero: '/products/prod-mini-4-pro-cutout.png',
       cutout: '/products/prod-mini-4-pro-cutout.png',
-      gallery: [
-        'https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1200&q=80'
-      ]
+      gallery: ['/products/prod-mini-4-pro-cutout.png']
     },
     variants: [
       {
@@ -386,11 +386,9 @@ export const DJI_PRODUCTS: Product[] = [
     rating: 4.8,
     reviewCount: 76,
     images: {
-      hero: 'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1400&q=80',
+      hero: '/products/prod-avata-2-cutout.png',
       cutout: '/products/prod-avata-2-cutout.png',
-      gallery: [
-        'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1200&q=80'
-      ]
+      gallery: ['/products/prod-avata-2-cutout.png']
     },
     variants: [
       {
@@ -448,7 +446,7 @@ export const DJI_PRODUCTS: Product[] = [
   {
     id: 'prod-osmo-pocket-3',
     sku: 'DJI-OSMO-POCKET3',
-    slug: 'dji-osmo-pocket-3',
+    slug: 'osmo-pocket-3',
     modelName: 'DJI Osmo Pocket 3',
     series: 'Pocket',
     category: 'handheld',
@@ -467,11 +465,9 @@ export const DJI_PRODUCTS: Product[] = [
     isFeatured: true,
     isBestSeller: true,
     images: {
-      hero: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=1400&q=80',
+      hero: '/products/prod-osmo-pocket-3-cutout.png',
       cutout: '/products/prod-osmo-pocket-3-cutout.png',
-      gallery: [
-        'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=1200&q=80'
-      ]
+      gallery: ['/products/prod-osmo-pocket-3-cutout.png']
     },
     variants: [
       {
@@ -536,7 +532,7 @@ export const DJI_PRODUCTS: Product[] = [
   {
     id: 'prod-osmo-action-5-pro',
     sku: 'DJI-OSMO-ACTION5PRO',
-    slug: 'dji-osmo-action-5-pro',
+    slug: 'osmo-action-5-pro',
     modelName: 'DJI Osmo Action 5 Pro',
     series: 'Action',
     category: 'handheld',
@@ -553,11 +549,9 @@ export const DJI_PRODUCTS: Product[] = [
     rating: 4.8,
     reviewCount: 64,
     images: {
-      hero: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=1400&q=80',
+      hero: '/products/prod-osmo-action-5-pro-cutout.png',
       cutout: '/products/prod-osmo-action-5-pro-cutout.png',
-      gallery: [
-        'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=1200&q=80'
-      ]
+      gallery: ['/products/prod-osmo-action-5-pro-cutout.png']
     },
     variants: [
       {
@@ -629,11 +623,9 @@ export const DJI_PRODUCTS: Product[] = [
     rating: 5.0,
     reviewCount: 18,
     images: {
-      hero: 'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1400&q=80',
+      hero: '/products/prod-inspire-3-cutout.png',
       cutout: '/products/prod-inspire-3-cutout.png',
-      gallery: [
-        'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1200&q=80'
-      ]
+      gallery: ['/products/prod-inspire-3-cutout.png']
     },
     variants: [
       {
@@ -690,9 +682,9 @@ export const DJI_PRODUCTS: Product[] = [
     reviewCount: 110,
     isBestSeller: true,
     images: {
-      hero: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1000&q=80',
+      hero: '/products/acc-bat-m4p-cutout.png',
       cutout: '/products/acc-bat-m4p-cutout.png',
-      gallery: ['https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80']
+      gallery: ['/products/acc-bat-m4p-cutout.png']
     },
     variants: [
       {
@@ -738,9 +730,9 @@ export const DJI_PRODUCTS: Product[] = [
     rating: 4.9,
     reviewCount: 95,
     images: {
-      hero: 'https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=1000&q=80',
+      hero: '/products/acc-rc2-cutout.png',
       cutout: '/products/acc-rc2-cutout.png',
-      gallery: ['https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=800&q=80']
+      gallery: ['/products/acc-rc2-cutout.png']
     },
     variants: [
       {
@@ -784,9 +776,9 @@ export const DJI_PRODUCTS: Product[] = [
     reviewCount: 240,
     isBestSeller: true,
     images: {
-      hero: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1000&q=80',
+      hero: '/products/acc-care-m4p-cutout.png',
       cutout: '/products/acc-care-m4p-cutout.png',
-      gallery: ['https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80']
+      gallery: ['/products/acc-care-m4p-cutout.png']
     },
     variants: [
       {
@@ -821,5 +813,22 @@ export const DJI_PRODUCTS: Product[] = [
   ...OFFICIAL_STORE_EXPANSION,
   ...WAVE2_OFFICIAL_EXPANSION,
   ...NAV_CATALOG_EXPANSION,
-  ...WAVE4_OFFICIAL_EXPANSION
+  ...WAVE4_OFFICIAL_EXPANSION,
+  ...WAVE5_OFFICIAL_EXPANSION,
+  ...WAVE6_OFFICIAL_EXPANSION
 ];
+
+/** Seed catalog (US reference EUR placeholders) before EU pricing rules. */
+export const RAW_DJI_PRODUCTS: Product[] = RAW_DJI_PRODUCTS_SEED;
+
+/** Live catalog with USD→EUR conversion, variant expansion, media galleries, then Wave 6 enrichment. */
+export const DJI_PRODUCTS: Product[] = applyWave6EnrichmentToCatalog(
+  applyCatalogPresentation(
+    applyUsdPricingToProducts(RAW_DJI_PRODUCTS_SEED, officialUsdPriceCache as OfficialUsdPriceCache),
+    {
+      usdCache: officialUsdPriceCache as OfficialUsdPriceCache,
+      mediaCache: officialStoreMediaCache as OfficialStoreMediaCache,
+      databaseMediaCache: productDatabaseMediaCache as DatabaseMediaCache
+    }
+  )
+);

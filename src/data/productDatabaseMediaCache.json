@@ -1,0 +1,23 @@
+{
+  "dji-mavic-3-pro": {
+    "slug": "dji-mavic-3-pro",
+    "hero": "http://localhost:3015/api/assets/0959123f-2213-45b0-a190-f2ae716fbabb",
+    "cutout": "http://localhost:3015/api/assets/2808ab4e-081d-418f-9fe1-ad186e9a45b2",
+    "gallery": [
+      "http://localhost:3015/api/assets/0959123f-2213-45b0-a190-f2ae716fbabb",
+      "http://localhost:3015/api/assets/36205840-ddb2-4084-bc08-071f5449827b",
+      "http://localhost:3015/api/assets/29718398-ce5c-4dfd-a56c-361e20d98bcd",
+      "http://localhost:3015/api/assets/7eb34729-c363-4a04-816d-f2a921ecc353",
+      "http://localhost:3015/api/assets/8314785d-48fb-430f-ac71-d585011a8bba",
+      "http://localhost:3015/api/assets/c442fd5e-3df5-4788-9212-0fcdbec74d94",
+      "http://localhost:3015/api/assets/916deabf-b69d-4601-b5c5-abb7a4082071",
+      "http://localhost:3015/api/assets/fb66f5f8-beb8-40e5-8cdd-6a11ec2fe1ba",
+      "http://localhost:3015/api/assets/2a4c51c5-afbf-4ff2-8528-761a1abcafe6",
+      "http://localhost:3015/api/assets/77929647-8faa-44c2-a653-48c46d14384a",
+      "http://localhost:3015/api/assets/2808ab4e-081d-418f-9fe1-ad186e9a45b2",
+      "http://localhost:3015/api/assets/ddcfcb10-4f95-486e-90b8-20b50f28a786",
+      "http://localhost:3015/api/assets/09a981b1-8c26-466a-a69e-2011613a63f7"
+    ],
+    "ingestedAt": "2026-09-02T09:26:49.809Z"
+  }
+}

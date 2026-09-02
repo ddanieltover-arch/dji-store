@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ShieldCheck,
   Truck,
@@ -13,7 +13,6 @@ import {
   Award,
   Zap,
   Info,
-  RotateCw,
   Plus,
   Check,
   Download,
@@ -27,6 +26,8 @@ import { ProductVariant, Product } from '../types';
 import { ReviewsSection } from './ReviewsSection';
 import { InventoryDepotDrawer } from './InventoryDepotDrawer';
 import { Wave3PdpModules } from './pim/Wave3PdpModules';
+import { ProductMediaStage } from './pdp/ProductMediaStage';
+import { productListingImage } from '../lib/pim/productListingImage';
 
 export const ProductDetailPage: React.FC = () => {
   const {
@@ -49,11 +50,6 @@ export const ProductDetailPage: React.FC = () => {
   const activeVariant: ProductVariant =
     product.variants.find((v) => v.id === selectedVariantId) || product.variants[0];
 
-  // Media gallery
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
-  const [is360Mode, setIs360Mode] = useState<boolean>(false);
-  const [rotationAngle, setRotationAngle] = useState<number>(0);
-
   // Quantity
   const [quantity, setQuantity] = useState<number>(1);
   const [isDepotDrawerOpen, setIsDepotDrawerOpen] = useState<boolean>(false);
@@ -71,8 +67,6 @@ export const ProductDetailPage: React.FC = () => {
   useEffect(() => {
     if (product.variants.length > 0) {
       setSelectedVariantId(product.variants[0].id);
-      setSelectedImageIndex(0);
-      setIs360Mode(false);
       setQuantity(1);
     }
   }, [product.id]);
@@ -90,11 +84,18 @@ export const ProductDetailPage: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const galleryImages = [
-    product.images.cutout,
-    product.images.hero,
-    ...(product.images.gallery || [])
-  ].filter((src, index, arr) => src && arr.indexOf(src) === index);
+  const galleryImages = useMemo(() => {
+    const official = (product.images.gallery || []).filter((src) => src.startsWith('http'));
+    if (official.length >= 3) {
+      return [...new Set(official)];
+    }
+
+    const variantHero = activeVariant?.imageUrl;
+    const hero = variantHero || product.images.hero || product.images.cutout;
+    return [hero, product.images.cutout, ...(product.images.gallery || []), product.images.hero].filter(
+      (src, index, arr) => src && arr.indexOf(src) === index
+    );
+  }, [product, activeVariant]);
 
   // Calculate Bundle Pricing
   const bundleDiscount = 50; // €50 discount
@@ -140,87 +141,24 @@ export const ProductDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Left Column: High-Res Interactive Media Stage (Col 7) */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="relative rounded-3xl bg-white border border-gray-200/90 p-8 shadow-sm overflow-hidden flex items-center justify-center min-h-[420px] sm:min-h-[500px]">
-              {/* Top Badges */}
-              <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
-                {product.easaClass && (
-                  <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase tracking-wider">
-                    EASA {product.easaClass}
-                  </span>
-                )}
-                {product.badgeLabel && (
-                  <span className="px-3 py-1 rounded-full bg-[#E30613] text-white font-extrabold text-xs uppercase tracking-wider">
-                    {product.badgeLabel}
-                  </span>
-                )}
-              </div>
-
-              {/* 360 Mode Toggle */}
-              <button
-                onClick={() => setIs360Mode(!is360Mode)}
-                className={`absolute top-4 right-4 z-10 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  is360Mode
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                }`}
-              >
-                <RotateCw className={`w-3.5 h-3.5 ${is360Mode ? 'animate-spin' : ''}`} />
-                {is360Mode ? 'Exit 360° View' : '360° Interactive'}
-              </button>
-
-              {/* Primary Image View or 360 Scrubber */}
-              {is360Mode ? (
-                <div className="text-center space-y-4 w-full">
-                  <div
-                    className="relative w-full h-80 flex items-center justify-center cursor-ew-resize"
-                    style={{ transform: `rotate(${rotationAngle}deg)` }}
-                  >
-                    <img
-                      src={galleryImages[0]}
-                      alt={`${product.modelName} 360 View`}
-                      className="max-h-72 object-contain select-none pointer-events-none"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <input
-                      type="range"
-                      min="-180"
-                      max="180"
-                      value={rotationAngle}
-                      onChange={(e) => setRotationAngle(Number(e.target.value))}
-                      className="w-3/4 accent-blue-600"
-                    />
-                    <p className="text-[11px] text-gray-500">Drag slider to rotate drone angle 360°</p>
-                  </div>
-                </div>
-              ) : (
-                <img
-                  src={galleryImages[selectedImageIndex] || product.images.hero}
-                  alt={product.modelName}
-                  className="max-h-96 w-auto object-contain transition-all duration-300 hover:scale-105"
-                />
-              )}
-            </div>
-
-            {/* Thumbnail Strip */}
-            <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
-              {galleryImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setIs360Mode(false);
-                    setSelectedImageIndex(idx);
-                  }}
-                  className={`w-20 h-20 rounded-2xl bg-white border-2 overflow-hidden shrink-0 transition-all p-1 ${
-                    selectedImageIndex === idx && !is360Mode
-                      ? 'border-[#E30613] shadow-md ring-2 ring-red-100'
-                      : 'border-gray-200 hover:border-gray-300 opacity-70 hover:opacity-100'
-                  }`}
-                >
-                  <img src={img} alt="Thumbnail" className="w-full h-full object-contain" />
-                </button>
-              ))}
-            </div>
+            <ProductMediaStage
+              product={product}
+              galleryImages={galleryImages}
+              badges={
+                <>
+                  {product.easaClass && (
+                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-xs uppercase tracking-wider">
+                      EASA {product.easaClass}
+                    </span>
+                  )}
+                  {product.badgeLabel && (
+                    <span className="px-3 py-1 rounded-full bg-[#E30613] text-white font-extrabold text-xs uppercase tracking-wider">
+                      {product.badgeLabel}
+                    </span>
+                  )}
+                </>
+              }
+            />
 
             {/* Key Feature Highlights */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
@@ -302,7 +240,7 @@ export const ProductDetailPage: React.FC = () => {
                     {formatPrice(activeVariant.priceEur, currency)}
                   </span>
                   <span className="text-[11px] text-gray-400 block">
-                    Statutory EU VAT included • Free DHL Express
+                    Free DHL Express
                   </span>
                 </div>
                 {product.compareAtPriceEur && (
@@ -579,11 +517,11 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* Sticky Bottom Purchase Bar (View-Port Docked) */}
       {showStickyBar && (
-        <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-gray-200 py-3 px-4 sm:px-8 shadow-2xl animate-fadeIn">
+        <div className="fixed bottom-[52px] md:bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-gray-200 py-3 px-4 sm:px-8 shadow-2xl animate-fadeIn">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center space-x-3">
               <img
-                src={product.images.cutout || product.images.hero}
+                src={productListingImage(product)}
                 alt={product.modelName}
                 className="w-10 h-10 object-contain hidden sm:block"
               />
@@ -607,7 +545,7 @@ export const ProductDetailPage: React.FC = () => {
 
               <button
                 onClick={() => addToCart(product, activeVariant, quantity)}
-                className="px-6 py-2.5 rounded-xl bg-[#E30613] hover:bg-[#c20510] text-white font-bold text-xs tracking-wide shadow-md active:scale-95 flex items-center gap-2"
+                className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#E30613] hover:bg-[#c20510] text-white font-bold text-xs tracking-wide shadow-md active:scale-95 flex items-center gap-2"
               >
                 <ShoppingBag className="w-4 h-4" /> Add to Bag
               </button>

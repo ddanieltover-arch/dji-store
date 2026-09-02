@@ -1,25 +1,14 @@
 """Studio cutouts on #F5F5F7 — original geometric silhouettes, not DJI photography."""
+import json
 from pathlib import Path
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1] / "public" / "products"
+IDS_JSON = Path(__file__).resolve().parents[1] / ".tmp" / "product-ids.json"
 BG = (245, 245, 247, 255)
 INK = (45, 45, 48, 255)
 ACCENT = (90, 90, 96, 255)
 W, H = 900, 900
-
-EXISTING = {
-    "prod-mavic-4-pro",
-    "prod-air-3s",
-    "prod-mini-4-pro",
-    "prod-avata-2",
-    "prod-osmo-pocket-3",
-    "prod-osmo-action-5-pro",
-    "prod-inspire-3",
-    "acc-bat-m4p",
-    "acc-rc2",
-    "acc-care-m4p",
-}
 
 COPIES = {
     "refurb-mini-4-pro": "prod-mini-4-pro-cutout.png",
@@ -27,21 +16,13 @@ COPIES = {
     "refurb-pocket-3": "prod-osmo-pocket-3-cutout.png",
 }
 
-IDS = [
-    "prod-neo", "prod-flip", "prod-mini-4k", "prod-mini-3", "prod-mini-5-pro", "prod-mini-2-se",
-    "prod-air-3", "prod-mavic-3-pro", "prod-mavic-3-classic", "prod-avata",
-    "prod-goggles-3", "prod-goggles-n3", "prod-rc-motion-3",
-    "prod-osmo-mobile-7", "prod-osmo-mobile-7p", "prod-osmo-360", "prod-osmo-action-4", "prod-osmo-nano",
-    "prod-mic-mini", "prod-mic-2", "prod-dji-mic",
-    "prod-power-1000", "prod-power-500", "prod-power-2000",
-    "prod-matrice-4t", "prod-matrice-4e",
-    "acc-nd-mini", "acc-props-neo", "acc-hub-air", "prod-rs4", "prod-rs4-pro", "prod-rs-4-mini", "prod-rs-5",
-    "acc-fmk-m4p", "acc-bat-air", "acc-nd-air", "acc-fmk-mini", "acc-bat-mini", "acc-bat-avata",
-    "acc-nd-flip", "acc-bat-neo", "acc-bat-pocket", "acc-tripod-pocket", "acc-filter-action",
-    "acc-bat-360", "acc-case-rs", "acc-care-mini", "acc-care-air3s", "acc-care-action", "acc-care-inspire",
-    "acc-nd-m4p", "acc-rc-n3", "acc-65w-car", "prod-robomaster-ep",
-    "refurb-mini-4-pro", "refurb-air-3s", "refurb-pocket-3",
-]
+FALLBACK_IDS = ["prod-mavic-4-pro", "prod-air-3s", "prod-mini-4-pro"]
+
+
+def load_ids() -> list[str]:
+    if IDS_JSON.exists():
+        return json.loads(IDS_JSON.read_text(encoding="utf-8"))
+    return FALLBACK_IDS
 
 
 def drone(draw: ImageDraw.ImageDraw, seed: int) -> None:
@@ -102,49 +83,102 @@ def robot(draw: ImageDraw.ImageDraw) -> None:
     draw.ellipse((480, 360, 560, 440), fill=BG)
 
 
+def solar(draw: ImageDraw.ImageDraw) -> None:
+    for row in range(4):
+        for col in range(3):
+            x = 260 + col * 130
+            y = 280 + row * 110
+            draw.rectangle((x, y, x + 110, y + 90), fill=INK, outline=ACCENT, width=4)
+
+
 def pick(pid: str, draw: ImageDraw.ImageDraw) -> None:
     seed = sum(ord(c) for c in pid)
     if "goggles" in pid:
         goggles(draw)
     elif "mic" in pid:
         mic(draw)
+    elif "solar" in pid or "zignes" in pid:
+        solar(draw)
     elif "power" in pid or "65w" in pid:
         power(draw, seed)
-    elif "rs" in pid or "case-rs" in pid:
+    elif "rs" in pid or "case-rs" in pid or "focus-pro" in pid:
         gimbal(draw)
     elif "robomaster" in pid:
         robot(draw)
-    elif pid.startswith("acc-bat") or "battery" in pid:
+    elif pid.startswith("acc-bat") or "battery" in pid or "exp-2000" in pid:
         battery(draw)
-    elif pid.startswith("acc-care") or pid.startswith("acc-nd") or pid.startswith("acc-fmk") or "hub" in pid or "filter" in pid or "props" in pid or "tripod" in pid:
+    elif (
+        pid.startswith("acc-care")
+        or pid.startswith("acc-nd")
+        or pid.startswith("acc-fmk")
+        or "hub" in pid
+        or "filter" in pid
+        or "props" in pid
+        or "tripod" in pid
+        or pid.startswith("bundle-")
+    ):
         box(draw)
     elif "osmo" in pid or "pocket" in pid or "action" in pid or "mobile" in pid or "360" in pid:
         handheld(draw, seed)
-    elif "rc" in pid or "motion" in pid:
+    elif pid.startswith("w6-"):
+        if "care" in pid or "combo" in pid or "bundle" in pid:
+            box(draw)
+        elif "power" in pid or "solar" in pid or "battery" in pid or "charger" in pid:
+            power(draw, seed)
+        elif "mic" in pid:
+            mic(draw)
+        elif "goggles" in pid or "rc" in pid or "transmission" in pid:
+            box(draw)
+        elif "rs" in pid or "ronin" in pid or "osmo" in pid or "pocket" in pid or "action" in pid:
+            handheld(draw, seed)
+        else:
+            drone(draw, seed)
+    elif "rc" in pid or "motion" in pid or "transmission" in pid or "sdr" in pid:
         box(draw)
     else:
         drone(draw, seed)
 
 
+def write_gallery_variants(pid: str, base: Image.Image) -> None:
+    for suffix, shift in (("gallery-2", 28), ("gallery-3", -22)):
+        dest = ROOT / f"{pid}-{suffix}.png"
+        if dest.exists():
+            continue
+        canvas = Image.new("RGBA", (W, H), BG)
+        canvas.paste(base, (shift, shift // 2), base)
+        canvas.save(dest, "PNG")
+
+
 def main() -> None:
     ROOT.mkdir(parents=True, exist_ok=True)
+    ids = load_ids()
     for src_id, src_file in COPIES.items():
         src = ROOT / src_file
         dest = ROOT / f"{src_id}-cutout.png"
         if src.exists():
             Image.open(src).save(dest)
 
-    for pid in IDS:
+    written = 0
+    gallery_written = 0
+    for pid in ids:
         dest = ROOT / f"{pid}-cutout.png"
-        if pid in EXISTING and dest.exists():
-            continue
         if pid in COPIES and dest.exists():
-            continue
-        img = Image.new("RGBA", (W, H), BG)
-        draw = ImageDraw.Draw(img)
-        pick(pid, draw)
-        img.save(dest, "PNG")
-        print("wrote", dest.name)
+            pass
+        elif not dest.exists():
+            img = Image.new("RGBA", (W, H), BG)
+            draw = ImageDraw.Draw(img)
+            pick(pid, draw)
+            img.save(dest, "PNG")
+            print("wrote", dest.name)
+            written += 1
+
+        base = Image.open(dest).convert("RGBA")
+        before = sum(1 for s in ("gallery-2", "gallery-3") if (ROOT / f"{pid}-{s}.png").exists())
+        write_gallery_variants(pid, base)
+        after = sum(1 for s in ("gallery-2", "gallery-3") if (ROOT / f"{pid}-{s}.png").exists())
+        gallery_written += after - before
+
+    print(f"done — {written} new cutouts, {gallery_written} new gallery frames in {ROOT}")
 
 
 if __name__ == "__main__":

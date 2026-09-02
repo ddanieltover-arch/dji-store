@@ -1,0 +1,379 @@
+{
+  "order.confirmed": {
+    "subject": "Je bestelling {{orderNumber}} bij DJI Store EU is bevestigd",
+    "preview": "Bedankt voor je bestelling",
+    "headline": "Bestelling bevestigd",
+    "body": "Hallo {{customerName}}, bedankt voor je bestelling. {{productName}} is toegewezen aan een EU-depot.",
+    "cta": "Bestelling volgen",
+    "badge": "Bevestigd"
+  },
+  "order.payment_pending": {
+    "subject": "Complete payment for order {{orderNumber}}",
+    "preview": "Payment instructions inside",
+    "headline": "Payment required",
+    "body": "Your order {{orderNumber}} is reserved. Please complete payment via {{paymentMethod}} to confirm allocation.",
+    "cta": "View payment details",
+    "badge": "Action required"
+  },
+  "order.payment_confirmed": {
+    "subject": "Payment received for order {{orderNumber}}",
+    "preview": "Your payment has been confirmed",
+    "headline": "Payment confirmed",
+    "body": "We have received payment for order {{orderNumber}}. Your items will ship from our EU depot shortly.",
+    "cta": "Track your order",
+    "badge": "Paid"
+  },
+  "order.shipped": {
+    "subject": "Order {{orderNumber}} has shipped",
+    "preview": "Your order is on its way",
+    "headline": "Order shipped",
+    "body": "Great news — order {{orderNumber}} has left our EU depot. Tracking: {{trackingNumber}}.",
+    "cta": "Track shipment",
+    "badge": "Shipped"
+  },
+  "order.delivered": {
+    "subject": "Order {{orderNumber}} delivered",
+    "preview": "Your order has arrived",
+    "headline": "Delivered",
+    "body": "Order {{orderNumber}} has been delivered. We hope you enjoy your new gear. Share your experience and earn Flight Club points.",
+    "cta": "Leave a review",
+    "badge": "Delivered"
+  },
+  "warranty.registered": {
+    "subject": "Warranty registered for {{productName}}",
+    "preview": "Your warranty registration is confirmed",
+    "headline": "Warranty registered",
+    "body": "Your warranty for {{productName}} (serial {{serialNumber}}) is now active in our EU service system.",
+    "cta": "View my products",
+    "badge": "Registered"
+  },
+  "rma.submitted": {
+    "subject": "RMA request {{rmaNumber}} received",
+    "preview": "We received your return request",
+    "headline": "RMA submitted",
+    "body": "Your return request {{rmaNumber}} for {{productName}} has been received. Our service team will review it within 1 business day.",
+    "cta": "View service status",
+    "badge": "Received"
+  },
+  "rma.approved": {
+    "subject": "RMA {{rmaNumber}} approved",
+    "preview": "Your return has been authorized",
+    "headline": "RMA approved",
+    "body": "Return {{rmaNumber}} is approved. Follow the return instructions in your account to ship your item to our EU service centre.",
+    "cta": "View return label",
+    "badge": "Approved"
+  },
+  "care.claim_submitted": {
+    "subject": "DJI Care claim {{claimId}} received",
+    "preview": "Your Care claim is being reviewed",
+    "headline": "Care claim submitted",
+    "body": "Claim {{claimId}} for {{productName}} has been submitted. Our team will respond within 24 hours on business days.",
+    "cta": "View claim status",
+    "badge": "Submitted"
+  },
+  "review.submitted": {
+    "subject": "Thank you for your review",
+    "preview": "Your review is pending moderation",
+    "headline": "Review received",
+    "body": "Thank you for reviewing {{productName}}. Your feedback helps the European pilot community. It will appear after moderation.",
+    "cta": "Browse products",
+    "badge": "Pending"
+  },
+  "review.published": {
+    "subject": "Your review is now live",
+    "preview": "Thank you for sharing your experience",
+    "headline": "Review published",
+    "body": "Your review of {{productName}} is now visible on DJI Store EU. You earned Flight Club points for your contribution.",
+    "cta": "View review",
+    "badge": "Published"
+  },
+  "b2b.quote_created": {
+    "subject": "Enterprise quote {{quoteNumber}} created",
+    "preview": "Your B2B quote summary",
+    "headline": "Quote created",
+    "body": "Quote {{quoteNumber}} for {{companyName}} has been created. Our enterprise team will follow up within 4 business hours.",
+    "cta": "View quote",
+    "badge": "B2B"
+  },
+  "b2b.vat_validated": {
+    "subject": "VAT validation result for {{vatId}}",
+    "preview": "Your VIES validation result",
+    "headline": "VAT validation",
+    "body": "VAT ID {{vatId}} validation status: {{validationStatus}}. This result is stored for your B2B account.",
+    "cta": "Business account",
+    "badge": "VAT"
+  },
+  "newsletter.welcome": {
+    "subject": "Welkom bij DJI Flight Club EU",
+    "preview": "Abonnement bevestigd",
+    "headline": "Welkom",
+    "body": "Bedankt voor je aanmelding bij Flight Club. Firmware-alerts, restock-meldingen en EU-pilot updates.",
+    "cta": "Shop verkennen",
+    "badge": "Flight Club",
+    "footer": "Wijzig voorkeuren in je account."
+  },
+  "referral.invite": {
+    "subject": "{{referrerName}} invited you to DJI Store EU",
+    "preview": "Exclusive referral invitation",
+    "headline": "You have been invited",
+    "body": "{{referrerName}} thinks you will love {{productName}}. Use code {{referralCode}} for exclusive Flight Club benefits at checkout.",
+    "cta": "Shop now",
+    "badge": "Referral"
+  },
+  "referral.reward_earned": {
+    "subject": "You earned {{points}} Flight Club points",
+    "preview": "Referral reward credited",
+    "headline": "Referral reward",
+    "body": "Your referral of {{refereeName}} converted. {{points}} points have been added to your Flight Club balance.",
+    "cta": "View rewards",
+    "badge": "Reward"
+  },
+  "loyalty.points_awarded": {
+    "subject": "{{points}} Flight Club points added",
+    "preview": "Points credited to your account",
+    "headline": "Points awarded",
+    "body": "{{points}} points have been credited to your account. Reason: {{reason}}.",
+    "cta": "View rewards",
+    "badge": "Points"
+  },
+  "alert.restock": {
+    "subject": "{{productName}} is back in stock",
+    "preview": "Product restock alert",
+    "headline": "Back in stock",
+    "body": "{{productName}} is available again at our EU depot. Stock is limited — order soon to secure allocation.",
+    "cta": "Buy now",
+    "badge": "Restock"
+  },
+  "alert.price_drop": {
+    "subject": "Price update for {{productName}}",
+    "preview": "Price drop alert",
+    "headline": "Price change",
+    "body": "{{productName}} is now €{{newPrice}} (was €{{oldPrice}}). This offer applies while stock lasts.",
+    "cta": "View product",
+    "badge": "Price alert"
+  },
+  "gdpr.export_ready": {
+    "subject": "Your data export is ready",
+    "preview": "GDPR data export available",
+    "headline": "Export ready",
+    "body": "Your personal data export has been prepared. Download it from your account within 7 days. Request ID: {{requestId}}.",
+    "cta": "Download export",
+    "badge": "GDPR"
+  },
+  "gdpr.erasure_received": {
+    "subject": "Erasure request received",
+    "preview": "We received your deletion request",
+    "headline": "Erasure request",
+    "body": "Your right-to-erasure request (ID {{requestId}}) has been received. We will complete processing within 30 days as required by GDPR.",
+    "cta": "Contact support",
+    "badge": "GDPR"
+  },
+  "marketing.cart_abandoned_1h": {
+    "subject": "Your aerial setup is still reserved",
+    "preview": "Complete your order",
+    "headline": "Still thinking it over?",
+    "body": "Items in your cart are reserved for a limited time. Complete checkout to secure EU depot allocation for {{productName}}.",
+    "cta": "Complete checkout",
+    "badge": "Cart"
+  },
+  "marketing.cart_abandoned_24h": {
+    "subject": "Creators in Europe trust DJI Store EU",
+    "preview": "See why pilots choose us",
+    "headline": "Join European creators",
+    "body": "Your cart with {{productName}} is waiting. Certified EU distribution, EASA-aware support, and depot-fast delivery.",
+    "cta": "Return to cart",
+    "badge": "Cart"
+  },
+  "marketing.cart_abandoned_72h": {
+    "subject": "€25 off your order — limited time",
+    "preview": "Exclusive cart recovery offer",
+    "headline": "Special offer inside",
+    "body": "Use code {{voucherCode}} for €25 off your order including {{productName}}. Valid for 48 hours.",
+    "cta": "Claim offer",
+    "badge": "Offer"
+  },
+  "marketing.browse_abandonment_48h": {
+    "subject": "Still researching {{productName}}?",
+    "preview": "Compare specs and EU pricing",
+    "headline": "Need help deciding?",
+    "body": "You recently viewed {{productName}}. Compare specs, EU warranty coverage, and certified accessories in one place.",
+    "cta": "View product",
+    "badge": "Browse"
+  },
+  "marketing.post_purchase_14d": {
+    "subject": "EASA flight guide for {{productName}}",
+    "preview": "Day 14 pilot resources",
+    "headline": "Fly safely in Europe",
+    "body": "Your {{productName}} setup is complete? Download our EASA-aware flight checklist and registration guidance for your country.",
+    "cta": "Read guide",
+    "badge": "Guide"
+  },
+  "marketing.post_purchase_30d": {
+    "subject": "Share your {{productName}} experience",
+    "preview": "Earn 500 Flight Club points",
+    "headline": "How is it flying?",
+    "body": "Tell us about your {{productName}} experience. Submit a review and earn 500 Flight Club points.",
+    "cta": "Write a review",
+    "badge": "Review"
+  },
+  "marketing.care_upsell_90d": {
+    "subject": "Protect your {{productName}} with DJI Care",
+    "preview": "Care Refresh recommendation",
+    "headline": "Care Refresh",
+    "body": "After 90 days of ownership, consider DJI Care Refresh for {{productName}}. Covers accidental damage with EU service turnaround.",
+    "cta": "Learn about Care",
+    "badge": "Care"
+  },
+  "marketing.warranty_renewal_300d": {
+    "subject": "Warranty renewal for {{productName}}",
+    "preview": "Care Refresh renewal reminder",
+    "headline": "Renewal reminder",
+    "body": "Your standard warranty for {{productName}} approaches expiry. Extend protection with Care Refresh before {{expiryDate}}.",
+    "cta": "Renew coverage",
+    "badge": "Renewal"
+  },
+  "lifecycle.getting_started": {
+    "subject": "Getting started with {{productName}}",
+    "preview": "Day 1 tips from DJI Store EU",
+    "headline": "Getting started",
+    "body": "Welcome to {{productName}}. Here are official getting-started tips from our certified EU catalog and support team.",
+    "cta": "View guides",
+    "badge": "Day 1"
+  },
+  "lifecycle.setup_guidance": {
+    "subject": "Setup guidance for {{productName}}",
+    "preview": "Day 3 setup checklist",
+    "headline": "Setup guidance",
+    "body": "Use official manuals and EASA-aware setup steps for {{productName}}. Register your serial in My Products for faster service.",
+    "cta": "Setup checklist",
+    "badge": "Day 3"
+  },
+  "lifecycle.compatibility_edu": {
+    "subject": "Compatible accessories for {{productName}}",
+    "preview": "Day 7 accessory guide",
+    "headline": "Compatible gear",
+    "body": "Explore certified accessories tested with {{productName}} — batteries, filters, and cases stocked at EU depots.",
+    "cta": "Shop accessories",
+    "badge": "Day 7"
+  },
+  "lifecycle.review_invite": {
+    "subject": "How is your {{productName}} flying?",
+    "preview": "Day 14 review invitation",
+    "headline": "Share your experience",
+    "body": "Optional review invitation for {{productName}}. Honest feedback helps European pilots choose the right gear.",
+    "cta": "Write a review",
+    "badge": "Day 14"
+  },
+  "lifecycle.accessory_reco": {
+    "subject": "Accessories for your {{productName}}",
+    "preview": "Day 30 personalized picks",
+    "headline": "Recommended for you",
+    "body": "Based on your ownership of {{productName}}, we selected accessories popular with European creators.",
+    "cta": "View picks",
+    "badge": "Day 30"
+  },
+  "admin.order.new": {
+    "subject": "[Admin] New order {{orderNumber}}",
+    "preview": "New order requires processing",
+    "headline": "New order received",
+    "body": "Customer {{customerName}} ({{customerEmail}}) placed order {{orderNumber}} for {{productName}}. Total: €{{totalEur}}.",
+    "cta": "Open admin",
+    "badge": "New order"
+  },
+  "admin.order.payment_pending": {
+    "subject": "[Admin] Payment verification — {{orderNumber}}",
+    "preview": "SEPA/crypto payment pending",
+    "headline": "Verify payment",
+    "body": "Order {{orderNumber}} from {{customerEmail}} requires payment verification via {{paymentMethod}}.",
+    "cta": "Verify payment",
+    "badge": "Payment queue"
+  },
+  "admin.order.payment_confirmed": {
+    "subject": "[Admin] Payment confirmed — {{orderNumber}}",
+    "preview": "Payment verified",
+    "headline": "Payment confirmed",
+    "body": "Payment for order {{orderNumber}} ({{customerEmail}}) has been verified. Ready for warehouse allocation.",
+    "cta": "Open order",
+    "badge": "Verified"
+  },
+  "admin.warranty.registered": {
+    "subject": "[Admin] Warranty registration — {{serialNumber}}",
+    "preview": "New warranty registration",
+    "headline": "Warranty registered",
+    "body": "Customer {{customerEmail}} registered {{productName}} with serial {{serialNumber}}.",
+    "cta": "View registration",
+    "badge": "Warranty"
+  },
+  "admin.rma.submitted": {
+    "subject": "[Admin] New RMA {{rmaNumber}}",
+    "preview": "RMA requires review",
+    "headline": "New RMA request",
+    "body": "Customer {{customerEmail}} submitted RMA {{rmaNumber}} for {{productName}}. Reason: {{reason}}.",
+    "cta": "Review RMA",
+    "badge": "RMA"
+  },
+  "admin.care.claim_submitted": {
+    "subject": "[Admin] Care claim {{claimId}}",
+    "preview": "New Care claim",
+    "headline": "Care claim submitted",
+    "body": "Customer {{customerEmail}} filed Care claim {{claimId}} for {{productName}}.",
+    "cta": "Review claim",
+    "badge": "Care"
+  },
+  "admin.review.submitted": {
+    "subject": "[Admin] Review pending — {{productName}}",
+    "preview": "Review moderation queue",
+    "headline": "Review to moderate",
+    "body": "Customer {{customerEmail}} submitted a review for {{productName}}. Rating: {{rating}}/5.",
+    "cta": "Moderate review",
+    "badge": "Moderation"
+  },
+  "admin.b2b.quote_created": {
+    "subject": "[Admin] B2B quote {{quoteNumber}}",
+    "preview": "New enterprise quote",
+    "headline": "B2B quote request",
+    "body": "{{companyName}} ({{customerEmail}}) requested quote {{quoteNumber}} for {{productName}} × {{quantity}}.",
+    "cta": "View quote",
+    "badge": "B2B"
+  },
+  "admin.newsletter.subscriber": {
+    "subject": "[Admin] Newsletter signup — {{customerEmail}}",
+    "preview": "New Flight Club subscriber",
+    "headline": "New subscriber",
+    "body": "{{customerEmail}} subscribed to Flight Club newsletter.",
+    "cta": "View CRM",
+    "badge": "Newsletter"
+  },
+  "admin.referral.sent": {
+    "subject": "[Admin] Referral sent to {{refereeEmail}}",
+    "preview": "Referral invitation sent",
+    "headline": "Referral sent",
+    "body": "{{referrerName}} ({{customerEmail}}) invited {{refereeName}} ({{refereeEmail}}). Code: {{referralCode}}.",
+    "cta": "View referrals",
+    "badge": "Referral"
+  },
+  "admin.gdpr.export": {
+    "subject": "[Admin] GDPR export request — {{customerEmail}}",
+    "preview": "Data export requested",
+    "headline": "GDPR export",
+    "body": "Customer {{customerEmail}} requested data export. Request ID: {{requestId}}.",
+    "cta": "Process request",
+    "badge": "GDPR"
+  },
+  "admin.gdpr.erasure": {
+    "subject": "[Admin] GDPR erasure — {{customerEmail}}",
+    "preview": "Erasure action required",
+    "headline": "GDPR erasure",
+    "body": "Customer {{customerEmail}} requested account erasure. Request ID: {{requestId}}. Action required within 30 days.",
+    "cta": "Process erasure",
+    "badge": "GDPR"
+  },
+  "admin.loyalty.awarded": {
+    "subject": "[Admin] Loyalty points awarded — {{customerEmail}}",
+    "preview": "Manual points award logged",
+    "headline": "Points awarded",
+    "body": "Awarded {{points}} points to {{customerEmail}}. Reason: {{reason}}.",
+    "cta": "View loyalty",
+    "badge": "Loyalty"
+  }
+}

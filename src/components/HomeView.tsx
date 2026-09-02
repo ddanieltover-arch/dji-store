@@ -20,6 +20,7 @@ import {
 import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
+import { productListingImage } from '../lib/pim/productListingImage';
 import { Product } from '../types';
 import { HomeHeroCarousel } from './home/HomeHeroCarousel';
 import { runWave5Merchandising } from '../lib/merch/wave5Merchandising';
@@ -359,7 +360,7 @@ export const HomeView: React.FC = () => {
                 className="p-6 cursor-pointer flex items-center justify-center relative overflow-hidden group/img"
               >
                 <img
-                  src={product.images.cutout || product.images.hero}
+                  src={productListingImage(product)}
                   alt={product.modelName}
                   className="h-44 object-contain transition-transform duration-500 group-hover/img:scale-105"
                 />
@@ -615,7 +616,7 @@ export const HomeView: React.FC = () => {
             </div>
             <h3 className="font-bold text-base text-[#1D1D1F]">SEPA Wire & Web3 Crypto</h3>
             <p className="text-xs text-gray-500 leading-relaxed">
-              Direct commercial bank transfer with German IBAN or instant Web3 USDT/BTC settlement with zero foreign exchange fees.
+              Direct commercial bank transfer with a European IBAN or instant Web3 USDT/BTC settlement with zero foreign exchange fees.
             </p>
           </div>
         </div>

@@ -137,7 +137,7 @@ export const MEGA_MENU_PANELS: MegaPanelConfig[] = [
         sidebarId: 'osmo360',
         viewAllCategory: 'handheld',
         viewAllSeries: 'Osmo360',
-        productIds: ['prod-osmo-360', 'acc-bat-360']
+        productIds: ['prod-osmo-360', 'acc-bat-360', 'bundle-osmo-360-std']
       },
       {
         id: 'g-pocket',
@@ -173,7 +173,7 @@ export const MEGA_MENU_PANELS: MegaPanelConfig[] = [
         sidebarId: 'ronin',
         viewAllCategory: 'handheld',
         viewAllSeries: 'Ronin',
-        productIds: ['prod-rs-5', 'prod-rs4-pro', 'prod-rs4', 'prod-rs-4-mini', 'acc-case-rs']
+        productIds: ['prod-rs-5', 'prod-rs4-pro', 'prod-rs4', 'prod-rs-4-mini', 'prod-rs-3-mini', 'acc-case-rs', 'acc-focus-pro-creator']
       },
       {
         id: 'g-mic',
@@ -182,7 +182,7 @@ export const MEGA_MENU_PANELS: MegaPanelConfig[] = [
         sidebarId: 'mic',
         viewAllCategory: 'handheld',
         viewAllSeries: 'Mic',
-        productIds: ['prod-mic-2', 'prod-mic-mini', 'prod-dji-mic']
+        productIds: ['prod-mic-2', 'prod-mic-mini', 'prod-dji-mic', 'bundle-mic-mini-tx-rx']
       }
     ]
   },
@@ -201,7 +201,7 @@ export const MEGA_MENU_PANELS: MegaPanelConfig[] = [
         sidebarId: 'stations',
         viewAllCategory: 'power',
         viewAllSeries: 'Power',
-        productIds: ['prod-power-500', 'prod-power-1000', 'prod-power-2000']
+        productIds: ['prod-power-500', 'prod-power-1000', 'prod-power-2000', 'acc-power-exp-2000', 'acc-power-solar-mppt', 'acc-zignes-solar-100w', 'bundle-power-1000-solar']
       },
       {
         id: 'g-care-power',

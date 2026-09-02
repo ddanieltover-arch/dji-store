@@ -60,6 +60,9 @@ import {
   getTierPerks,
   computeLeadCategory
 } from '../data/crmData';
+import { resolveContentSlug } from '../data/storeContentPages';
+import { submitCheckoutOrder } from '../lib/checkout/submitCheckout';
+import { notifyOrderStatusChange } from '../lib/checkout/notifyOrderStatus';
 
 interface StoreContextType {
   // Navigation & View
@@ -72,6 +75,8 @@ interface StoreContextType {
   navigateToPdp: (productId: string) => void;
   navigateToPlp: (category?: string, series?: string) => void;
   selectedPlpSeries: string | null;
+  contentPageSlug: string | null;
+  navigateToContent: (slug: string) => void;
 
   // Localization & Currency
   locale: Locale;
@@ -116,6 +121,8 @@ interface StoreContextType {
   setActiveOrderNumber: (num: string | null) => void;
   placeNewOrder: (orderData: Omit<PlacedOrder, 'orderNumber' | 'trackingToken' | 'createdAt'>) => PlacedOrder;
   updateOrderStatus: (orderNumber: string, status: PlacedOrder['paymentStatus']) => void;
+  updateOrder: (orderNumber: string, updates: Partial<PlacedOrder>) => void;
+  deleteOrder: (orderNumber: string) => void;
   advanceOrderStatus: (orderNumber: string, status: OrderStatus) => void;
   verifyOrderPayment: (orderNumber: string, verification: Partial<OrderPaymentVerification>) => void;
 
@@ -206,6 +213,9 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [accountActiveTab, setAccountActiveTab] = useState<AccountTab>(
     boot.accountActiveTab || 'dashboard'
   );
+  const [contentPageSlug, setContentPageSlug] = useState<string | null>(
+    boot.contentPageSlug ?? null
+  );
   const skippingPush = useRef(false);
 
   const setViewMode = (mode: ViewMode) => {
@@ -221,6 +231,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       if (next.selectedCategory) setSelectedCategory(next.selectedCategory);
       setSelectedPlpSeries(next.selectedPlpSeries ?? null);
       if (next.accountActiveTab) setAccountActiveTab(next.accountActiveTab);
+      setContentPageSlug(next.contentPageSlug ?? null);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -236,13 +247,14 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       selectedProductId,
       selectedCategory,
       selectedPlpSeries,
-      accountActiveTab
+      accountActiveTab,
+      contentPageSlug
     });
     const current = `${window.location.pathname}${window.location.search}`;
     if (current !== next) {
       window.history.pushState({ viewMode }, '', next);
     }
-  }, [viewMode, selectedProductId, selectedCategory, selectedPlpSeries, accountActiveTab]);
+  }, [viewMode, selectedProductId, selectedCategory, selectedPlpSeries, accountActiveTab, contentPageSlug]);
 
   // i18n
   const [locale, setLocale] = useState<Locale>('en');
@@ -607,14 +619,18 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const navigateToPdp = (productId: string) => {
     setSelectedProductId(productId);
     setViewMode('pdp');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToPlp = (category = 'all', series?: string) => {
     setSelectedCategory(category);
     setSelectedPlpSeries(series || null);
     setViewMode('plp');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToContent = (slug: string) => {
+    const resolved = resolveContentSlug(slug);
+    setContentPageSlug(resolved);
+    setViewMode('content');
   };
 
   // Cart operations
@@ -850,10 +866,58 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     });
 
     clearCart();
+
+    const customerId =
+      orderData.customer.email.toLowerCase() === currentCustomer.email.toLowerCase()
+        ? currentCustomer.id
+        : `guest-${orderData.customer.email.trim().toLowerCase()}`;
+
+    void submitCheckoutOrder({ order: newOrder, customerId, locale }).then((result) => {
+      if (result.ok) {
+        addToast({
+          type: 'success',
+          title: 'Confirmation email sent',
+          message: `Order #${newOrder.orderNumber} — check ${orderData.customer.email} (and admin inbox).`
+        });
+      } else {
+        addToast({
+          type: 'warning',
+          title: 'Confirmation email pending',
+          message:
+            'Your order was registered, but the confirmation email could not be sent. Run `npm run dev:production` and contact sales@djii.eu with your order reference.'
+        });
+      }
+    });
+
     return newOrder;
   };
 
+  const dispatchOrderStatusEmails = (order: PlacedOrder, previous: PlacedOrder) => {
+    const statusChanged = (order.status ?? '') !== (previous.status ?? '');
+    const paymentChanged = order.paymentStatus !== previous.paymentStatus;
+    if (!statusChanged && !paymentChanged) return;
+
+    void notifyOrderStatusChange({ order, previousOrder: previous, locale }).then((result) => {
+      if (result.ok) {
+        addToast({
+          type: 'success',
+          title: 'Status emails sent',
+          message: `Customer and admin notified for order #${order.orderNumber}.`
+        });
+      } else {
+        addToast({
+          type: 'warning',
+          title: 'Status emails pending',
+          message: 'Order saved but notification emails could not be sent. Ensure you are signed in as admin and the API is running.'
+        });
+      }
+    });
+  };
+
   const updateOrderStatus = (orderNumber: string, status: PlacedOrder['paymentStatus']) => {
+    const previous = orders.find((ord) => ord.orderNumber === orderNumber);
+    let updated: PlacedOrder | undefined;
+
     setOrders((prev) =>
       prev.map((ord) => {
         if (ord.orderNumber === orderNumber) {
@@ -870,15 +934,21 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     : 'payment_verifying'
               }
             : undefined;
-          return {
+          updated = {
             ...ord,
             paymentStatus: status,
-            tracking: updatedTracking as any
+            tracking: updatedTracking as PlacedOrder['tracking']
           };
+          return updated;
         }
         return ord;
       })
     );
+
+    if (previous && updated) {
+      dispatchOrderStatusEmails(updated, previous);
+    }
+
     addToast({
       type: 'success',
       title: 'Order Status Updated',
@@ -886,7 +956,44 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     });
   };
 
+  const updateOrder = (orderNumber: string, updates: Partial<PlacedOrder>) => {
+    const previous = orders.find((ord) => ord.orderNumber === orderNumber);
+    let merged: PlacedOrder | undefined;
+
+    setOrders((prev) =>
+      prev.map((ord) => {
+        if (ord.orderNumber === orderNumber) {
+          merged = { ...ord, ...updates };
+          return merged;
+        }
+        return ord;
+      })
+    );
+
+    if (previous && merged) {
+      dispatchOrderStatusEmails(merged, previous);
+    }
+
+    addToast({
+      type: 'success',
+      title: 'Order Updated',
+      message: `Order #${orderNumber} has been saved.`
+    });
+  };
+
+  const deleteOrder = (orderNumber: string) => {
+    setOrders((prev) => prev.filter((ord) => ord.orderNumber !== orderNumber));
+    addToast({
+      type: 'info',
+      title: 'Order Deleted',
+      message: `Order #${orderNumber} was removed from the system.`
+    });
+  };
+
   const advanceOrderStatus = (orderNumber: string, nextStatus: OrderStatus) => {
+    const previous = orders.find((ord) => ord.orderNumber === orderNumber);
+    let updated: PlacedOrder | undefined;
+
     setOrders((prev) =>
       prev.map((ord) => {
         if (ord.orderNumber === orderNumber) {
@@ -896,17 +1003,21 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
           const updatedPaymentStatus: PlacedOrder['paymentStatus'] =
             isDelivered ? 'delivered' : isDispatched ? 'dispatched' : ord.paymentStatus;
 
-          return {
+          updated = {
             ...ord,
             status: nextStatus,
             paymentStatus: updatedPaymentStatus
           };
+          return updated;
         }
         return ord;
       })
     );
 
-    // Send status notification
+    if (previous && updated) {
+      dispatchOrderStatusEmails(updated, previous);
+    }
+
     const notif: CustomerNotification = {
       id: `notif-${Date.now()}`,
       type: 'email',
@@ -930,10 +1041,13 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     orderNumber: string,
     verification: Partial<OrderPaymentVerification>
   ) => {
+    const previous = orders.find((ord) => ord.orderNumber === orderNumber);
+    let updated: PlacedOrder | undefined;
+
     setOrders((prev) =>
       prev.map((ord) => {
         if (ord.orderNumber === orderNumber) {
-          return {
+          updated = {
             ...ord,
             paymentStatus: 'confirmed',
             status: 'confirmed',
@@ -943,10 +1057,16 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
               verifiedAt: new Date().toISOString()
             }
           };
+          return updated;
         }
         return ord;
       })
     );
+
+    if (previous && updated) {
+      dispatchOrderStatusEmails(updated, previous);
+    }
+
     addToast({
       type: 'success',
       title: 'Payment Cleared',
@@ -1513,6 +1633,8 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         selectedPlpSeries,
         navigateToPdp,
         navigateToPlp,
+        contentPageSlug,
+        navigateToContent,
         locale,
         setLocale,
         currency,
@@ -1545,6 +1667,8 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setActiveOrderNumber,
         placeNewOrder,
         updateOrderStatus,
+        updateOrder,
+        deleteOrder,
         quickViewProduct,
         setQuickViewProduct,
         toasts,

@@ -76,7 +76,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       shippingTitle: '24h-48h DHL Express',
       shippingDesc: 'Dispatched directly from our Frankfurt and Amsterdam logistics centers.',
       paymentTitle: 'Zero-Risk SEPA & Crypto',
-      paymentDesc: 'Official German corporate bank wire and zero-fee Web3 cryptocurrency verification.',
+      paymentDesc: 'Official European corporate bank wire and zero-fee Web3 cryptocurrency verification.',
       oemTitle: '100% Factory OEM Serial Numbers',
       oemDesc: 'Brand new, factory-sealed hardware with valid CE European flight compliance.'
     },
@@ -84,7 +84,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       title: 'Shopping Bag',
       empty: 'Your shopping bag is currently empty.',
       subtotal: 'Subtotal',
-      vatIncluded: 'European VAT included',
+      vatIncluded: 'Prices in EUR',
       freeShippingUnlocked: '🎉 Free DHL Express Shipping Unlocked!',
       checkoutBtn: 'Proceed to Fast Guest Checkout'
     },
@@ -94,7 +94,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       step2: '2. European Delivery Destination',
       step3: '3. Payment Method (SEPA or Crypto)',
       placeOrder: 'Confirm Order & Generate Reference',
-      bankTransfer: 'SEPA Bank Wire Transfer (Deutsche Bank)',
+      bankTransfer: 'SEPA Bank Wire Transfer',
       cryptoPayment: 'Direct Web3 Cryptocurrency (USDT / BTC / ETH)'
     }
   },
@@ -124,7 +124,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       shippingTitle: '24h–48h DHL Express',
       shippingDesc: 'Direkter Expressversand ab Logistikzentrum Frankfurt / Nürnberg.',
       paymentTitle: 'Sichere SEPA & Krypto-Zahlung',
-      paymentDesc: 'Offizielles deutsches Bankkonto (Deutsche Bank) sowie Web3-Krypto.',
+      paymentDesc: 'Offizielles europäisches Firmenkonto (SEPA) sowie Web3-Krypto.',
       oemTitle: '100% Originalverpackte Neuware',
       oemDesc: 'Originale Werksseriennummern mit voller CE- und EASA-Konformität.'
     },
@@ -132,7 +132,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       title: 'Warenkorb',
       empty: 'Ihr Warenkorb ist derzeit leer.',
       subtotal: 'Zwischensumme',
-      vatIncluded: 'Inkl. 19% MwSt.',
+      vatIncluded: 'Preise in EUR',
       freeShippingUnlocked: '🎉 Kostenloser DHL Expressversand freigeschaltet!',
       checkoutBtn: 'Zur Express-Kasse (Ohne Registrierung)'
     },
@@ -142,7 +142,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       step2: '2. Lieferadresse in Europa',
       step3: '3. Zahlungsart (SEPA oder Krypto)',
       placeOrder: 'Bestellung absenden & Zahlungsdaten generieren',
-      bankTransfer: 'SEPA Banküberweisung (Deutsche Bank AG)',
+      bankTransfer: 'SEPA-Banküberweisung',
       cryptoPayment: 'Kryptowährungszahlung (USDT / BTC / ETH)'
     }
   },
@@ -180,7 +180,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       title: 'Panier d’Achat',
       empty: 'Votre panier est actuellement vide.',
       subtotal: 'Sous-total',
-      vatIncluded: 'TVA européenne incluse',
+      vatIncluded: 'Prix en EUR',
       freeShippingUnlocked: '🎉 Livraison DHL Express Gratuite Débloquée !',
       checkoutBtn: 'Commander en Invité (Sans Compte)'
     },
@@ -190,7 +190,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       step2: '2. Adresse de Livraison en Europe',
       step3: '3. Méthode de Paiement (SEPA ou Crypto)',
       placeOrder: 'Valider la commande & obtenir l’IBAN',
-      bankTransfer: 'Virement Bancaire SEPA (Deutsche Bank AG)',
+      bankTransfer: 'Virement bancaire SEPA',
       cryptoPayment: 'Paiement Cryptomonnaie Direct (USDT / BTC)'
     }
   },
@@ -220,7 +220,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       shippingTitle: 'Envío Express 24h-48h',
       shippingDesc: 'Envíos rápidos con DHL Express directo desde Fráncfort.',
       paymentTitle: 'Pagos Seguros SEPA y Cripto',
-      paymentDesc: 'Transferencia bancaria directa con IBAN alemán o criptoactivos.',
+      paymentDesc: 'Transferencia bancaria europea oficial o criptoactivos Web3 sin comisiones.',
       oemTitle: '100% Productos Originales DJI',
       oemDesc: 'Artículos precintados de fábrica con marcado CE de la UE.'
     },
@@ -228,7 +228,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       title: 'Cesta de Compra',
       empty: 'Tu cesta está vacía.',
       subtotal: 'Subtotal',
-      vatIncluded: 'IVA europeo incluido',
+      vatIncluded: 'Precios en EUR',
       freeShippingUnlocked: '🎉 ¡Envío DHL Express Gratis Activado!',
       checkoutBtn: 'Tramitar Pedido como Invitado'
     },
@@ -268,7 +268,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       shippingTitle: 'Spedizione DHL 24h-48h',
       shippingDesc: 'Consegna rapida in tutta Europa direttamente dai nostri magazzini.',
       paymentTitle: 'Bonifico SEPA e Cripto Sicuri',
-      paymentDesc: 'Conto bancario tedesco ufficiale e pagamenti crypto Web3.',
+      paymentDesc: 'Conto aziendale europeo ufficiale e pagamenti crypto Web3 senza commissioni.',
       oemTitle: '100% Prodotti Originali Sigillati',
       oemDesc: 'Seriale originale di fabbrica con conformità europea CE.'
     },
@@ -276,7 +276,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       title: 'Carrello',
       empty: 'Il tuo carrello è vuoto.',
       subtotal: 'Subtotale',
-      vatIncluded: 'IVA europea inclusa',
+      vatIncluded: 'Prezzi in EUR',
       freeShippingUnlocked: '🎉 Spedizione DHL Express Gratuita Sbloccata!',
       checkoutBtn: 'Cassa Rapida Ospite (Senza Registrazione)'
     },
@@ -316,7 +316,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       shippingTitle: '24u–48u DHL Express Levering',
       shippingDesc: 'Snelle verzending rechtstreeks vanuit onze distributiecentra.',
       paymentTitle: 'Veilige SEPA & Crypto Betaling',
-      paymentDesc: 'Officiële Duitse zakelijke bankoverschrijving of Web3 crypto.',
+      paymentDesc: 'Officiële Europese zakelijke bankoverschrijving of Web3 crypto zonder kosten.',
       oemTitle: '100% Fabrieksverzegeld Origineel',
       oemDesc: 'Originele serienummers met officiële Europese CE-markering.'
     },
@@ -324,7 +324,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       title: 'Winkelwagen',
       empty: 'Je winkelwagen is momenteel leeg.',
       subtotal: 'Subtotaal',
-      vatIncluded: 'Inclusief Europese btw',
+      vatIncluded: 'Prijzen in EUR',
       freeShippingUnlocked: '🎉 Gratis DHL Express Verzending Geactiveerd!',
       checkoutBtn: 'Direct Afrekenen als Gast'
     },
@@ -334,7 +334,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       step2: '2. Bezorgadres in Europa',
       step3: '3. Betaalmethode (SEPA of Crypto)',
       placeOrder: 'Bestelling Plaatsen & Gegevens Ontvangen',
-      bankTransfer: 'SEPA Bankoverschrijving (Deutsche Bank)',
+      bankTransfer: 'SEPA-bankoverschrijving',
       cryptoPayment: 'Directe Crypto Betaling (USDT / BTC)'
     }
   }

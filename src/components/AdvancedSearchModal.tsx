@@ -17,6 +17,7 @@ import { useStore } from '../context/StoreContext';
 import { DJI_PRODUCTS } from '../data/products';
 import { performIntelligentSearch } from '../data/searchSynonyms';
 import { formatPrice } from '../data/currency';
+import { productListingImage } from '../lib/pim/productListingImage';
 import { personalizedSearch } from '../lib/personalization/wave6Personalization';
 
 export const AdvancedSearchModal: React.FC = () => {
@@ -178,7 +179,7 @@ export const AdvancedSearchModal: React.FC = () => {
                       className="p-3.5 rounded-2xl border border-gray-100 hover:border-gray-300 hover:bg-gray-50 cursor-pointer flex items-center gap-3 transition-all"
                     >
                       <img
-                        src={p.images.cutout || p.images.hero}
+                        src={productListingImage(p)}
                         alt={p.modelName}
                         className="w-14 h-14 object-contain"
                       />
@@ -228,7 +229,7 @@ export const AdvancedSearchModal: React.FC = () => {
                   >
                     <div className="flex items-center gap-4 min-w-0">
                       <img
-                        src={product.images.cutout || product.images.hero}
+                        src={productListingImage(product)}
                         alt={product.modelName}
                         className="w-16 h-16 object-contain shrink-0 group-hover:scale-105 transition-transform"
                       />

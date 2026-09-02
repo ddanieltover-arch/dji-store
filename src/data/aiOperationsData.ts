@@ -510,7 +510,7 @@ export const INITIAL_MERCHANDISING_SCORES: MerchandisingScore[] = [
     recommendedAction: 'maintain'
   },
   {
-    productId: 'dji-osmo-pocket-3',
+    productId: 'osmo-pocket-3',
     productName: 'DJI Osmo Pocket 3 (1-inch CMOS)',
     currentPosition: 5,
     recommendedPosition: 5,

@@ -32,7 +32,8 @@ import {
   Gift,
   Users,
   Plane,
-  BriefcaseBusiness
+  BriefcaseBusiness,
+  Wrench
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import {
@@ -53,6 +54,8 @@ import { LoyaltyPortalTab } from './loyalty/LoyaltyPortalTab';
 import { ReferralsFlightClubTab } from './loyalty/ReferralsFlightClubTab';
 import { RecommendationsTab } from './loyalty/RecommendationsTab';
 import { BusinessAccountPortal } from './enterprise/BusinessAccountPortal';
+import { ServiceAccountPortal } from './service/ServiceAccountPortal';
+import { NotificationPreferencesPortal } from './mobile/NotificationPreferencesPortal';
 
 export const CustomerAccountPortal: React.FC = () => {
   const {
@@ -358,6 +361,7 @@ export const CustomerAccountPortal: React.FC = () => {
           { id: 'downloads', label: 'Downloads & Compliance Docs', icon: FileText },
           { id: 'b2b_tax', label: 'B2B & Tax Exemption (VIES)', icon: Building2 },
           { id: 'business', label: 'Business Portal', icon: BriefcaseBusiness },
+          { id: 'service', label: 'Service & Warranty', icon: Wrench },
           { id: 'notifications', label: `Notifications (${notifications.length})`, icon: Bell },
           { id: 'settings', label: 'Saved Addresses & Settings', icon: Settings }
         ].map((tab) => {
@@ -717,9 +721,7 @@ export const CustomerAccountPortal: React.FC = () => {
                     </strong>
                   </div>
                   <div className="text-right flex items-center gap-4">
-                    <span className="text-gray-500">
-                      Total ({order.vatRatePercent}% EU VAT included):
-                    </span>
+                    <span className="text-gray-500">Total:</span>
                     <span className="font-black text-base text-gray-900">
                       {formatPrice(order.totalEur, currency)}
                     </span>
@@ -1487,11 +1489,15 @@ export const CustomerAccountPortal: React.FC = () => {
 
       {activeTab === 'business' && <BusinessAccountPortal />}
 
+      {activeTab === 'service' && <ServiceAccountPortal />}
+
       {/* ============================================================ */}
       {/* TAB 8: NOTIFICATIONS & COMMUNICATIONS INBOX */}
       {/* ============================================================ */}
       {activeTab === 'notifications' && (
         <div className="space-y-4">
+          <NotificationPreferencesPortal />
+
           <div className="flex items-center justify-between bg-white p-6 rounded-3xl border border-gray-200">
             <div>
               <h3 className="font-black text-lg text-gray-900">Communication & Notification Log</h3>

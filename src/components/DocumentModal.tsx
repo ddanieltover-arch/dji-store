@@ -56,7 +56,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
               OFFICIAL EU DOCUMENT
             </span>
             <span className="text-sm font-bold text-gray-200">
-              {docType === 'vat_invoice' && 'Commercial Tax & VAT Invoice'}
+              {docType === 'vat_invoice' && 'Commercial Invoice'}
               {docType === 'packing_slip' && 'WMS Logistics Warehouse Packing Slip'}
               {docType === 'ce_declaration' && 'EU EASA CE Declaration of Conformity'}
               {docType === 'dhl_shipping_label' && 'DHL Express European Air Waybill'}
@@ -109,7 +109,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                     European Distribution Operations Hub<br />
                     Flughafenstraße 100, Gateway Gardens<br />
                     60549 Frankfurt am Main, Germany<br />
-                    EU VAT ID: <strong>DE 349 821 002</strong> • HRB 108920 Frankfurt
+                    EU Company Reg: <strong>HRB 108920 Frankfurt</strong>
                   </p>
                 </div>
 
@@ -171,7 +171,6 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                     <th className="p-3">SKU & Serial</th>
                     <th className="p-3 text-center">Qty</th>
                     <th className="p-3 text-right">Unit Price</th>
-                    <th className="p-3 text-right">VAT %</th>
                     <th className="p-3 text-right">Amount EUR</th>
                   </tr>
                 </thead>
@@ -192,7 +191,6 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                       </td>
                       <td className="p-3 text-center font-bold">{item.quantity}</td>
                       <td className="p-3 text-right">{formatPrice(item.priceEur, 'EUR')}</td>
-                      <td className="p-3 text-right">{order.vatRatePercent}%</td>
                       <td className="p-3 text-right font-bold text-gray-900">
                         {formatPrice(item.priceEur * item.quantity, 'EUR')}
                       </td>
@@ -205,12 +203,8 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
               <div className="flex justify-end pt-2">
                 <div className="w-72 space-y-1.5 text-xs bg-gray-50 p-4 rounded-2xl border border-gray-200">
                   <div className="flex justify-between text-gray-600">
-                    <span>Net Subtotal (excl. VAT):</span>
-                    <span>{formatPrice(order.totalEur - order.vatEur, 'EUR')}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>VAT ({order.vatRatePercent}%):</span>
-                    <span>{formatPrice(order.vatEur, 'EUR')}</span>
+                    <span>Subtotal:</span>
+                    <span>{formatPrice(order.subtotalEur, 'EUR')}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Express European Air Shipping:</span>
@@ -462,7 +456,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
 
               <div className="p-4 bg-purple-50 rounded-2xl border border-purple-200 text-xs">
                 <p className="font-bold text-purple-950">Company: {quote.companyName}</p>
-                <p className="text-purple-800">EU VAT ID: {quote.vatId} • VIES Status: Validated</p>
+                <p className="text-purple-800">Company ID: {quote.vatId} • VIES Status: Validated</p>
               </div>
 
               <table className="w-full text-xs text-left">
@@ -499,10 +493,6 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                   <div className="flex justify-between text-emerald-700 font-bold">
                     <span>Dealer Savings:</span>
                     <span>-{formatPrice(quote.discountEur, 'EUR')}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>19% VAT:</span>
-                    <span>{formatPrice(quote.vatEur, 'EUR')}</span>
                   </div>
                   <div className="flex justify-between font-black text-sm text-gray-900 pt-2 border-t border-gray-300">
                     <span>Quote Total:</span>

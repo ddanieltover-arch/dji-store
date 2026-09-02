@@ -97,7 +97,7 @@ export const RecommendationsTab: React.FC = () => {
 
                       <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between">
                         <div>
-                          <div className="text-xs text-zinc-500">Price (Inc. EU VAT)</div>
+                          <div className="text-xs text-zinc-500">Price</div>
                           <div className="text-base font-bold text-zinc-100 font-mono">
                             {formatPrice(defaultVariant.priceEur, currency)}
                           </div>

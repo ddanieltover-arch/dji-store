@@ -1,5 +1,6 @@
 import React from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
+import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { HomeView } from './components/HomeView';
@@ -7,12 +8,17 @@ import { BestSellersPage } from './components/BestSellersPage';
 import { ProductListingPage } from './components/ProductListingPage';
 import { ProductDetailPage } from './components/ProductDetailPage';
 import { CheckoutPage } from './components/CheckoutPage';
+import { CartPage } from './components/CartPage';
+import { StoreContentPage } from './components/StoreContentPage';
 import { OrderSuccessPage } from './components/OrderSuccessPage';
 import { TrackOrderPage } from './components/TrackOrderPage';
 import { ComparePage } from './components/ComparePage';
 import { EasaGuidePage } from './components/EasaGuidePage';
 import { AdminDashboard } from './components/AdminDashboard';
 import { CustomerAccountPortal } from './components/CustomerAccountPortal';
+import { AuthPage } from './components/auth/AuthPage';
+import { AuthCustomerSync } from './components/auth/AuthCustomerSync';
+import { ProtectedView } from './components/auth/ProtectedView';
 import { AiOperationsPortal } from './components/ai/AiOperationsPortal';
 import { SecurityOpsCenter } from './components/security/SecurityOpsCenter';
 import { ReliabilityEngineeringCenter } from './components/performance/ReliabilityEngineeringCenter';
@@ -24,16 +30,24 @@ import { MerchandisingWorkstation } from './components/merch/MerchandisingWorkst
 import { PersonalizationWorkstation } from './components/personalization/PersonalizationWorkstation';
 import { LifecycleWorkstation } from './components/lifecycle/LifecycleWorkstation';
 import { EnterpriseSalesWorkstation } from './components/enterprise/EnterpriseSalesWorkstation';
+import { ServiceCenterWorkstation } from './components/service/ServiceCenterWorkstation';
+import { KnowledgeBaseWorkstation } from './components/service/KnowledgeBaseWorkstation';
+import { MobileNotificationsWorkstation } from './components/mobile/MobileNotificationsWorkstation';
+import { ProductionMigrationWorkstation } from './components/migration/ProductionMigrationWorkstation';
+import { ConnectivityBanner, MobileBottomNav } from './components/mobile/MobileChrome';
 import { GdprConsentModal } from './components/security/GdprConsentModal';
 import { SlideOverCart } from './components/SlideOverCart';
 import { AdvancedSearchModal } from './components/AdvancedSearchModal';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import { useScrollToTopOnNavigation } from './hooks/useScrollToTopOnNavigation';
 
 const GDPR_CONSENT_KEY = 'dji-eu-gdpr-consent-v1';
 
 const MainLayout: React.FC = () => {
   const { viewMode, toasts, removeToast, setIsSearchOpen } = useStore();
   const [gdprOpen, setGdprOpen] = React.useState(false);
+
+  useScrollToTopOnNavigation();
 
   React.useEffect(() => {
     try {
@@ -71,30 +85,109 @@ const MainLayout: React.FC = () => {
       <Navbar />
 
       {/* Main Routed View Container */}
-      <div className="flex-1 w-full">
+      <div className="flex-1 w-full pb-16 md:pb-0">
         {viewMode === 'home' && <HomeView />}
         {viewMode === 'best-sellers' && <BestSellersPage />}
         {viewMode === 'plp' && <ProductListingPage />}
         {viewMode === 'pdp' && <ProductDetailPage />}
+        {viewMode === 'cart' && <CartPage />}
+        {viewMode === 'content' && <StoreContentPage />}
         {viewMode === 'checkout' && <CheckoutPage />}
         {viewMode === 'order-success' && <OrderSuccessPage />}
         {viewMode === 'track-order' && <TrackOrderPage />}
         {viewMode === 'compare' && <ComparePage />}
         {viewMode === 'easa-guide' && <EasaGuidePage />}
-        {viewMode === 'account' && <CustomerAccountPortal />}
-        {viewMode === 'admin' && <AdminDashboard />}
-        {viewMode === 'ai-operations' && <AiOperationsPortal />}
-        {viewMode === 'security-ops' && <SecurityOpsCenter />}
-        {viewMode === 'sre-ops' && <ReliabilityEngineeringCenter />}
-        {viewMode === 'qa-ops' && <QualityEngineeringCenter />}
-        {viewMode === 'launch-ops' && <LaunchCommandCenter />}
-        {viewMode === 'blueprint-ops' && <EnterpriseBlueprintCenter />}
-        {viewMode === 'pim-ops' && <ProductIntelligenceWorkstation />}
-        {viewMode === 'merch-ops' && <MerchandisingWorkstation />}
-        {viewMode === 'personalization-ops' && <PersonalizationWorkstation />}
-        {viewMode === 'lifecycle-ops' && <LifecycleWorkstation />}
-        {viewMode === 'enterprise-ops' && <EnterpriseSalesWorkstation />}
+        {viewMode === 'login' && <AuthPage mode="login" />}
+        {viewMode === 'signup' && <AuthPage mode="signup" />}
+        {viewMode === 'account' && (
+          <ProtectedView viewMode="account">
+            <CustomerAccountPortal />
+          </ProtectedView>
+        )}
+        {viewMode === 'admin' && (
+          <ProtectedView viewMode="admin">
+            <AdminDashboard />
+          </ProtectedView>
+        )}
+        {viewMode === 'ai-operations' && (
+          <ProtectedView viewMode="ai-operations">
+            <AiOperationsPortal />
+          </ProtectedView>
+        )}
+        {viewMode === 'security-ops' && (
+          <ProtectedView viewMode="security-ops">
+            <SecurityOpsCenter />
+          </ProtectedView>
+        )}
+        {viewMode === 'sre-ops' && (
+          <ProtectedView viewMode="sre-ops">
+            <ReliabilityEngineeringCenter />
+          </ProtectedView>
+        )}
+        {viewMode === 'qa-ops' && (
+          <ProtectedView viewMode="qa-ops">
+            <QualityEngineeringCenter />
+          </ProtectedView>
+        )}
+        {viewMode === 'launch-ops' && (
+          <ProtectedView viewMode="launch-ops">
+            <LaunchCommandCenter />
+          </ProtectedView>
+        )}
+        {viewMode === 'blueprint-ops' && (
+          <ProtectedView viewMode="blueprint-ops">
+            <EnterpriseBlueprintCenter />
+          </ProtectedView>
+        )}
+        {viewMode === 'pim-ops' && (
+          <ProtectedView viewMode="pim-ops">
+            <ProductIntelligenceWorkstation />
+          </ProtectedView>
+        )}
+        {viewMode === 'merch-ops' && (
+          <ProtectedView viewMode="merch-ops">
+            <MerchandisingWorkstation />
+          </ProtectedView>
+        )}
+        {viewMode === 'personalization-ops' && (
+          <ProtectedView viewMode="personalization-ops">
+            <PersonalizationWorkstation />
+          </ProtectedView>
+        )}
+        {viewMode === 'lifecycle-ops' && (
+          <ProtectedView viewMode="lifecycle-ops">
+            <LifecycleWorkstation />
+          </ProtectedView>
+        )}
+        {viewMode === 'enterprise-ops' && (
+          <ProtectedView viewMode="enterprise-ops">
+            <EnterpriseSalesWorkstation />
+          </ProtectedView>
+        )}
+        {viewMode === 'service-ops' && (
+          <ProtectedView viewMode="service-ops">
+            <ServiceCenterWorkstation />
+          </ProtectedView>
+        )}
+        {viewMode === 'knowledge-ops' && (
+          <ProtectedView viewMode="knowledge-ops">
+            <KnowledgeBaseWorkstation />
+          </ProtectedView>
+        )}
+        {viewMode === 'mobile-ops' && (
+          <ProtectedView viewMode="mobile-ops">
+            <MobileNotificationsWorkstation />
+          </ProtectedView>
+        )}
+        {viewMode === 'migration-ops' && (
+          <ProtectedView viewMode="migration-ops">
+            <ProductionMigrationWorkstation />
+          </ProtectedView>
+        )}
       </div>
+
+      <ConnectivityBanner />
+      <MobileBottomNav />
 
       {/* Global Slide-Over Shopping Bag Drawer */}
       <SlideOverCart />
@@ -149,8 +242,11 @@ const MainLayout: React.FC = () => {
 
 export default function App() {
   return (
-    <StoreProvider>
-      <MainLayout />
-    </StoreProvider>
+    <AuthProvider>
+      <StoreProvider>
+        <AuthCustomerSync />
+        <MainLayout />
+      </StoreProvider>
+    </AuthProvider>
   );
 }

@@ -20,9 +20,13 @@ import {
   Megaphone,
   Sparkles,
   HeartHandshake,
-  BriefcaseBusiness
+  BriefcaseBusiness,
+  Wrench,
+  BookOpen,
+  Smartphone,
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import { useAuth } from '../context/AuthContext';
 import { Locale, CurrencyCode, ViewMode } from '../types';
 import { getMegaPanel } from '../data/megaMenu';
 import { NavMegaMenu } from './nav/NavMegaMenu';
@@ -64,6 +68,7 @@ export const Navbar: React.FC = () => {
     setCurrency,
     t
   } = useStore();
+  const { isAuthenticated, isAdmin, logout, user } = useAuth();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileOpenId, setMobileOpenId] = useState<string | null>(null);
@@ -196,6 +201,39 @@ export const Navbar: React.FC = () => {
 
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-64 rounded-xl bg-white shadow-xl border border-black/8 py-2 text-sm text-[#1D1D1F]">
+                  {isAuthenticated ? (
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-xs text-gray-400 uppercase tracking-wider">Signed in</p>
+                      <p className="font-semibold truncate">{user?.email}</p>
+                      {isAdmin && (
+                        <p className="text-[10px] text-emerald-600 font-bold uppercase mt-0.5">Admin</p>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 font-semibold text-[#E30613]"
+                        onClick={() => {
+                          setViewMode('login');
+                          setIsUserMenuOpen(false);
+                        }}
+                      >
+                        Sign in
+                      </button>
+                      <button
+                        type="button"
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50"
+                        onClick={() => {
+                          setViewMode('signup');
+                          setIsUserMenuOpen(false);
+                        }}
+                      >
+                        Create account
+                      </button>
+                      <div className="my-2 border-t border-gray-100" />
+                    </>
+                  )}
                   <button
                     type="button"
                     className="w-full px-4 py-2 text-left hover:bg-gray-50"
@@ -280,37 +318,62 @@ export const Navbar: React.FC = () => {
                     </label>
                   </div>
 
-                  <div className="my-2 border-t border-gray-100" />
-                  <p className="px-4 pb-1 text-[10px] uppercase tracking-wider text-gray-400">Ops</p>
-                  {(
-                    [
-                      { mode: 'admin' as const, label: t.nav.adminPortal, icon: Settings },
-                      { mode: 'ai-operations' as const, label: 'AI Ops', icon: Cpu },
-                      { mode: 'security-ops' as const, label: 'SecOps', icon: ShieldCheck },
-                      { mode: 'sre-ops' as const, label: 'SRE', icon: Gauge },
-                      { mode: 'qa-ops' as const, label: 'QA / Release', icon: FlaskConical },
-                      { mode: 'launch-ops' as const, label: 'Go-Live', icon: Rocket },
-                      { mode: 'blueprint-ops' as const, label: 'Blueprint / Cert', icon: Award },
-                      { mode: 'pim-ops' as const, label: 'PIM / Sync', icon: Database },
-                      { mode: 'merch-ops' as const, label: 'Merchandising', icon: Megaphone },
-                      { mode: 'personalization-ops' as const, label: 'Personalization', icon: Sparkles },
-                      { mode: 'lifecycle-ops' as const, label: 'Lifecycle', icon: HeartHandshake },
-                      { mode: 'enterprise-ops' as const, label: 'Enterprise Sales', icon: BriefcaseBusiness }
-                    ] as const
-                  ).map((item) => (
-                    <button
-                      key={item.mode}
-                      type="button"
-                      className="w-full px-4 py-1.5 text-left hover:bg-gray-50 inline-flex items-center gap-2 text-xs text-gray-700"
-                      onClick={() => {
-                        setViewMode(viewMode === item.mode ? 'home' : item.mode);
-                        setIsUserMenuOpen(false);
-                      }}
-                    >
-                      <item.icon className="w-3.5 h-3.5" />
-                      {viewMode === item.mode ? `Exit ${item.label}` : item.label}
-                    </button>
-                  ))}
+                  {isAdmin && (
+                    <>
+                      <div className="my-2 border-t border-gray-100" />
+                      <p className="px-4 pb-1 text-[10px] uppercase tracking-wider text-gray-400">Ops</p>
+                      {(
+                        [
+                          { mode: 'admin' as const, label: t.nav.adminPortal, icon: Settings },
+                          { mode: 'ai-operations' as const, label: 'AI Ops', icon: Cpu },
+                          { mode: 'security-ops' as const, label: 'SecOps', icon: ShieldCheck },
+                          { mode: 'sre-ops' as const, label: 'SRE', icon: Gauge },
+                          { mode: 'qa-ops' as const, label: 'QA / Release', icon: FlaskConical },
+                          { mode: 'launch-ops' as const, label: 'Go-Live', icon: Rocket },
+                          { mode: 'blueprint-ops' as const, label: 'Blueprint / Cert', icon: Award },
+                          { mode: 'pim-ops' as const, label: 'PIM / Sync', icon: Database },
+                          { mode: 'merch-ops' as const, label: 'Merchandising', icon: Megaphone },
+                          { mode: 'personalization-ops' as const, label: 'Personalization', icon: Sparkles },
+                          { mode: 'lifecycle-ops' as const, label: 'Lifecycle', icon: HeartHandshake },
+                          { mode: 'enterprise-ops' as const, label: 'Enterprise Sales', icon: BriefcaseBusiness },
+                          { mode: 'service-ops' as const, label: 'Service Center', icon: Wrench },
+                          { mode: 'knowledge-ops' as const, label: 'Knowledge Base', icon: BookOpen },
+                          { mode: 'mobile-ops' as const, label: 'Mobile & Push', icon: Smartphone },
+                          { mode: 'migration-ops' as const, label: 'Production Migration', icon: Rocket }
+                        ] as const
+                      ).map((item) => (
+                        <button
+                          key={item.mode}
+                          type="button"
+                          className="w-full px-4 py-1.5 text-left hover:bg-gray-50 inline-flex items-center gap-2 text-xs text-gray-700"
+                          onClick={() => {
+                            setViewMode(viewMode === item.mode ? 'home' : item.mode);
+                            setIsUserMenuOpen(false);
+                          }}
+                        >
+                          <item.icon className="w-3.5 h-3.5" />
+                          {viewMode === item.mode ? `Exit ${item.label}` : item.label}
+                        </button>
+                      ))}
+                    </>
+                  )}
+
+                  {isAuthenticated && (
+                    <>
+                      <div className="my-2 border-t border-gray-100" />
+                      <button
+                        type="button"
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 text-red-600"
+                        onClick={async () => {
+                          await logout();
+                          setViewMode('home');
+                          setIsUserMenuOpen(false);
+                        }}
+                      >
+                        Sign out
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>

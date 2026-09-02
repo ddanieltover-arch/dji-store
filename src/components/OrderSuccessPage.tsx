@@ -1,22 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   CheckCircle2,
   Package,
   Truck,
-  Building2,
-  QrCode,
-  Download,
   ArrowRight,
-  ShieldCheck,
   Clock,
   Printer
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../data/currency';
+import {
+  PaymentInstructionsModal,
+  requiresAdminPaymentInstructions
+} from './checkout/PaymentInstructionsModal';
 
 export const OrderSuccessPage: React.FC = () => {
   const { orders, activeOrderNumber, setViewMode, currency } = useStore();
   const currentOrder = orders.find((o) => o.orderNumber === activeOrderNumber) || orders[0];
+  const [showPaymentModal, setShowPaymentModal] = useState(
+    () => currentOrder != null && requiresAdminPaymentInstructions(currentOrder.paymentMethod)
+  );
 
   if (!currentOrder) {
     return (
@@ -34,6 +37,14 @@ export const OrderSuccessPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      {showPaymentModal && (
+        <PaymentInstructionsModal
+          order={currentOrder}
+          currency={currency}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
+
       {/* Confirmation Hero Card */}
       <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-emerald-950 text-white rounded-3xl p-8 sm:p-10 shadow-xl space-y-4 text-center relative overflow-hidden">
         <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 flex items-center justify-center mx-auto shadow-inner">
@@ -142,14 +153,25 @@ export const OrderSuccessPage: React.FC = () => {
                 {currentOrder.shippingEur === 0 ? 'FREE' : formatPrice(currentOrder.shippingEur, currency)}
               </span>
             </div>
-            <div className="flex justify-between text-gray-500 text-[11px]">
-              <span>Included 19% Statutory VAT:</span>
-              <span>{formatPrice(currentOrder.vatEur, currency)}</span>
-            </div>
+            {currentOrder.discountEur > 0 && (
+              <div className="flex justify-between text-emerald-700 font-bold">
+                <span>Web3 Cryptocurrency (5% off)</span>
+                <span>−{formatPrice(currentOrder.discountEur, currency)}</span>
+              </div>
+            )}
             <div className="flex justify-between text-base font-black text-gray-900 pt-2 border-t border-gray-100">
               <span>Total Paid / Payable:</span>
               <span className="text-base text-[#1D1D1F]">{formatPrice(currentOrder.totalEur, currency)}</span>
             </div>
+            {requiresAdminPaymentInstructions(currentOrder.paymentMethod) && (
+              <button
+                type="button"
+                onClick={() => setShowPaymentModal(true)}
+                className="w-full mt-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 font-bold text-[11px] hover:bg-amber-100 transition-colors"
+              >
+                View Payment Instructions — Contact Admin
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -193,7 +215,7 @@ export const OrderSuccessPage: React.FC = () => {
           onClick={() => window.print()}
           className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold text-xs flex items-center justify-center gap-2 shadow-xs"
         >
-          <Printer className="w-4 h-4" /> Print European VAT Invoice
+          <Printer className="w-4 h-4" /> Print Order Invoice
         </button>
 
         <button
