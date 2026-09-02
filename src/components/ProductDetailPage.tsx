@@ -257,43 +257,14 @@ export const ProductDetailPage: React.FC = () => {
               </div>
 
               {/* Combo Package Selector */}
-              <div className="space-y-2">
-                <span className="text-xs font-bold text-gray-900 uppercase tracking-wider block">
-                  Select Package Configuration:
-                </span>
-                {product.variants.length > 1 ? (
-                  <div className="space-y-2">
-                    {product.variants.map((v) => {
-                      const selected = v.id === selectedVariantId;
-                      return (
-                        <button
-                          key={v.id}
-                          type="button"
-                          onClick={() => setSelectedVariantId(v.id)}
-                          className={`w-full flex items-center gap-3 p-3 rounded-2xl border text-left transition-colors ${
-                            selected
-                              ? 'border-[#E30613] bg-red-50/40'
-                              : 'border-gray-200 bg-white hover:border-gray-300'
-                          }`}
-                        >
-                          {v.imageUrl && (
-                            <img
-                              src={v.imageUrl}
-                              alt=""
-                              className="w-14 h-14 rounded-xl object-contain bg-white border border-gray-100 shrink-0"
-                            />
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm font-bold text-[#1D1D1F] truncate">{v.comboName}</div>
-                            <div className="text-xs text-gray-500">
-                              {formatPrice(v.priceEur, currency)} · {v.stockQuantity} Units
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                ) : (
+              {product.variants.length > 1 && (
+                <div className="space-y-2">
+                  <label
+                    htmlFor="package-config-select"
+                    className="text-xs font-bold text-gray-900 uppercase tracking-wider block"
+                  >
+                    Select Package Configuration:
+                  </label>
                   <div className="relative">
                     <select
                       id="package-config-select"
@@ -309,14 +280,14 @@ export const ProductDetailPage: React.FC = () => {
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   </div>
-                )}
-                {activeVariant.tagline && (
-                  <p className="text-xs text-gray-500">{activeVariant.tagline}</p>
-                )}
-                <span className="text-[10px] text-emerald-600 font-semibold block">
-                  {activeVariant.stockQuantity} Units in stock
-                </span>
-              </div>
+                  {activeVariant.tagline && (
+                    <p className="text-xs text-gray-500">{activeVariant.tagline}</p>
+                  )}
+                  <span className="text-[10px] text-emerald-600 font-semibold block">
+                    {activeVariant.stockQuantity} Units in stock
+                  </span>
+                </div>
+              )}
 
               {/* Itemized BOM (In the Box) */}
               <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 space-y-2">
