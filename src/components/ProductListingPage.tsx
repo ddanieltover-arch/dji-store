@@ -8,6 +8,8 @@ import {
   ShoppingBag,
   CheckCircle2,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   X,
   RotateCcw,
   Sparkles,
@@ -54,6 +56,8 @@ export const ProductListingPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'rating' | 'flight-time'>('featured');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [viewLayout, setViewLayout] = useState<'grid' | 'list'>('grid');
+  const PRODUCTS_PER_PAGE = 81;
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setSelectedSeries(selectedPlpSeries ? [selectedPlpSeries] : []);
@@ -142,6 +146,23 @@ export const ProductListingPage: React.FC = () => {
     compareList,
     cart
   ]);
+
+  // Reset page when filters/sort change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedSeries, selectedEasaClasses, maxPrice, minFlightTime, inStockOnly, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
+  );
+
+  const goToPage = (page: number) => {
+    const clamped = Math.max(1, Math.min(page, totalPages));
+    setCurrentPage(clamped);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const resetFilters = () => {
     setSelectedSeries([]);
@@ -356,7 +377,7 @@ export const ProductListingPage: React.FC = () => {
                 <Filter className="w-3.5 h-3.5" /> Filters ({hasActiveFilters ? 'Active' : 'All'})
               </button>
               <span className="text-xs text-gray-500 font-medium">
-                Showing <strong className="text-gray-900">{filteredProducts.length}</strong> products
+                Showing <strong className="text-gray-900">{(currentPage - 1) * PRODUCTS_PER_PAGE + 1}–{Math.min(currentPage * PRODUCTS_PER_PAGE, filteredProducts.length)}</strong> of <strong className="text-gray-900">{filteredProducts.length}</strong> products
               </span>
             </div>
 
@@ -419,7 +440,7 @@ export const ProductListingPage: React.FC = () => {
           {/* Grid View */}
           {viewLayout === 'grid' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product) => (
+              {paginatedProducts.map((product) => (
                 <div
                   key={product.id}
                   className="group bg-white rounded-2xl border border-gray-200/90 hover:border-gray-400 transition-all duration-300 hover:shadow-lg flex flex-col justify-between overflow-hidden relative"
@@ -530,7 +551,7 @@ export const ProductListingPage: React.FC = () => {
           {/* List View */}
           {viewLayout === 'list' && (
             <div className="space-y-4">
-              {filteredProducts.map((product) => (
+              {paginatedProducts.map((product) => (
                 <div
                   key={product.id}
                   className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col sm:flex-row items-center gap-6 hover:shadow-md transition-all"
@@ -597,6 +618,64 @@ export const ProductListingPage: React.FC = () => {
                 </div>
               ))}
             </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <nav className="flex items-center justify-center gap-1.5 pt-6" aria-label="Pagination">
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => {
+                  if (totalPages <= 7) return true;
+                  if (page === 1 || page === totalPages) return true;
+                  if (Math.abs(page - currentPage) <= 1) return true;
+                  return false;
+                })
+                .reduce<(number | 'ellipsis')[]>((acc, page, idx, arr) => {
+                  if (idx > 0 && page - (arr[idx - 1] as number) > 1) {
+                    acc.push('ellipsis');
+                  }
+                  acc.push(page);
+                  return acc;
+                }, [])
+                .map((item, idx) =>
+                  item === 'ellipsis' ? (
+                    <span key={`e-${idx}`} className="px-2 text-xs text-gray-400 select-none">…</span>
+                  ) : (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => goToPage(item)}
+                      className={`min-w-[36px] h-9 rounded-lg text-xs font-bold transition-colors ${
+                        currentPage === item
+                          ? 'bg-[#1D1D1F] text-white shadow-sm'
+                          : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  )
+                )}
+
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </nav>
           )}
         </main>
       </div>
