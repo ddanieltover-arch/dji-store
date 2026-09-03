@@ -62,7 +62,7 @@ import {
 } from '../data/crmData';
 import { resolveContentSlug } from '../data/storeContentPages';
 import { submitCheckoutOrder } from '../lib/checkout/submitCheckout';
-import { fetchRemoteOrders, mergeOrderLists } from '../lib/checkout/fetchRemoteOrders';
+import { fetchRemoteOrders, mergeOrderLists, normalizePlacedOrder } from '../lib/checkout/fetchRemoteOrders';
 import { notifyOrderStatusChange } from '../lib/checkout/notifyOrderStatus';
 
 interface StoreContextType {
@@ -375,10 +375,19 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [orders, setOrders] = useState<PlacedOrder[]>(() => {
     try {
       const saved = localStorage.getItem('dji_orders_v8');
-      return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+      if (saved) {
+        const parsed = JSON.parse(saved) as unknown[];
+        if (Array.isArray(parsed)) {
+          const normalized = parsed
+            .map((order) => normalizePlacedOrder(order))
+            .filter((order): order is PlacedOrder => Boolean(order));
+          if (normalized.length) return normalized;
+        }
+      }
     } catch {
-      return INITIAL_ORDERS;
+      /* fall through */
     }
+    return INITIAL_ORDERS;
   });
 
   const [products, setProducts] = useState<Product[]>(() => {
@@ -405,24 +414,25 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   useEffect(() => {
     syncRuntimeCatalog(products);
+  }, [products]);
+
+  const persistCatalogPatches = (nextProducts: Product[]) => {
     try {
-      const seedIds = new Set(DJI_PRODUCTS.map((p) => p.id));
-      const deletedIds = DJI_PRODUCTS.filter((p) => !products.some((x) => x.id === p.id)).map((p) => p.id);
+      const nextIds = new Set(nextProducts.map((p) => p.id));
+      const deletedIds = DJI_PRODUCTS.filter((p) => !nextIds.has(p.id)).map((p) => p.id);
       const updates: Record<string, Partial<Product>> = {};
-      for (const product of products) {
-        if (!seedIds.has(product.id)) continue;
+      for (const product of nextProducts) {
         const seed = DJI_PRODUCTS.find((p) => p.id === product.id);
         if (!seed) continue;
-        const changed =
+        if (
           seed.modelName !== product.modelName ||
           seed.sku !== product.sku ||
           seed.slug !== product.slug ||
           seed.basePriceEur !== product.basePriceEur ||
           seed.tagline !== product.tagline ||
           seed.description !== product.description ||
-          seed.category !== product.category ||
-          JSON.stringify(seed.variants) !== JSON.stringify(product.variants);
-        if (changed) {
+          seed.category !== product.category
+        ) {
           updates[product.id] = {
             modelName: product.modelName,
             sku: product.sku,
@@ -450,7 +460,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     } catch (e) {
       console.error(e);
     }
-  }, [products]);
+  };
 
   const [activeOrderNumber, setActiveOrderNumber] = useState<string | null>('DJI-EU-100239');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -1082,9 +1092,13 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const updateProduct = (productId: string, updates: Partial<Product>) => {
-    setProducts((prev) =>
-      prev.map((product) => (product.id === productId ? { ...product, ...updates, id: product.id } : product))
-    );
+    setProducts((prev) => {
+      const next = prev.map((product) =>
+        product.id === productId ? { ...product, ...updates, id: product.id } : product
+      );
+      persistCatalogPatches(next);
+      return next;
+    });
     addToast({
       type: 'success',
       title: 'Product Updated',
@@ -1093,7 +1107,11 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const deleteProduct = (productId: string) => {
-    setProducts((prev) => prev.filter((product) => product.id !== productId));
+    setProducts((prev) => {
+      const next = prev.filter((product) => product.id !== productId);
+      persistCatalogPatches(next);
+      return next;
+    });
     if (selectedProductId === productId) {
       setSelectedProductId('');
       setViewMode('plp');

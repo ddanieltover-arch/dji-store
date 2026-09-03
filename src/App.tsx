@@ -15,6 +15,7 @@ import { TrackOrderPage } from './components/TrackOrderPage';
 import { ComparePage } from './components/ComparePage';
 import { EasaGuidePage } from './components/EasaGuidePage';
 import { AdminDashboard } from './components/AdminDashboard';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { CustomerAccountPortal } from './components/CustomerAccountPortal';
 import { AuthPage } from './components/auth/AuthPage';
 import { AuthCustomerSync } from './components/auth/AuthCustomerSync';
@@ -111,7 +112,9 @@ const MainLayout: React.FC = () => {
         )}
         {viewMode === 'admin' && (
           <ProtectedView viewMode="admin">
-            <AdminDashboard />
+            <ErrorBoundary fallbackTitle="Admin console crashed">
+              <AdminDashboard />
+            </ErrorBoundary>
           </ProtectedView>
         )}
         {viewMode === 'ai-operations' && (

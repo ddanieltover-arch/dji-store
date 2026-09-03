@@ -492,25 +492,27 @@ export const AdminDashboard: React.FC = () => {
                     </td>
                     <td className="p-4">
                       <span className="font-bold text-gray-900 block">
-                        {order.customer.firstName} {order.customer.lastName}
+                        {order.customer?.firstName || '—'} {order.customer?.lastName || ''}
                       </span>
                       <span className="text-gray-500 text-[11px]">
-                        {order.shippingAddress.city}, {order.shippingAddress.countryCode}
+                        {order.shippingAddress?.city || '—'}, {order.shippingAddress?.countryCode || ''}
                       </span>
                     </td>
                     <td className="p-4">
                       <span className="text-gray-800 font-medium truncate block max-w-xs">
-                        {order.items.map((i) => `${i.quantity}x ${i.productName || i.sku}`).join(', ')}
+                        {(order.items ?? [])
+                          .map((i) => `${i.quantity}x ${i.productName || i.sku || 'Item'}`)
+                          .join(', ') || 'No items'}
                       </span>
                     </td>
                     <td className="p-4 font-black text-gray-900">
-                      {formatPrice(order.totalEur, currency)}
+                      {formatPrice(Number(order.totalEur) || 0, currency)}
                     </td>
                     <td className="p-4">
                       <span className="font-semibold text-gray-700 block">
-                        {isCryptoPaymentMethod(order.paymentMethod)
-                          ? `⚡ ${paymentMethodDisplayName(order.paymentMethod)}`
-                          : `🏦 ${paymentMethodDisplayName(order.paymentMethod)}`}
+                        {isCryptoPaymentMethod(order.paymentMethod || '')
+                          ? `⚡ ${paymentMethodDisplayName(order.paymentMethod || '')}`
+                          : `🏦 ${paymentMethodDisplayName(order.paymentMethod || 'card')}`}
                       </span>
                       {order.paymentVerification?.senderMatched && (
                         <span className="text-[10px] text-emerald-600 font-semibold">✓ Verified Match</span>
@@ -524,12 +526,15 @@ export const AdminDashboard: React.FC = () => {
                             : 'bg-amber-100 text-amber-800'
                         }`}
                       >
-                        {order.status ? order.status.replace(/_/g, ' ') : order.paymentStatus.replace(/_/g, ' ')}
+                        {order.status
+                          ? order.status.replace(/_/g, ' ')
+                          : (order.paymentStatus || 'pending').replace(/_/g, ' ')}
                       </span>
                     </td>
                     <td className="p-4 text-right space-y-1.5">
                       <div className="flex items-center justify-end gap-1.5">
-                        {order.paymentStatus === 'payment_verifying' ? (
+                        {order.paymentStatus === 'verifying' ||
+                        (order.paymentStatus as string) === 'payment_verifying' ? (
                           <button
                             onClick={() => {
                               verifyOrderPayment(order.orderNumber, {
