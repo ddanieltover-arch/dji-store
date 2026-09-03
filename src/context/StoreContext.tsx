@@ -62,7 +62,7 @@ import {
 } from '../data/crmData';
 import { resolveContentSlug } from '../data/storeContentPages';
 import { submitCheckoutOrder } from '../lib/checkout/submitCheckout';
-import { fetchRemoteOrders, mergeOrderLists, normalizePlacedOrder } from '../lib/checkout/fetchRemoteOrders';
+import { fetchRemoteOrders, mergeOrderLists, normalizePlacedOrder, deleteRemoteOrder } from '../lib/checkout/fetchRemoteOrders';
 import { notifyOrderStatusChange } from '../lib/checkout/notifyOrderStatus';
 
 interface StoreContextType {
@@ -123,7 +123,7 @@ interface StoreContextType {
   placeNewOrder: (orderData: Omit<PlacedOrder, 'orderNumber' | 'trackingToken' | 'createdAt'>) => PlacedOrder;
   updateOrderStatus: (orderNumber: string, status: PlacedOrder['paymentStatus']) => void;
   updateOrder: (orderNumber: string, updates: Partial<PlacedOrder>) => void;
-  deleteOrder: (orderNumber: string) => void;
+  deleteOrder: (orderNumber: string) => Promise<void>;
   refreshRemoteOrders: () => Promise<void>;
   advanceOrderStatus: (orderNumber: string, status: OrderStatus) => void;
   verifyOrderPayment: (orderNumber: string, verification: Partial<OrderPaymentVerification>) => void;
@@ -1082,12 +1082,28 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     });
   };
 
-  const deleteOrder = (orderNumber: string) => {
+  const deleteOrder = async (orderNumber: string) => {
+    const existing = orders.find((ord) => ord.orderNumber === orderNumber);
     setOrders((prev) => prev.filter((ord) => ord.orderNumber !== orderNumber));
+
+    const remote = await deleteRemoteOrder({
+      orderNumber,
+      dbId: existing?.dbId
+    });
+
+    if (!remote.ok) {
+      addToast({
+        type: 'warning',
+        title: 'Removed locally only',
+        message: `Order #${orderNumber} was removed here, but the server delete failed (${remote.error}). It may reappear on refresh.`
+      });
+      return;
+    }
+
     addToast({
       type: 'info',
       title: 'Order Deleted',
-      message: `Order #${orderNumber} was removed from the system.`
+      message: `Order #${orderNumber} was removed from the server.`
     });
   };
 

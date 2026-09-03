@@ -65,7 +65,8 @@ export function normalizePlacedOrder(input: unknown): PlacedOrder | null {
     paymentMethod: String(raw.paymentMethod ?? 'card'),
     paymentStatus,
     status: (raw.status as PlacedOrder['status']) || undefined,
-    serverSynced: Boolean(raw.serverSynced ?? raw.dbId)
+    serverSynced: Boolean(raw.serverSynced ?? raw.dbId),
+    dbId: raw.dbId ? String(raw.dbId) : undefined
   };
 }
 
@@ -80,6 +81,29 @@ export async function fetchRemoteOrders(): Promise<PlacedOrder[]> {
       .filter((order): order is PlacedOrder => Boolean(order));
   } catch {
     return [];
+  }
+}
+
+export async function deleteRemoteOrder(args: {
+  orderNumber: string;
+  dbId?: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await fetch('/api/admin/orders', {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderNumber: args.orderNumber,
+        id: args.dbId,
+        orderId: args.dbId
+      })
+    });
+    const data = (await res.json().catch(() => ({}))) as { error?: string; ok?: boolean };
+    if (!res.ok) return { ok: false, error: data.error ?? `delete_http_${res.status}` };
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : 'network_error' };
   }
 }
 

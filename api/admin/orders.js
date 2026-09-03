@@ -122,10 +122,21 @@ module.exports = wrap(async function adminOrders(req, res) {
     const orderNumber = String(body.orderNumber || '');
     if (!orderId && !orderNumber) return send(res, { error: 'missing_id' }, 400);
 
-    if (orderId) {
+    if (orderId && orderNumber) {
+      await sql`
+        DELETE FROM orders
+        WHERE id = ${orderId}
+           OR payload->>'orderNumber' = ${orderNumber}
+           OR payload->'placedOrder'->>'orderNumber' = ${orderNumber}
+      `;
+    } else if (orderId) {
       await sql`DELETE FROM orders WHERE id = ${orderId}`;
     } else {
-      await sql`DELETE FROM orders WHERE payload->>'orderNumber' = ${orderNumber}`;
+      await sql`
+        DELETE FROM orders
+        WHERE payload->>'orderNumber' = ${orderNumber}
+           OR payload->'placedOrder'->>'orderNumber' = ${orderNumber}
+      `;
     }
     return send(res, { ok: true });
   }
