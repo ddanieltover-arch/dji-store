@@ -41,4 +41,21 @@ async function ensureAuthTables() {
   await sql`CREATE INDEX IF NOT EXISTS auth_sessions_expires_idx ON auth_sessions (expires_at)`;
 }
 
-module.exports = { createDb, ensureAuthTables };
+async function ensureOrdersTable() {
+  const sql = createDb();
+  await sql`
+    CREATE TABLE IF NOT EXISTS orders (
+      id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      customer_id TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      payment_intent_id TEXT,
+      status TEXT NOT NULL,
+      payload JSONB NOT NULL DEFAULT '{}',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `;
+  await sql`CREATE INDEX IF NOT EXISTS orders_customer_idx ON orders (customer_id)`;
+  await sql`CREATE INDEX IF NOT EXISTS orders_created_idx ON orders (created_at DESC)`;
+}
+
+module.exports = { createDb, ensureAuthTables, ensureOrdersTable };

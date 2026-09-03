@@ -25,7 +25,10 @@ export async function submitCheckoutOrder(args: {
     firstName: order.customer.firstName,
     lastName: order.customer.lastName,
     orderNumber: order.orderNumber,
+    trackingToken: order.trackingToken,
     paymentMethod: order.paymentMethod,
+    paymentStatus: order.paymentStatus,
+    orderStatus: order.status,
     totalEur: order.totalEur,
     subtotalEur: order.subtotalEur,
     shippingEur: order.shippingEur,
@@ -34,11 +37,14 @@ export async function submitCheckoutOrder(args: {
       name: item.productName,
       sku: item.sku,
       quantity: item.quantity,
-      priceEur: item.priceEur
+      priceEur: item.priceEur,
+      productId: item.productId,
+      variantId: item.variantId
     })),
     locale,
     shippingAddress: order.shippingAddress,
-    phone: order.customer.phone
+    phone: order.customer.phone,
+    placedOrder: order
   };
 
   try {
@@ -52,9 +58,17 @@ export async function submitCheckoutOrder(args: {
       body: JSON.stringify(body)
     });
 
-    const data = (await res.json()) as { orderId?: string; error?: string; status?: string };
+    const data = (await res.json()) as {
+      orderId?: string;
+      error?: string;
+      status?: string;
+      emailError?: string;
+    };
     if (!res.ok) {
       return { ok: false, error: data.error ?? `checkout_http_${res.status}` };
+    }
+    if (data.emailError) {
+      return { ok: false, orderId: data.orderId, error: data.emailError };
     }
     return { ok: true, orderId: data.orderId };
   } catch (err) {

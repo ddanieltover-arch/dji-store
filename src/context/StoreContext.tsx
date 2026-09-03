@@ -62,6 +62,7 @@ import {
 } from '../data/crmData';
 import { resolveContentSlug } from '../data/storeContentPages';
 import { submitCheckoutOrder } from '../lib/checkout/submitCheckout';
+import { fetchRemoteOrders, mergeOrderLists } from '../lib/checkout/fetchRemoteOrders';
 import { notifyOrderStatusChange } from '../lib/checkout/notifyOrderStatus';
 
 interface StoreContextType {
@@ -123,6 +124,7 @@ interface StoreContextType {
   updateOrderStatus: (orderNumber: string, status: PlacedOrder['paymentStatus']) => void;
   updateOrder: (orderNumber: string, updates: Partial<PlacedOrder>) => void;
   deleteOrder: (orderNumber: string) => void;
+  refreshRemoteOrders: () => Promise<void>;
   advanceOrderStatus: (orderNumber: string, status: OrderStatus) => void;
   verifyOrderPayment: (orderNumber: string, verification: Partial<OrderPaymentVerification>) => void;
 
@@ -912,14 +914,22 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       } else {
         addToast({
           type: 'warning',
-          title: 'Confirmation email pending',
+          title: 'Order saved locally only',
           message:
-            'Your order was registered, but the confirmation email could not be sent. Run `npm run dev:production` and contact sales@djii.eu with your order reference.'
+            result.error === 'network_error' || (result.error ?? '').includes('checkout')
+              ? 'Your order was registered in this browser, but the server could not save it or send email. Contact sales@djii.eu with your order number.'
+              : `Order registered, but confirmation email failed (${result.error}). Contact sales@djii.eu with #${newOrder.orderNumber}.`
         });
       }
     });
 
     return newOrder;
+  };
+
+  const refreshRemoteOrders = async () => {
+    const remote = await fetchRemoteOrders();
+    if (!remote.length) return;
+    setOrders((prev) => mergeOrderLists(remote, prev));
   };
 
   const dispatchOrderStatusEmails = (order: PlacedOrder, previous: PlacedOrder) => {
@@ -1725,6 +1735,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         updateOrderStatus,
         updateOrder,
         deleteOrder,
+        refreshRemoteOrders,
         products,
         updateProduct,
         deleteProduct,

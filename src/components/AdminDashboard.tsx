@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ShieldAlert,
   Package,
@@ -93,6 +93,7 @@ export const AdminDashboard: React.FC = () => {
     updateOrderStatus,
     updateOrder,
     deleteOrder,
+    refreshRemoteOrders,
     products,
     updateProduct,
     deleteProduct,
@@ -128,6 +129,22 @@ export const AdminDashboard: React.FC = () => {
   const [catalogSearch, setCatalogSearch] = useState('');
   const [catalogCategory, setCatalogCategory] = useState<'all' | Product['category']>('all');
   const [reviewFilter, setReviewFilter] = useState<'all' | 'pending_moderation' | 'approved' | 'rejected'>('all');
+  const [ordersSyncing, setOrdersSyncing] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setOrdersSyncing(true);
+    refreshRemoteOrders()
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setOrdersSyncing(false);
+      });
+    return () => {
+      active = false;
+    };
+    // Load server orders once when opening admin (shared Neon store).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Document Modal state
   const [activeDoc, setActiveDoc] = useState<{
@@ -342,6 +359,27 @@ export const AdminDashboard: React.FC = () => {
                 <button type="button" onClick={() => selectSubTab('returns_rma')} className={subNavClass('returns_rma')}>
                   <RotateCcw className="w-3 h-3 text-rose-500" />
                   RMA & returns ({rmas.filter((r) => r.status === 'requested').length})
+                </button>
+                <button
+                  type="button"
+                  disabled={ordersSyncing}
+                  onClick={async () => {
+                    setOrdersSyncing(true);
+                    try {
+                      await refreshRemoteOrders();
+                      addToast({
+                        type: 'success',
+                        title: 'Orders refreshed',
+                        message: 'Loaded latest orders from the server.'
+                      });
+                    } finally {
+                      setOrdersSyncing(false);
+                    }
+                  }}
+                  className={subNavClass('orders')}
+                >
+                  <RefreshCw className={`w-3 h-3 ${ordersSyncing ? 'animate-spin' : ''}`} />
+                  Sync server orders
                 </button>
               </>
             )}
