@@ -164,6 +164,8 @@ export interface PlacedOrder {
   totalEur: number;
   paymentMethod: PaymentMethod;
   paymentStatus: 'verifying' | 'confirmed' | 'processing' | 'dispatched' | 'delivered';
+  /** True when /api/checkout persisted the order; false when only local. */
+  serverSynced?: boolean;
   status?: OrderStatus;
   paymentDetails?: {
     senderIban?: string;

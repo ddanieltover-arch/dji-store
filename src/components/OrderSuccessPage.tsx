@@ -58,8 +58,20 @@ export const OrderSuccessPage: React.FC = () => {
           Thank you, {currentOrder.customer.firstName}!
         </h1>
         <p className="text-sm text-emerald-100 max-w-lg mx-auto leading-relaxed">
-          Your order has been recorded in our European distribution center in Frankfurt. A confirmation invoice has been sent to{' '}
-          <strong className="text-white">{currentOrder.customer.email}</strong>.
+          Your order has been recorded in our European distribution center in Frankfurt.
+          {currentOrder.serverSynced === false ? (
+            <>
+              {' '}
+              Email delivery is pending — please save your order reference and contact{' '}
+              <strong className="text-white">sales@djii.eu</strong> if you do not receive a confirmation.
+            </>
+          ) : (
+            <>
+              {' '}
+              A confirmation email will be sent to{' '}
+              <strong className="text-white">{currentOrder.customer.email}</strong>.
+            </>
+          )}
         </p>
 
         <div className="inline-block bg-black/40 border border-emerald-500/30 rounded-2xl px-6 py-3 text-center">

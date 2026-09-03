@@ -905,6 +905,11 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         : `guest-${orderData.customer.email.trim().toLowerCase()}`;
 
     void submitCheckoutOrder({ order: newOrder, customerId, locale }).then((result) => {
+      setOrders((prev) =>
+        prev.map((ord) =>
+          ord.orderNumber === orderNumber ? { ...ord, serverSynced: result.ok } : ord
+        )
+      );
       if (result.ok) {
         addToast({
           type: 'success',

@@ -1,5 +1,5 @@
-const { createDb, ensureOrdersTable } = require('../../_lib/db');
-const { getUserFromToken, readToken, readBody, send, wrap } = require('../../_lib/auth');
+const { createDb, ensureOrdersTable } = require('../_lib/db');
+const { getUserFromToken, readToken, readBody, send, wrap } = require('../_lib/auth');
 
 function mapRowToPlacedOrder(row) {
   const payload = row.payload && typeof row.payload === 'object' ? row.payload : {};

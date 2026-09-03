@@ -1,6 +1,6 @@
-const { createDb, ensureOrdersTable } = require('../_lib/db');
-const { sendOrderEmails } = require('../_lib/email');
-const { readBody, send, wrap } = require('../_lib/auth');
+const { createDb, ensureOrdersTable } = require('./_lib/db');
+const { sendOrderEmails } = require('./_lib/email');
+const { readBody, send, wrap } = require('./_lib/auth');
 
 function isManualSettlementMethod(method) {
   const value = String(method || '');
@@ -49,9 +49,10 @@ module.exports = wrap(async function checkout(req, res) {
   const orderStatus = isManualSettlementMethod(paymentMethod) ? 'pending_payment' : 'confirmed';
   const emailStatus = orderStatus === 'pending_payment' ? 'payment_pending' : 'confirmed';
 
+  const payload = typeof body === 'string' ? body : JSON.stringify(body);
   const inserted = await sql`
     INSERT INTO orders (customer_id, idempotency_key, status, payload)
-    VALUES (${customerId}, ${idempotencyKey}, ${orderStatus}, ${JSON.stringify(body)}::jsonb)
+    VALUES (${customerId}, ${idempotencyKey}, ${orderStatus}, ${payload}::jsonb)
     RETURNING id
   `;
   const orderId = String(inserted[0].id);
