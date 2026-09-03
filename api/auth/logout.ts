@@ -1,11 +1,9 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { readToken, deleteSession, clearSessionCookie } from '../_lib/auth';
+import { clearedSessionCookie, deleteSession, json, readToken, withAuthHandler } from '../_lib/auth';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+export const config = { runtime: 'nodejs' };
 
-  const token = readToken(req);
-  await deleteSession(token);
-  clearSessionCookie(res);
-  return res.status(200).json({ ok: true });
-}
+export default withAuthHandler(async (request: Request) => {
+  if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+  await deleteSession(readToken(request));
+  return json({ ok: true }, 200, clearedSessionCookie());
+});

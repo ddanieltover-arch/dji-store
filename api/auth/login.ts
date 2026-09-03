@@ -1,20 +1,30 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { findUserByEmail, verifyPassword, createSession, setSessionCookie } from '../_lib/auth';
+import {
+  createSession,
+  findUserByEmail,
+  json,
+  parseJsonBody,
+  sessionCookie,
+  verifyPassword,
+  withAuthHandler
+} from '../_lib/auth';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+export const config = { runtime: 'nodejs' };
 
-  const { email, password } = req.body ?? {};
-  if (!email || !password) return res.status(400).json({ error: 'missing_fields' });
+export default withAuthHandler(async (request: Request) => {
+  if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
 
-  const user = await findUserByEmail(String(email));
-  if (!user) return res.status(401).json({ error: 'invalid_credentials' });
+  const body = await parseJsonBody(request);
+  const email = String(body.email ?? '');
+  const password = String(body.password ?? '');
+  if (!email.trim() || !password) return json({ error: 'missing_fields' }, 400);
 
-  const valid = await verifyPassword(String(password), user.passwordHash);
-  if (!valid) return res.status(401).json({ error: 'invalid_credentials' });
+  const user = await findUserByEmail(email);
+  if (!user) return json({ error: 'invalid_credentials' }, 401);
 
-  const { passwordHash: _, ...safeUser } = user;
+  const valid = await verifyPassword(password, user.passwordHash);
+  if (!valid) return json({ error: 'invalid_credentials' }, 401);
+
+  const { passwordHash: _hash, ...safeUser } = user;
   const token = await createSession(user.id);
-  setSessionCookie(res, token);
-  return res.status(200).json({ user: safeUser });
-}
+  return json({ user: safeUser }, 200, sessionCookie(token));
+});

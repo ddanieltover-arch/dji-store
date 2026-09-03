@@ -1,28 +1,33 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { findUserByEmail, createUser, createSession, setSessionCookie } from '../_lib/auth';
+import {
+  createSession,
+  createUser,
+  findUserByEmail,
+  json,
+  parseJsonBody,
+  sessionCookie,
+  withAuthHandler
+} from '../_lib/auth';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
+export const config = { runtime: 'nodejs' };
 
-  const { email, password, firstName, lastName } = req.body ?? {};
-  if (!email || !password) return res.status(400).json({ error: 'missing_fields' });
+export default withAuthHandler(async (request: Request) => {
+  if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
 
-  try {
-    const existing = await findUserByEmail(String(email));
-    if (existing) return res.status(409).json({ error: 'email_taken' });
+  const body = await parseJsonBody(request);
+  const email = String(body.email ?? '');
+  const password = String(body.password ?? '');
+  if (!email.trim() || !password) return json({ error: 'missing_fields' }, 400);
 
-    const user = await createUser({
-      email: String(email),
-      password: String(password),
-      firstName: firstName ? String(firstName) : undefined,
-      lastName: lastName ? String(lastName) : undefined,
-    });
+  const existing = await findUserByEmail(email);
+  if (existing) return json({ error: 'email_taken' }, 409);
 
-    const token = await createSession(user.id);
-    setSessionCookie(res, token);
-    return res.status(200).json({ user });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'signup_failed';
-    return res.status(400).json({ error: message });
-  }
-}
+  const user = await createUser({
+    email,
+    password,
+    firstName: body.firstName ? String(body.firstName) : undefined,
+    lastName: body.lastName ? String(body.lastName) : undefined
+  });
+
+  const token = await createSession(user.id);
+  return json({ user }, 200, sessionCookie(token));
+});

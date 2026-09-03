@@ -1,10 +1,10 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { readToken, getUserFromToken } from '../_lib/auth';
+import { getUserFromToken, json, readToken, withAuthHandler } from '../_lib/auth';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'GET') return res.status(405).json({ error: 'method_not_allowed' });
+export const config = { runtime: 'nodejs' };
 
-  const user = await getUserFromToken(readToken(req));
-  if (!user) return res.status(401).json({ user: null });
-  return res.status(200).json({ user });
-}
+export default withAuthHandler(async (request: Request) => {
+  if (request.method !== 'GET') return json({ error: 'method_not_allowed' }, 405);
+  const user = await getUserFromToken(readToken(request));
+  if (!user) return json({ user: null }, 401);
+  return json({ user });
+});

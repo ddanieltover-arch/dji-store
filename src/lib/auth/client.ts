@@ -9,6 +9,10 @@ export interface AuthUser {
 }
 
 async function parseJson<T>(res: Response): Promise<T> {
+  const contentType = res.headers.get('content-type') ?? '';
+  if (!contentType.includes('application/json')) {
+    throw new Error(`Expected JSON from ${res.url || 'auth API'}, got ${contentType || res.status}`);
+  }
   return res.json() as Promise<T>;
 }
 
@@ -24,15 +28,19 @@ export async function fetchSession(): Promise<AuthUser | null> {
 }
 
 export async function login(email: string, password: string): Promise<{ user?: AuthUser; error?: string }> {
-  const res = await fetch('/api/auth/login', {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-  });
-  const data = await parseJson<{ user?: AuthUser; error?: string }>(res);
-  if (!res.ok) return { error: data.error ?? 'login_failed' };
-  return { user: data.user };
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await parseJson<{ user?: AuthUser; error?: string }>(res);
+    if (!res.ok) return { error: data.error ?? 'login_failed' };
+    return { user: data.user };
+  } catch {
+    return { error: 'Could not reach the login service. Please try again.' };
+  }
 }
 
 export async function signup(args: {
@@ -41,15 +49,19 @@ export async function signup(args: {
   firstName?: string;
   lastName?: string;
 }): Promise<{ user?: AuthUser; error?: string }> {
-  const res = await fetch('/api/auth/signup', {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(args)
-  });
-  const data = await parseJson<{ user?: AuthUser; error?: string }>(res);
-  if (!res.ok) return { error: data.error ?? 'signup_failed' };
-  return { user: data.user };
+  try {
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(args)
+    });
+    const data = await parseJson<{ user?: AuthUser; error?: string }>(res);
+    if (!res.ok) return { error: data.error ?? 'signup_failed' };
+    return { user: data.user };
+  } catch {
+    return { error: 'Could not reach the signup service. Please try again.' };
+  }
 }
 
 export async function logout(): Promise<void> {
