@@ -1,19 +1,19 @@
-import { neon } from '@neondatabase/serverless';
+const { neon } = require('@neondatabase/serverless');
 
-function requireDatabaseUrl(): string {
+function requireDatabaseUrl() {
   const url =
-    process.env.DATABASE_URL ??
-    process.env.POSTGRES_URL ??
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
     process.env.POSTGRES_PRISMA_URL;
   if (!url) throw new Error('Missing DATABASE_URL');
   return url;
 }
 
-export function createDb() {
+function createDb() {
   return neon(requireDatabaseUrl());
 }
 
-export async function ensureAuthTables(): Promise<void> {
+async function ensureAuthTables() {
   const sql = createDb();
   await sql`
     CREATE TABLE IF NOT EXISTS users (
@@ -40,3 +40,5 @@ export async function ensureAuthTables(): Promise<void> {
   await sql`CREATE INDEX IF NOT EXISTS auth_sessions_user_idx ON auth_sessions (user_id)`;
   await sql`CREATE INDEX IF NOT EXISTS auth_sessions_expires_idx ON auth_sessions (expires_at)`;
 }
+
+module.exports = { createDb, ensureAuthTables };
