@@ -29,6 +29,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               try {
                 localStorage.removeItem('dji_catalog_v1');
                 localStorage.removeItem('dji_orders_v8');
+                localStorage.removeItem('dji_orders_v9');
               } catch {
                 /* ignore */
               }

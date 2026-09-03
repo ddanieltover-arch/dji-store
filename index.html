@@ -28,13 +28,8 @@
     <div id="root"></div>
     <script>
       try {
-        // Legacy full-catalog cache can OOM the tab (multi-MB media payloads).
         localStorage.removeItem('dji_catalog_v1');
-        // One-time recovery for incomplete remote orders that crashed admin after login.
-        if (!sessionStorage.getItem('dji_orders_sanitized_v1')) {
-          localStorage.removeItem('dji_orders_v8');
-          sessionStorage.setItem('dji_orders_sanitized_v1', '1');
-        }
+        localStorage.removeItem('dji_orders_v8');
       } catch (e) {}
     </script>
     <script type="module" src="/src/main.tsx"></script>

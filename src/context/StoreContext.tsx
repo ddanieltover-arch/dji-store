@@ -40,7 +40,6 @@ import { INITIAL_DEPOT_STOCK } from '../data/warehouses';
 import { initializeInventoryFromCatalog } from '../lib/pim/wave1Execution';
 import { INITIAL_SYNC_JOB } from '../data/syncPipeline';
 import {
-  INITIAL_ORDERS,
   INITIAL_WARRANTIES,
   INITIAL_CARE_PLANS,
   INITIAL_RMAS,
@@ -63,6 +62,13 @@ import {
 import { resolveContentSlug } from '../data/storeContentPages';
 import { submitCheckoutOrder } from '../lib/checkout/submitCheckout';
 import { fetchRemoteOrders, mergeOrderLists, normalizePlacedOrder, deleteRemoteOrder } from '../lib/checkout/fetchRemoteOrders';
+
+/** Demo/seed order refs from INITIAL_ORDERS — never show these in live admin. */
+const PLACEHOLDER_ORDER_NUMBERS = new Set(['DJI-EU-100239', 'DJI-EU-100188', 'DJI-EU-100305']);
+
+function withoutPlaceholders(list: PlacedOrder[]): PlacedOrder[] {
+  return list.filter((order) => !PLACEHOLDER_ORDER_NUMBERS.has(order.orderNumber));
+}
 import { notifyOrderStatusChange } from '../lib/checkout/notifyOrderStatus';
 
 interface StoreContextType {
@@ -371,23 +377,25 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Compare State
   const [compareList, setCompareList] = useState<string[]>([]);
 
-  // Orders State (initial seeded orders with OMS telemetry)
+  // Orders: live Neon store is source of truth. Never seed demo INITIAL_ORDERS.
   const [orders, setOrders] = useState<PlacedOrder[]>(() => {
     try {
-      const saved = localStorage.getItem('dji_orders_v8');
+      localStorage.removeItem('dji_orders_v8'); // drop legacy cache that included placeholders
+      const saved = localStorage.getItem('dji_orders_v9');
       if (saved) {
         const parsed = JSON.parse(saved) as unknown[];
         if (Array.isArray(parsed)) {
-          const normalized = parsed
-            .map((order) => normalizePlacedOrder(order))
-            .filter((order): order is PlacedOrder => Boolean(order));
-          if (normalized.length) return normalized;
+          return withoutPlaceholders(
+            parsed
+              .map((order) => normalizePlacedOrder(order))
+              .filter((order): order is PlacedOrder => Boolean(order))
+          );
         }
       }
     } catch {
       /* fall through */
     }
-    return INITIAL_ORDERS;
+    return [];
   });
 
   const [products, setProducts] = useState<Product[]>(() => {
@@ -462,7 +470,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   };
 
-  const [activeOrderNumber, setActiveOrderNumber] = useState<string | null>('DJI-EU-100239');
+  const [activeOrderNumber, setActiveOrderNumber] = useState<string | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Phase 8: Warranty, Care, RMA, B2B, Notifications
@@ -633,7 +641,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [wishlist]);
 
   useEffect(() => {
-    localStorage.setItem('dji_orders_v8', JSON.stringify(orders));
+    localStorage.setItem('dji_orders_v9', JSON.stringify(withoutPlaceholders(orders)));
   }, [orders]);
 
   useEffect(() => {
@@ -860,6 +868,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       trackingToken,
       createdAt: nowIso,
       status: 'pending_payment',
+      serverSynced: false,
       allocation: {
         warehouseId: allocationResult.depot.id,
         warehouseCode: allocationResult.depot.code,
@@ -963,7 +972,9 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     void submitCheckoutOrder({ order: newOrder, customerId, locale }).then((result) => {
       setOrders((prev) =>
         prev.map((ord) =>
-          ord.orderNumber === orderNumber ? { ...ord, serverSynced: result.ok } : ord
+          ord.orderNumber === orderNumber
+            ? { ...ord, serverSynced: result.ok, dbId: result.orderId ?? ord.dbId }
+            : ord
         )
       );
       if (result.ok) {
@@ -988,9 +999,16 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const refreshRemoteOrders = async () => {
-    const remote = await fetchRemoteOrders();
-    if (!remote.length) return;
-    setOrders((prev) => mergeOrderLists(remote, prev));
+    const remote = withoutPlaceholders(await fetchRemoteOrders());
+    setOrders((prev) => {
+      // Keep only unsynced local checkouts that are not already on the server.
+      const localPending = withoutPlaceholders(prev).filter(
+        (order) =>
+          order.serverSynced === false &&
+          !remote.some((remoteOrder) => remoteOrder.orderNumber === order.orderNumber)
+      );
+      return mergeOrderLists(remote, localPending);
+    });
   };
 
   const dispatchOrderStatusEmails = (order: PlacedOrder, previous: PlacedOrder) => {
