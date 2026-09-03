@@ -161,28 +161,30 @@ export const AdminDashboard: React.FC = () => {
     if (orderFilter !== 'all' && o.paymentStatus !== orderFilter) return false;
     if (searchOrder) {
       const q = searchOrder.toLowerCase();
+      const lastName = o.customer?.lastName?.toLowerCase() ?? '';
+      const email = o.customer?.email?.toLowerCase() ?? '';
       return (
         o.orderNumber.toLowerCase().includes(q) ||
-        o.customer.lastName.toLowerCase().includes(q) ||
-        o.customer.email.toLowerCase().includes(q)
+        lastName.includes(q) ||
+        email.includes(q)
       );
     }
     return true;
   });
 
-  const filteredCatalog = products.filter((product) => {
+  const filteredCatalog = (products ?? []).filter((product) => {
     if (catalogCategory !== 'all' && product.category !== catalogCategory) return false;
     if (!catalogSearch.trim()) return true;
     const q = catalogSearch.toLowerCase();
     return (
-      product.modelName.toLowerCase().includes(q) ||
-      product.sku.toLowerCase().includes(q) ||
-      product.slug.toLowerCase().includes(q) ||
-      product.id.toLowerCase().includes(q)
+      (product.modelName ?? '').toLowerCase().includes(q) ||
+      (product.sku ?? '').toLowerCase().includes(q) ||
+      (product.slug ?? '').toLowerCase().includes(q) ||
+      (product.id ?? '').toLowerCase().includes(q)
     );
   });
 
-  const catalogCategories = Array.from(new Set(products.map((p) => p.category))).sort();
+  const catalogCategories = Array.from(new Set((products ?? []).map((p) => p.category))).sort();
 
   const filteredReviews = reviews.filter((r) => {
     if (reviewFilter !== 'all' && r.status !== reviewFilter) return false;

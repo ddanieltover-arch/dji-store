@@ -18,7 +18,13 @@ async function parseJson<T>(res: Response): Promise<T> {
 
 export async function fetchSession(): Promise<AuthUser | null> {
   try {
-    const res = await fetch('/api/auth/session', { credentials: 'include' });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch('/api/auth/session', {
+      credentials: 'include',
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
     if (!res.ok) return null;
     const data = await parseJson<{ user: AuthUser | null }>(res);
     return data.user;

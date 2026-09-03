@@ -46,12 +46,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     let active = true;
-    fetchSession().then((sessionUser) => {
-      if (active) {
-        setUser(sessionUser);
-        setIsLoading(false);
-      }
-    });
+    fetchSession()
+      .then((sessionUser) => {
+        if (active) setUser(sessionUser);
+      })
+      .catch(() => {
+        if (active) setUser(null);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
     return () => {
       active = false;
     };

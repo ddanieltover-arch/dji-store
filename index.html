@@ -26,6 +26,12 @@
   </head>
   <body class="bg-[#F8F9FB] text-[#1D1D1F] antialiased selection:bg-[#E30613] selection:text-white">
     <div id="root"></div>
+    <script>
+      try {
+        // Legacy full-catalog cache can OOM the tab (multi-MB media payloads).
+        localStorage.removeItem('dji_catalog_v1');
+      } catch (e) {}
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -383,13 +383,19 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const [products, setProducts] = useState<Product[]>(() => {
     try {
-      const saved = localStorage.getItem('dji_catalog_v1');
-      if (saved) {
-        const parsed = JSON.parse(saved) as Product[];
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          syncRuntimeCatalog(parsed);
-          return parsed;
-        }
+      // Full catalog is too large for localStorage (media payloads). Clear any legacy blob.
+      localStorage.removeItem('dji_catalog_v1');
+      const patchRaw = localStorage.getItem('dji_catalog_patches_v1');
+      if (patchRaw) {
+        const patch = JSON.parse(patchRaw) as {
+          deletedIds?: string[];
+          updates?: Record<string, Partial<Product>>;
+        };
+        const deleted = new Set(patch.deletedIds ?? []);
+        const updates = patch.updates ?? {};
+        return DJI_PRODUCTS.filter((p) => !deleted.has(p.id)).map((p) =>
+          updates[p.id] ? { ...p, ...updates[p.id], id: p.id } : p
+        );
       }
     } catch {
       /* fall through to seed */
@@ -400,7 +406,47 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   useEffect(() => {
     syncRuntimeCatalog(products);
     try {
-      localStorage.setItem('dji_catalog_v1', JSON.stringify(products));
+      const seedIds = new Set(DJI_PRODUCTS.map((p) => p.id));
+      const deletedIds = DJI_PRODUCTS.filter((p) => !products.some((x) => x.id === p.id)).map((p) => p.id);
+      const updates: Record<string, Partial<Product>> = {};
+      for (const product of products) {
+        if (!seedIds.has(product.id)) continue;
+        const seed = DJI_PRODUCTS.find((p) => p.id === product.id);
+        if (!seed) continue;
+        const changed =
+          seed.modelName !== product.modelName ||
+          seed.sku !== product.sku ||
+          seed.slug !== product.slug ||
+          seed.basePriceEur !== product.basePriceEur ||
+          seed.tagline !== product.tagline ||
+          seed.description !== product.description ||
+          seed.category !== product.category ||
+          JSON.stringify(seed.variants) !== JSON.stringify(product.variants);
+        if (changed) {
+          updates[product.id] = {
+            modelName: product.modelName,
+            sku: product.sku,
+            slug: product.slug,
+            series: product.series,
+            category: product.category,
+            categoryLabel: product.categoryLabel,
+            tagline: product.tagline,
+            description: product.description,
+            basePriceEur: product.basePriceEur,
+            compareAtPriceEur: product.compareAtPriceEur,
+            badgeLabel: product.badgeLabel,
+            weightGrams: product.weightGrams,
+            rating: product.rating,
+            reviewCount: product.reviewCount,
+            isFeatured: product.isFeatured,
+            isBestSeller: product.isBestSeller,
+            isNew: product.isNew,
+            images: product.images,
+            variants: product.variants
+          };
+        }
+      }
+      localStorage.setItem('dji_catalog_patches_v1', JSON.stringify({ deletedIds, updates }));
     } catch (e) {
       console.error(e);
     }
