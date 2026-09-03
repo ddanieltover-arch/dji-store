@@ -67,21 +67,25 @@ async function main() {
       continue;
     }
 
-    const asset = await fetchAsset(assetId);
-    if (!asset) {
-      console.warn(`skip missing asset ${assetId}`);
-      continue;
-    }
+    try {
+      const asset = await fetchAsset(assetId);
+      if (!asset) {
+        console.warn(`skip missing asset ${assetId}`);
+        continue;
+      }
 
-    const format = formatFromContentType(asset.contentType);
-    const filePath = path.join(OUTPUT_DIR, `${assetId}.${format}`);
-    writeFileSync(filePath, asset.data);
-    manifest[assetId] = format;
-    exported += 1;
+      const format = formatFromContentType(asset.contentType);
+      const filePath = path.join(OUTPUT_DIR, `${assetId}.${format}`);
+      writeFileSync(filePath, asset.data);
+      manifest[assetId] = format;
+      exported += 1;
 
-    if (exported % 25 === 0) {
-      writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
-      console.log(`… ${exported} exported`);
+      if (exported % 25 === 0) {
+        writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
+        console.log(`… ${exported} exported`);
+      }
+    } catch (err) {
+      console.warn(`skip ${assetId}:`, err instanceof Error ? err.message : err);
     }
   }
 

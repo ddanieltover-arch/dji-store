@@ -9,7 +9,7 @@ import {
 
 const PRODUCT_MEDIA_ROLES = new Set(['hero', 'gallery', 'cutout', 'video', 'spin360']);
 
-/** Upload images/files into Postgres db_assets (BYTEA). */
+/** Upload images/files into configured storage (Supabase Storage or Neon BYTEA). */
 export async function POST(req: NextRequest) {
   let formData: FormData;
   try {
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         role,
         contentHash: asset.contentHash,
         contentType: asset.contentType,
-        sourceUrl
+        sourceUrl: sourceUrl || asset.url
       });
       productMediaId = linked.id;
     }

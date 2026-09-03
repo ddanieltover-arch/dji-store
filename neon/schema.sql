@@ -45,10 +45,13 @@ CREATE TABLE IF NOT EXISTS db_assets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   content_type TEXT NOT NULL,
   file_name TEXT,
-  data BYTEA NOT NULL,
+  data BYTEA,
   content_hash TEXT NOT NULL UNIQUE,
   byte_size INT NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  storage_url TEXT,
+  storage_path TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT db_assets_has_payload CHECK (data IS NOT NULL OR storage_url IS NOT NULL)
 );
 
 CREATE INDEX IF NOT EXISTS db_assets_hash_idx ON db_assets (content_hash);
@@ -91,7 +94,7 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Support attachments stored in db_assets (not external storage_path)
+-- Support attachments: metadata in Neon; binary in Supabase Storage or legacy db_assets BYTEA
 CREATE TABLE IF NOT EXISTS support_attachments (
   id TEXT PRIMARY KEY,
   owner_type TEXT NOT NULL,

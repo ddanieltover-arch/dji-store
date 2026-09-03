@@ -13,15 +13,16 @@ const databaseMediaCache = productDatabaseMediaCacheJson as DatabaseMediaCache;
 /** URL is served from our own database asset API. */
 export { isDatabaseAssetUrl, isExternalCdnUrl } from './databaseMediaCache';
 
-/** Remote reference CDN — must not be used in the storefront. */
+/** True when URL is a real storefront asset (DB API or static /media/). */
 export function isStorefrontImageUrl(url?: string): boolean {
   if (!url) return false;
   if (isDatabaseAssetUrl(url)) return true;
+  if (url.startsWith('/media/')) return true;
   if (isExternalCdnUrl(url)) return false;
   if (url.startsWith('/api/assets/')) return true;
   if (url.startsWith('https://')) return false;
   if (url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1')) {
-    return isDatabaseAssetUrl(url);
+    return isDatabaseAssetUrl(url) || url.includes('/media/');
   }
   return false;
 }
@@ -29,6 +30,7 @@ export function isStorefrontImageUrl(url?: string): boolean {
 /** Missing bundled PNG paths under /products/ — fallback until ingest completes. */
 export function isLocalPlaceholderUrl(url?: string): boolean {
   if (!url) return false;
+  if (url.startsWith('/media/')) return false;
   return url.startsWith('/products/') || url.startsWith('/images/');
 }
 
@@ -52,9 +54,9 @@ export function productListingImage(
   return `/products/${product.id}-cutout.png`;
 }
 
-/** True when the listing resolves to a database asset (not a local placeholder). */
+/** True when the listing resolves to a real asset (DB or static media), not a placeholder. */
 export function hasStorefrontListingImage(product: Pick<Product, 'images' | 'slug' | 'id'>): boolean {
-  return isDatabaseAssetUrl(productListingImage(product));
+  return isStorefrontImageUrl(productListingImage(product));
 }
 
 export function getDatabaseMediaCache(): DatabaseMediaCache {

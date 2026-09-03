@@ -81,8 +81,10 @@
   },
   "dji-65w-car-charger": {
     "slug": "dji-65w-car-charger",
-    "status": 403,
-    "fetchedAt": "2026-09-02T09:44:21.287Z"
+    "status": 200,
+    "coverOriginal": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/dcb346f25755659b6bf53b45e843c837@origin.png",
+    "coverLarge": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/dcb346f25755659b6bf53b45e843c837@large.png",
+    "fetchedAt": "2026-09-03T08:47:59.441Z"
   },
   "dji-65w-portable-charger": {
     "slug": "dji-65w-portable-charger",
@@ -2768,8 +2770,10 @@
   },
   "dji-mavic-3-battery-charging-hub": {
     "slug": "dji-mavic-3-battery-charging-hub",
-    "status": 403,
-    "fetchedAt": "2026-09-02T09:44:29.190Z"
+    "status": 200,
+    "coverOriginal": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/407649266c3cfa5fd5783554eac3a690@origin.png",
+    "coverLarge": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/407649266c3cfa5fd5783554eac3a690@large.png",
+    "fetchedAt": "2026-09-03T08:48:02.288Z"
   },
   "dji-mavic-3": {
     "slug": "dji-mavic-3",
@@ -3496,8 +3500,10 @@
   },
   "dji-mic-3-mobile-phone-adapter-lightning": {
     "slug": "dji-mic-3-mobile-phone-adapter-lightning",
-    "status": 403,
-    "fetchedAt": "2026-09-02T09:44:30.986Z"
+    "status": 200,
+    "coverOriginal": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/c900c6d37d5e6ee64405d99b768355d9@origin.png",
+    "coverLarge": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/c900c6d37d5e6ee64405d99b768355d9@large.png",
+    "fetchedAt": "2026-09-03T08:48:03.983Z"
   },
   "dji-mic-3-camera-adapter": {
     "slug": "dji-mic-3-camera-adapter",
@@ -4239,7 +4245,7 @@
     "coverOriginal": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/3d7bcbdd3261dd51bb32b9b0a1dec102@origin.png?format=webp",
     "coverLarge": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/3d7bcbdd3261dd51bb32b9b0a1dec102@large.png?format=webp",
     "coverSmall": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/3d7bcbdd3261dd51bb32b9b0a1dec102@small.png?format=webp",
-    "fetchedAt": "2026-09-02T09:44:32.546Z"
+    "fetchedAt": "2026-09-03T08:56:12.969Z"
   },
   "dji-mini-bag": {
     "slug": "dji-mini-bag",
@@ -7730,8 +7736,10 @@
   },
   "osmo-action-combo-battery": {
     "slug": "osmo-action-combo-battery",
-    "status": 403,
-    "fetchedAt": "2026-09-02T09:44:42.935Z"
+    "status": 200,
+    "coverOriginal": "https://se-cdn.djiits.com/tpc/uploads/spu_bundle/cover/76083cabaff1971e8cf3983bcad6f8e7@origin.png",
+    "coverLarge": "https://se-cdn.djiits.com/tpc/uploads/spu_bundle/cover/76083cabaff1971e8cf3983bcad6f8e7@large.png",
+    "fetchedAt": "2026-09-03T08:48:04.923Z"
   },
   "osmo-action-bite-mount": {
     "slug": "osmo-action-bite-mount",
@@ -8106,8 +8114,10 @@
   },
   "osmo-flexible-mount": {
     "slug": "osmo-flexible-mount",
-    "status": 403,
-    "fetchedAt": "2026-09-02T09:44:46.217Z"
+    "status": 200,
+    "coverOriginal": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/8378a3c90a0a7e1168db988120e9f277@origin.png",
+    "coverLarge": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/8378a3c90a0a7e1168db988120e9f277@large.png",
+    "fetchedAt": "2026-09-03T08:48:05.853Z"
   },
   "osmo-grip-tripod": {
     "slug": "osmo-grip-tripod",
@@ -8819,8 +8829,10 @@
   },
   "pgytech-mavic-2-dji-goggles-protector-case": {
     "slug": "pgytech-mavic-2-dji-goggles-protector-case",
-    "status": 403,
-    "fetchedAt": "2026-09-02T09:44:48.217Z"
+    "status": 200,
+    "coverOriginal": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/7ae0f61d-9a43-479f-975c-1926c4e7e8fc@origin.png",
+    "coverLarge": "https://se-cdn.djiits.com/tpc/uploads/spu/cover/7ae0f61d-9a43-479f-975c-1926c4e7e8fc@large.png",
+    "fetchedAt": "2026-09-03T08:48:06.928Z"
   },
   "pgytech-mavic-2-propeller-holders": {
     "slug": "pgytech-mavic-2-propeller-holders",

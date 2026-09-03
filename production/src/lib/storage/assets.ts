@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   formatFromContentType,
   hashBuffer,
@@ -8,6 +9,12 @@ import {
   UploadValidationError
 } from '@shared/lib/storage/assetHelpers';
 import { createDb } from '../db/client';
+import {
+  createSupabaseAdmin,
+  extensionForContentType,
+  getStorageBackend,
+  getSupabaseStorageBucket
+} from './supabase';
 
 export type StoredAsset = {
   id: string;
@@ -15,6 +22,8 @@ export type StoredAsset = {
   fileName: string | null;
   contentHash: string;
   byteSize: number;
+  storageUrl?: string | null;
+  storagePath?: string | null;
 };
 
 export type StoredAssetWithUrl = StoredAsset & { url: string };
@@ -33,47 +42,126 @@ export {
   UploadValidationError
 } from '@shared/lib/storage/assetHelpers';
 
-function assertDatabaseStorage(): void {
-  const backend = (process.env.STORAGE_BACKEND ?? 'database').toLowerCase();
-  if (backend !== 'database') {
-    throw new Error(`Unsupported STORAGE_BACKEND="${backend}" — only "database" is configured`);
-  }
-}
-
 function toStoredAsset(row: Record<string, unknown>): StoredAsset {
   return {
     id: String(row.id),
     contentType: String(row.content_type),
     fileName: row.file_name ? String(row.file_name) : null,
     contentHash: String(row.content_hash),
-    byteSize: Number(row.byte_size)
+    byteSize: Number(row.byte_size),
+    storageUrl: row.storage_url ? String(row.storage_url) : null,
+    storagePath: row.storage_path ? String(row.storage_path) : null
   };
 }
 
 function withPublicUrl(asset: StoredAsset): StoredAssetWithUrl {
-  return { ...asset, url: assetPublicUrl(asset.id) };
+  return { ...asset, url: assetPublicUrl(asset) };
 }
 
-/** Persist binary data in Postgres db_assets (BYTEA). */
+async function findAssetByHash(contentHash: string): Promise<StoredAsset | null> {
+  const sql = createDb();
+  const rows = await sql`
+    SELECT id, content_type, file_name, content_hash, byte_size, storage_url, storage_path
+    FROM db_assets
+    WHERE content_hash = ${contentHash}
+    LIMIT 1
+  `;
+  if (!rows.length) return null;
+  return toStoredAsset(rows[0] as Record<string, unknown>);
+}
+
+/** Persist binary in Postgres BYTEA (legacy / fallback). */
+async function storeAssetInDatabase(args: {
+  data: Buffer;
+  contentType: string;
+  fileName?: string;
+  contentHash: string;
+}): Promise<StoredAsset> {
+  const sql = createDb();
+  const rows = await sql`
+    INSERT INTO db_assets (content_type, file_name, data, content_hash, byte_size)
+    VALUES (${args.contentType}, ${args.fileName ?? null}, ${args.data}, ${args.contentHash}, ${args.data.byteLength})
+    ON CONFLICT (content_hash) DO UPDATE SET content_type = EXCLUDED.content_type
+    RETURNING id, content_type, file_name, content_hash, byte_size, storage_url, storage_path
+  `;
+  return toStoredAsset(rows[0] as Record<string, unknown>);
+}
+
+/** Upload binary to Supabase Storage; Neon only stores metadata (no BYTEA). */
+async function storeAssetInSupabase(args: {
+  data: Buffer;
+  contentType: string;
+  fileName?: string;
+  contentHash: string;
+}): Promise<StoredAsset> {
+  const existing = await findAssetByHash(args.contentHash);
+  if (existing?.storageUrl) {
+    return existing;
+  }
+
+  const supabase = createSupabaseAdmin();
+  const bucket = getSupabaseStorageBucket();
+  const ext = extensionForContentType(args.contentType, args.fileName);
+  const objectId = randomUUID();
+  const storagePath = `uploads/${objectId}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage.from(bucket).upload(storagePath, args.data, {
+    contentType: args.contentType,
+    upsert: false,
+    cacheControl: '31536000'
+  });
+
+  if (uploadError) {
+    throw new Error(`supabase_upload_failed: ${uploadError.message}`);
+  }
+
+  const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(storagePath);
+  const storageUrl = publicData.publicUrl;
+
+  const sql = createDb();
+  const rows = await sql`
+    INSERT INTO db_assets (content_type, file_name, data, content_hash, byte_size, storage_url, storage_path)
+    VALUES (
+      ${args.contentType},
+      ${args.fileName ?? null},
+      NULL,
+      ${args.contentHash},
+      ${args.data.byteLength},
+      ${storageUrl},
+      ${storagePath}
+    )
+    ON CONFLICT (content_hash) DO UPDATE SET
+      content_type = EXCLUDED.content_type,
+      storage_url = COALESCE(EXCLUDED.storage_url, db_assets.storage_url),
+      storage_path = COALESCE(EXCLUDED.storage_path, db_assets.storage_path)
+    RETURNING id, content_type, file_name, content_hash, byte_size, storage_url, storage_path
+  `;
+
+  return toStoredAsset(rows[0] as Record<string, unknown>);
+}
+
+/** Persist binary according to STORAGE_BACKEND (database | supabase). */
 export async function storeAsset(args: {
   data: Buffer | Uint8Array;
   contentType: string;
   fileName?: string;
   contentHash: string;
 }): Promise<StoredAsset> {
-  assertDatabaseStorage();
-  const sql = createDb();
   const bytes = Buffer.from(args.data);
-  const rows = await sql`
-    INSERT INTO db_assets (content_type, file_name, data, content_hash, byte_size)
-    VALUES (${args.contentType}, ${args.fileName ?? null}, ${bytes}, ${args.contentHash}, ${bytes.byteLength})
-    ON CONFLICT (content_hash) DO UPDATE SET content_type = EXCLUDED.content_type
-    RETURNING id, content_type, file_name, content_hash, byte_size
-  `;
-  return toStoredAsset(rows[0] as Record<string, unknown>);
+  const payload = {
+    data: bytes,
+    contentType: args.contentType,
+    fileName: args.fileName,
+    contentHash: args.contentHash
+  };
+
+  if (getStorageBackend() === 'supabase') {
+    return storeAssetInSupabase(payload);
+  }
+  return storeAssetInDatabase(payload);
 }
 
-/** Validate and store an uploaded file buffer in db_assets. */
+/** Validate and store an uploaded file buffer. */
 export async function ingestUploadedFile(args: {
   data: Buffer | Uint8Array;
   contentType?: string;
@@ -104,7 +192,7 @@ export async function ingestUploadedFile(args: {
   return withPublicUrl(stored);
 }
 
-/** Download a remote image/file and persist it in db_assets (deduped by hash). */
+/** Download a remote image/file and persist it (deduped by hash). */
 export async function ingestAssetFromUrl(sourceUrl: string, fileName?: string): Promise<StoredAssetWithUrl> {
   const absoluteUrl = sourceUrl.startsWith('/')
     ? `${(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3015').replace(/\/$/, '')}${sourceUrl}`
@@ -130,7 +218,7 @@ export async function ingestAssetFromUrl(sourceUrl: string, fileName?: string): 
   });
 }
 
-/** Link a stored asset to a product_media row. */
+/** Link a stored asset to a product_media row (Neon metadata). */
 export async function linkProductMedia(args: {
   productId: string;
   assetId: string;
@@ -139,9 +227,9 @@ export async function linkProductMedia(args: {
   contentType: string;
   sourceUrl?: string;
 }): Promise<{ id: string }> {
-  assertDatabaseStorage();
   const sql = createDb();
   const format = formatFromContentType(args.contentType);
+  const publicUrl = args.sourceUrl ?? assetServePath(args.assetId);
   const rows = await sql`
     INSERT INTO product_media (product_id, role, asset_id, source_url, cdn_url, content_hash, format)
     VALUES (
@@ -149,7 +237,7 @@ export async function linkProductMedia(args: {
       ${args.role},
       ${args.assetId}::uuid,
       ${args.sourceUrl ?? null},
-      ${args.sourceUrl ?? null},
+      ${publicUrl},
       ${args.contentHash},
       ${format}
     )
@@ -158,7 +246,7 @@ export async function linkProductMedia(args: {
   return { id: String(rows[0].id) };
 }
 
-/** Link a stored asset to a support_attachments row (RMA, warranty, checkout receipts). */
+/** Link a stored asset to a support_attachments row (receipts, RMA, warranty). */
 export async function linkSupportAttachment(args: {
   ownerType: string;
   ownerId: string;
@@ -166,7 +254,6 @@ export async function linkSupportAttachment(args: {
   fileName: string;
   mimeType: string;
 }): Promise<{ id: string }> {
-  assertDatabaseStorage();
   const sql = createDb();
   const id = `att-${Date.now()}`;
   await sql`
@@ -183,33 +270,51 @@ export async function linkSupportAttachment(args: {
   return { id };
 }
 
-/** Read binary asset from Postgres. */
-export async function fetchAsset(id: string): Promise<{ data: Buffer; contentType: string; fileName: string | null } | null> {
-  assertDatabaseStorage();
+/** Read asset bytes from Neon BYTEA, or null if stored externally. */
+export async function fetchAsset(
+  id: string
+): Promise<{ data: Buffer; contentType: string; fileName: string | null; storageUrl?: string | null } | null> {
   const sql = createDb();
   const rows = await sql`
-    SELECT data, content_type, file_name
+    SELECT data, content_type, file_name, storage_url
     FROM db_assets
     WHERE id = ${id}::uuid
     LIMIT 1
   `;
   if (!rows.length) return null;
   const row = rows[0];
+  const storageUrl = row.storage_url ? String(row.storage_url) : null;
+
+  if (row.data == null) {
+    return {
+      data: Buffer.alloc(0),
+      contentType: String(row.content_type),
+      fileName: row.file_name ? String(row.file_name) : null,
+      storageUrl
+    };
+  }
+
   return {
     data: Buffer.from(row.data as Uint8Array),
     contentType: String(row.content_type),
-    fileName: row.file_name ? String(row.file_name) : null
+    fileName: row.file_name ? String(row.file_name) : null,
+    storageUrl
   };
 }
 
-/** Public URL for a database-stored asset (served via API route). */
-export function assetPublicUrl(assetId: string): string {
+/** Public URL for a stored asset (Supabase public URL or local API path). */
+export function assetPublicUrl(assetOrId: StoredAsset | string): string {
+  if (typeof assetOrId !== 'string') {
+    if (assetOrId.storageUrl) return assetOrId.storageUrl;
+    return assetPublicUrl(assetOrId.id);
+  }
+
   const site = process.env.NEXT_PUBLIC_SITE_URL ?? '';
   const base = site.replace(/\/$/, '');
-  return base ? `${base}${assetServePath(assetId)}` : assetServePath(assetId);
+  return base ? `${base}${assetServePath(assetOrId)}` : assetServePath(assetOrId);
 }
 
-/** Relative path served by /api/assets/[id] — safe for catalog cache and Vite proxy. */
+/** Relative path served by /api/assets/[id] — fallback when no external URL. */
 export function assetServePath(assetId: string): string {
   return `/api/assets/${assetId}`;
 }

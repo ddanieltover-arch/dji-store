@@ -6,6 +6,8 @@
  *   npm run media:ingest -- --slug=osmo-action-5-pro
  *   npm run media:ingest -- --limit=50
  *   npm run media:ingest -- --force
+ *   npm run media:ingest -- --listing-only --placeholders-only
+ *   npm run media:ingest -- --category=camera-drones --listing-only
  */
 import { readFileSync, writeFileSync, existsSync, unlinkSync, renameSync } from 'node:fs';
 import path from 'node:path';
@@ -35,9 +37,12 @@ const PUBLIC_PRODUCTS = path.join(repoRoot, 'public', 'products');
 const mediaCache = officialStoreMediaCache as OfficialStoreMediaCache;
 
 const slugArg = process.argv.find((a) => a.startsWith('--slug='))?.split('=')[1];
+const categoryArg = process.argv.find((a) => a.startsWith('--category='))?.split('=')[1];
 const limitArg = Number(process.argv.find((a) => a.startsWith('--limit='))?.split('=')[1] ?? 0);
 const force = process.argv.includes('--force');
 const priority = process.argv.includes('--priority');
+const listingOnly = process.argv.includes('--listing-only');
+const placeholdersOnly = process.argv.includes('--placeholders-only');
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -47,7 +52,31 @@ function normalizeSourceUrl(url: string): string {
   return url.split('?')[0];
 }
 
+function collectListingSourceUrl(slug: string, productId: string): string | null {
+  const media = mediaCache[slug];
+  if (media?.coverOriginal) return normalizeSourceUrl(media.coverOriginal);
+  if (media?.coverLarge) return normalizeSourceUrl(media.coverLarge);
+  const carouselFrame = media?.carouselGallery?.find((frame) => frame.startsWith('http'));
+  if (carouselFrame) return normalizeSourceUrl(carouselFrame);
+
+  const catalogProduct = RAW_DJI_PRODUCTS.find((product) => product.slug === slug);
+  const id = catalogProduct?.id ?? productId;
+  for (const suffix of ['-cutout.png', '-gallery-2.png', '-gallery-3.png']) {
+    const localPath = path.join(PUBLIC_PRODUCTS, `${id}${suffix}`);
+    if (existsSync(localPath)) {
+      return `/products/${id}${suffix}`;
+    }
+  }
+
+  return null;
+}
+
 function collectSourceUrls(slug: string, productId: string): string[] {
+  if (listingOnly) {
+    const single = collectListingSourceUrl(slug, productId);
+    return single ? [single] : [];
+  }
+
   const media = mediaCache[slug];
   const urls = new Set<string>();
 
@@ -212,9 +241,11 @@ async function main() {
 
   if (priority) {
     const prioritySet = new Set<string>(OFFICIAL_STORE_HOMEPAGE_PRODUCT_SLUGS);
-    for (const slug of OFFICIAL_STORE_HOMEPAGE_PRODUCT_SLUGS) {
-      for (const child of comboSlugsForProduct(slug, Object.keys(mediaCache))) {
-        prioritySet.add(child);
+    if (!listingOnly) {
+      for (const slug of OFFICIAL_STORE_HOMEPAGE_PRODUCT_SLUGS) {
+        for (const child of comboSlugsForProduct(slug, Object.keys(mediaCache))) {
+          prioritySet.add(child);
+        }
       }
     }
     products = RAW_DJI_PRODUCTS.filter((p) => prioritySet.has(p.slug));
@@ -232,14 +263,28 @@ async function main() {
     products = products.slice(0, limitArg);
   }
 
-  console.log(`Ingesting media for ${products.length} products → ${CACHE_PATH}`);
+  if (categoryArg) {
+    products = products.filter((p) => p.category === categoryArg);
+  }
+
+  if (placeholdersOnly) {
+    const cached = readCache();
+    products = products.filter((p) => !cached[p.slug]?.hero && !cached[p.slug]?.cutout);
+  }
+
+  const mode = listingOnly ? 'listing (1 image)' : 'full gallery';
+  console.log(`Ingesting ${mode} for ${products.length} products → ${CACHE_PATH}`);
   let ingested = 0;
 
   for (const product of products) {
-    const slugsToIngest = [
-      product.slug,
-      ...comboSlugsForProduct(product.slug, Object.keys(mediaCache)).filter((slug) => slug !== product.slug)
-    ];
+    const slugsToIngest = listingOnly
+      ? [product.slug]
+      : [
+          product.slug,
+          ...comboSlugsForProduct(product.slug, Object.keys(mediaCache)).filter(
+            (slug) => slug !== product.slug
+          )
+        ];
 
     const cached = readCache();
     const batch: DatabaseMediaCache = {};

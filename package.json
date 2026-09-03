@@ -17,7 +17,14 @@
     "pricing:sync": "tsx scripts/sync-usd-price-cache.ts",
     "media:ingest": "tsx --tsconfig production/tsconfig.json production/scripts/ingest-product-media.ts",
     "media:ingest:priority": "tsx --tsconfig production/tsconfig.json production/scripts/ingest-product-media.ts --priority",
-    "media:export": "tsx --tsconfig production/tsconfig.json production/scripts/export-media-to-public.ts"
+    "media:ingest:listing": "tsx --tsconfig production/tsconfig.json production/scripts/ingest-product-media.ts --listing-only --placeholders-only",
+    "media:ingest:priority:listing": "tsx --tsconfig production/tsconfig.json production/scripts/ingest-product-media.ts --priority --listing-only --placeholders-only",
+    "media:ingest:static": "tsx --tsconfig production/tsconfig.json production/scripts/ingest-listing-static.ts",
+    "media:audit": "tsx scripts/audit-placeholder-images.ts",
+    "media:export": "tsx --tsconfig production/tsconfig.json production/scripts/export-media-to-public.ts",
+    "media:prune": "tsx --tsconfig production/tsconfig.json production/scripts/prune-gallery-assets.ts --listing-only",
+    "media:free-neon": "tsx --tsconfig production/tsconfig.json production/scripts/free-neon-media-bytes.ts",
+    "db:migrate-storage": "tsx --tsconfig production/tsconfig.json production/scripts/run-storage-migration.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
