@@ -44,12 +44,17 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     title: 'Payment Methods',
     eyebrow: 'Help & Support',
     summary:
-      'DJI Store EU supports official European bank settlement and Web3 cryptocurrency with an automatic 5% discount on crypto checkout.',
+      'DJI Store EU supports official European bank settlement, Revolut banking, and Web3 cryptocurrency with an automatic 5% discount on crypto checkout.',
     sections: [
       {
         heading: 'SEPA Bank Wire',
         body: 'Pay via official European SEPA bank settlement. Banking instructions are provided by our admin team after you place your order — include your order reference when requesting details.',
         bullets: ['EUR settlement only', 'Corporate invoice available', '1-hour dispatch after payment verification']
+      },
+      {
+        heading: 'Revolut Banking',
+        body: 'Pay from your Revolut account to our official Revolut business account. Transfer details are provided by our admin team after you place your order — include your order reference when requesting details.',
+        bullets: ['EUR settlement', 'Instant Revolut-to-Revolut transfers', '1-hour dispatch after payment verification']
       },
       {
         heading: 'Web3 Cryptocurrency (5% off)',
@@ -72,7 +77,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     sections: [
       {
         heading: 'Order confirmation',
-        body: 'After checkout you receive an EU order reference (e.g. DJI-EU-XXXXX) and confirmation email. Orders remain in payment verification until SEPA or crypto settlement is matched.',
+        body: 'After checkout you receive an EU order reference (e.g. DJI-EU-XXXXX) and confirmation email. Orders remain in payment verification until SEPA, Revolut, or crypto settlement is matched.',
         bullets: ['Guest checkout — no account required', 'B2B company invoicing on request', 'Order history in Customer Account']
       },
       {
@@ -278,7 +283,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
       },
       {
         heading: 'Out-of-warranty',
-        body: 'Fixed-price repair quotes are emailed before work begins. Payment via SEPA or crypto using the same rails as storefront checkout.'
+        body: 'Fixed-price repair quotes are emailed before work begins. Payment via SEPA, Revolut, or crypto using the same rails as storefront checkout.'
       }
     ],
     cta: { label: 'Start an RMA', action: 'account' }

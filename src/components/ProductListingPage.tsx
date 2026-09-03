@@ -19,7 +19,6 @@ import {
   List
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
 import { productListingImage } from '../lib/pim/productListingImage';
 import { Product, EasaClass } from '../types';
@@ -44,7 +43,8 @@ export const ProductListingPage: React.FC = () => {
     wishlist,
     compareList,
     locale,
-    cart
+    cart,
+    products
   } = useStore();
 
   // Filters State
@@ -77,8 +77,8 @@ export const ProductListingPage: React.FC = () => {
 
   // Filtering Logic
   const filteredProducts = useMemo(() => {
-    const inventory = initializeInventoryFromCatalog(DJI_PRODUCTS);
-    const rankings = rankCatalog(buildCommerceSignals(DJI_PRODUCTS, inventory));
+    const inventory = initializeInventoryFromCatalog(products);
+    const rankings = rankCatalog(buildCommerceSignals(products, inventory));
     const ctx: PersonalizationContext = {
       sessionId: 'plp-session',
       locale,
@@ -90,10 +90,10 @@ export const ProductListingPage: React.FC = () => {
       ownedProductIds: []
     };
     const personalized = buildPersonalizedPlp(
-      DJI_PRODUCTS,
+      products,
       ctx,
       personalizeRanking(
-        DJI_PRODUCTS,
+        products,
         ctx,
         new Set(rankings.map((r) => r.productId))
       ),
@@ -104,7 +104,7 @@ export const ProductListingPage: React.FC = () => {
       rankings.find((r) => r.productId === id)?.score ??
       0;
 
-    return DJI_PRODUCTS.filter((product) => {
+    return products.filter((product) => {
       if (selectedCategory !== 'all' && product.category !== selectedCategory) {
         return false;
       }
@@ -134,6 +134,7 @@ export const ProductListingPage: React.FC = () => {
       return scoreOf(b.id) - scoreOf(a.id);
     });
   }, [
+    products,
     selectedCategory,
     selectedSeries,
     selectedEasaClasses,

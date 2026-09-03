@@ -2,7 +2,11 @@ import React from 'react';
 import { Building2, Mail, QrCode, X } from 'lucide-react';
 import { formatPrice } from '../../data/currency';
 import type { PlacedOrder } from '../../types';
-import { isCryptoPaymentMethod } from '../../lib/payments/checkoutTotals';
+import {
+  isCryptoPaymentMethod,
+  isManualSettlementMethod,
+  paymentMethodDisplayName
+} from '../../lib/payments/checkoutTotals';
 
 export const PAYMENT_ADMIN_EMAIL = 'sales@djii.eu';
 
@@ -19,6 +23,8 @@ export const PaymentInstructionsModal: React.FC<PaymentInstructionsModalProps> =
 }) => {
   const isCrypto = isCryptoPaymentMethod(order.paymentMethod);
   const isSepa = order.paymentMethod === 'sepa_bank_wire';
+  const isRevolut = order.paymentMethod === 'revolut_bank';
+  const methodLabel = paymentMethodDisplayName(order.paymentMethod);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -56,7 +62,7 @@ export const PaymentInstructionsModal: React.FC<PaymentInstructionsModalProps> =
                   Order {order.orderNumber}
                 </p>
                 <h2 id="payment-instructions-title" className="text-lg font-extrabold">
-                  {isCrypto ? 'Cryptocurrency Payment' : 'SEPA Bank Wire Payment'}
+                  {isCrypto ? 'Cryptocurrency Payment' : `${methodLabel} Payment`}
                 </h2>
               </div>
             </div>
@@ -100,7 +106,7 @@ export const PaymentInstructionsModal: React.FC<PaymentInstructionsModalProps> =
 
           <a
             href={`mailto:${PAYMENT_ADMIN_EMAIL}?subject=${encodeURIComponent(`Payment instructions — ${order.orderNumber}`)}&body=${encodeURIComponent(
-              `Hello,\n\nI would like to receive payment instructions for order ${order.orderNumber}.\n\nName: ${order.customer.firstName} ${order.customer.lastName}\nEmail: ${order.customer.email}\nPayment method: ${isCrypto ? 'Web3 Cryptocurrency' : 'SEPA Bank Wire'}\nAmount due: ${order.totalEur.toFixed(2)} EUR\n\nThank you.`
+              `Hello,\n\nI would like to receive payment instructions for order ${order.orderNumber}.\n\nName: ${order.customer.firstName} ${order.customer.lastName}\nEmail: ${order.customer.email}\nPayment method: ${methodLabel}\nAmount due: ${order.totalEur.toFixed(2)} EUR\n\nThank you.`
             )}`}
             className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#1D1D1F] hover:bg-black text-white font-bold text-xs transition-colors"
           >
@@ -111,6 +117,11 @@ export const PaymentInstructionsModal: React.FC<PaymentInstructionsModalProps> =
           {isSepa && (
             <p className="text-[11px] text-gray-500 text-center">
               Our team will provide IBAN, beneficiary, and reference details by email.
+            </p>
+          )}
+          {isRevolut && (
+            <p className="text-[11px] text-gray-500 text-center">
+              Our team will provide Revolut account details and a payment reference by email.
             </p>
           )}
           {isCrypto && (
@@ -135,5 +146,5 @@ export const PaymentInstructionsModal: React.FC<PaymentInstructionsModalProps> =
 };
 
 export function requiresAdminPaymentInstructions(paymentMethod: string): boolean {
-  return paymentMethod === 'sepa_bank_wire' || isCryptoPaymentMethod(paymentMethod);
+  return isManualSettlementMethod(paymentMethod);
 }

@@ -832,3 +832,8 @@ export const DJI_PRODUCTS: Product[] = applyWave6EnrichmentToCatalog(
     }
   )
 );
+
+/** Keep the shared DJI_PRODUCTS array in sync with runtime admin catalog edits. */
+export function syncRuntimeCatalog(next: Product[]): void {
+  DJI_PRODUCTS.splice(0, DJI_PRODUCTS.length, ...next);
+}

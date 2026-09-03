@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { PlacedOrder, WarrantyRegistration, ReturnRequest, B2bQuote } from '../types';
 import { formatPrice } from '../data/currency';
+import { paymentMethodDisplayName } from '../lib/payments/checkoutTotals';
 
 export type DocumentType =
   | 'vat_invoice'
@@ -123,7 +124,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                   <p className="text-[11px] text-gray-500 mt-1">
                     Invoice Date: {new Date(order.createdAt).toLocaleDateString()}<br />
                     Payment Reference: <strong>{order.orderNumber}</strong><br />
-                    Payment Method: {order.paymentMethod === 'sepa_bank_wire' ? 'SEPA Direct Wire' : 'Web3 USDT'}
+                    Payment Method: {paymentMethodDisplayName(order.paymentMethod)}
                   </p>
                 </div>
               </div>

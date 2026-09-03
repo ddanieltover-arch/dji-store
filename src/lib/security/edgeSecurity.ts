@@ -15,11 +15,12 @@ export const SECURITY_HEADERS: Record<string, string> = {
 
 export const CONTENT_SECURITY_POLICY =
   "default-src 'self'; " +
-  "script-src 'self' 'nonce-{NONCE}' https://js.stripe.com https://challenges.cloudflare.com; " +
+  "script-src 'self' 'nonce-{NONCE}' https://js.stripe.com https://challenges.cloudflare.com https://embed.tawk.to https://cdn.js.tawk.to; " +
   "style-src 'self' 'unsafe-inline'; " +
   "img-src 'self' data: https:; " +
-  "connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.openai.com https://generativelanguage.googleapis.com; " +
-  "frame-src https://js.stripe.com https://challenges.cloudflare.com; " +
+  "font-src 'self' data: https://embed.tawk.to https://cdn.js.tawk.to; " +
+  "connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.openai.com https://generativelanguage.googleapis.com https://*.tawk.to wss://*.tawk.to; " +
+  "frame-src https://js.stripe.com https://challenges.cloudflare.com https://tawk.to https://*.tawk.to; " +
   "base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
 
 export interface RateLimitBucket {

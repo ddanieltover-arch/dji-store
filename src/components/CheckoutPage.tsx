@@ -12,6 +12,7 @@ import { productListingImage } from '../lib/pim/productListingImage';
 import { calculateCheckoutTotals, isCryptoPaymentMethod } from '../lib/payments/checkoutTotals';
 import { CHECKOUT_COUNTRIES, findCheckoutCountry } from '../data/europeanCountries';
 import { ShippingMethodSection } from './checkout/ShippingMethodSection';
+import type { PaymentMethod } from '../types';
 
 export const CheckoutPage: React.FC = () => {
   const {
@@ -27,7 +28,7 @@ export const CheckoutPage: React.FC = () => {
   const isFreeShipping = cartSubtotalEur >= freeShippingThresholdEur;
   const shippingCostEur = isFreeShipping ? 0 : 19.0;
 
-  const [paymentMethod, setPaymentMethod] = useState<'sepa_bank_wire' | 'crypto_usdt' | 'crypto_btc'>('sepa_bank_wire');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('sepa_bank_wire');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const checkoutTotals = useMemo(
@@ -286,7 +287,7 @@ export const CheckoutPage: React.FC = () => {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
               {/* SEPA Wire Option */}
               <button
                 type="button"
@@ -310,12 +311,35 @@ export const CheckoutPage: React.FC = () => {
                 </p>
               </button>
 
+              {/* Revolut Banking Option */}
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('revolut_bank')}
+                className={`p-4 rounded-2xl border text-left transition-all space-y-1 ${
+                  paymentMethod === 'revolut_bank'
+                    ? 'border-[#E30613] bg-red-50/40 ring-1 ring-[#E30613]'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-sm text-gray-900 flex items-center gap-2">
+                    <RevolutMark /> Revolut Banking
+                  </span>
+                  <span className="text-[10px] font-bold bg-blue-50 text-blue-800 px-2 py-0.5 rounded">
+                    Instant · EUR
+                  </span>
+                </div>
+                <p className="text-gray-500 text-[11px]">
+                  Official Revolut business account. Payment instructions provided after order placement.
+                </p>
+              </button>
+
               {/* Crypto Option */}
               <button
                 type="button"
                 onClick={() => setPaymentMethod('crypto_usdt')}
                 className={`p-4 rounded-2xl border text-left transition-all space-y-1 ${
-                  paymentMethod === 'crypto_usdt'
+                  isCryptoPayment
                     ? 'border-[#E30613] bg-red-50/40 ring-1 ring-[#E30613]'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
@@ -414,3 +438,15 @@ export const CheckoutPage: React.FC = () => {
     </div>
   );
 };
+
+function RevolutMark() {
+  return (
+    <svg className="w-4 h-4 shrink-0" viewBox="0 0 16 16" aria-hidden="true">
+      <rect width="16" height="16" rx="4" fill="#0666EB" />
+      <path
+        fill="#fff"
+        d="M5.1 3.4h3.35c1.72 0 2.9 1.02 2.9 2.52 0 1.12-.68 1.98-1.78 2.3L11.3 12.6H9.38L7.75 8.55H6.45V12.6H5.1V3.4Zm1.35 3.75h1.85c.82 0 1.38-.48 1.38-1.18 0-.7-.56-1.15-1.38-1.15H6.45v2.33Z"
+      />
+    </svg>
+  );
+}

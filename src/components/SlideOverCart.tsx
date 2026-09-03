@@ -294,7 +294,7 @@ export const SlideOverCart: React.FC = () => {
 
               <div className="flex items-center justify-center gap-2 text-[10px] text-gray-400 text-center">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>No password required • Official SEPA Wire & Web3 Crypto</span>
+                <span>No password required • Official SEPA, Revolut & Web3 Crypto</span>
               </div>
             </div>
           )}

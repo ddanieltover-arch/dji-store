@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { calculateCheckoutTotals, CRYPTO_PAYMENT_DISCOUNT_RATE } from './checkoutTotals';
+import {
+  calculateCheckoutTotals,
+  CRYPTO_PAYMENT_DISCOUNT_RATE,
+  isManualSettlementMethod,
+  paymentMethodDisplayName
+} from './checkoutTotals';
 
 describe('calculateCheckoutTotals', () => {
   it('applies 5% discount for crypto payment methods', () => {
@@ -26,6 +31,17 @@ describe('calculateCheckoutTotals', () => {
     expect(totals.totalEur).toBe(219);
   });
 
+  it('does not discount Revolut banking payments', () => {
+    const totals = calculateCheckoutTotals({
+      subtotalEur: 200,
+      shippingEur: 19,
+      paymentMethod: 'revolut_bank'
+    });
+
+    expect(totals.discountEur).toBe(0);
+    expect(totals.totalEur).toBe(219);
+  });
+
   it('discounts BTC and ETH rails the same as USDT', () => {
     const btc = calculateCheckoutTotals({
       subtotalEur: 100,
@@ -41,5 +57,10 @@ describe('calculateCheckoutTotals', () => {
     expect(btc.discountEur).toBe(5);
     expect(eth.discountEur).toBe(5);
     expect(btc.totalEur).toBe(95);
+  });
+
+  it('treats Revolut as a manual settlement rail', () => {
+    expect(isManualSettlementMethod('revolut_bank')).toBe(true);
+    expect(paymentMethodDisplayName('revolut_bank')).toBe('Revolut Banking');
   });
 });

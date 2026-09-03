@@ -21,7 +21,6 @@ import {
   Building2
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
 import { ProductVariant, Product } from '../types';
 import { ReviewsSection } from './ReviewsSection';
@@ -41,15 +40,16 @@ export const ProductDetailPage: React.FC = () => {
     currency,
     setViewMode,
     navigateToPdp,
-    addToast
+    addToast,
+    products
   } = useStore();
 
-  const product = DJI_PRODUCTS.find((p) => p.id === selectedProductId) || DJI_PRODUCTS[0];
+  const product = products.find((p) => p.id === selectedProductId) || products[0];
 
   // Variant / Combo selection
-  const [selectedVariantId, setSelectedVariantId] = useState<string>(product.variants[0]?.id || '');
+  const [selectedVariantId, setSelectedVariantId] = useState<string>(product?.variants[0]?.id || '');
   const activeVariant: ProductVariant =
-    product.variants.find((v) => v.id === selectedVariantId) || product.variants[0];
+    product?.variants.find((v) => v.id === selectedVariantId) || product?.variants[0];
 
   // Quantity
   const [quantity, setQuantity] = useState<number>(1);
@@ -59,18 +59,18 @@ export const ProductDetailPage: React.FC = () => {
   const [showStickyBar, setShowStickyBar] = useState<boolean>(false);
 
   // Frequently bought together bundle checkboxes
-  const extraBattery = DJI_PRODUCTS.find((p) => p.id === 'acc-bat-m4p');
-  const careRefresh = DJI_PRODUCTS.find((p) => p.id === 'acc-care-m4p');
+  const extraBattery = products.find((p) => p.id === 'acc-bat-m4p');
+  const careRefresh = products.find((p) => p.id === 'acc-care-m4p');
   const [includeBatteryBundle, setIncludeBatteryBundle] = useState<boolean>(true);
   const [includeCareBundle, setIncludeCareBundle] = useState<boolean>(true);
 
   // Sync selected variant when product changes
   useEffect(() => {
-    if (product.variants.length > 0) {
+    if (product?.variants.length) {
       setSelectedVariantId(product.variants[0].id);
       setQuantity(1);
     }
-  }, [product.id]);
+  }, [product?.id]);
 
   // Scroll listener for sticky buy bar
   useEffect(() => {
@@ -86,6 +86,7 @@ export const ProductDetailPage: React.FC = () => {
   }, []);
 
   const galleryImages = useMemo(() => {
+    if (!product) return [];
     const gallery = (product.images.gallery || []).filter(Boolean);
     const variantHero = activeVariant?.imageUrl;
 
@@ -102,6 +103,22 @@ export const ProductDetailPage: React.FC = () => {
       (src, index, arr) => src && arr.indexOf(src) === index
     );
   }, [product, activeVariant]);
+
+  if (!product || !activeVariant) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-16 text-center space-y-3">
+        <h1 className="text-2xl font-extrabold text-gray-900">Product not found</h1>
+        <p className="text-sm text-gray-500">This product may have been removed from the catalog.</p>
+        <button
+          type="button"
+          onClick={() => setViewMode('plp')}
+          className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-[#1D1D1F] text-white text-sm font-semibold"
+        >
+          Back to catalog
+        </button>
+      </div>
+    );
+  }
 
   // Calculate Bundle Pricing
   const bundleDiscount = 50; // €50 discount

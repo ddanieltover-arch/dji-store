@@ -1,4 +1,5 @@
 import { checkoutIdempotencyKey, resolveCheckoutAttempt } from '@shared/lib/performance/checkoutIdempotency';
+import { isManualSettlementMethod } from '@shared/lib/payments/checkoutTotals';
 import { NextRequest, NextResponse } from 'next/server';
 import { badRequest, getLocale, requireFields } from '@/lib/api/helpers';
 import { createDb } from '@/lib/db/client';
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
   }
 
   const paymentMethod = String(body.paymentMethod ?? 'card');
-  const orderStatus = paymentMethod === 'sepa_bank_wire' || paymentMethod === 'crypto_usdt' ? 'pending_payment' : 'confirmed';
+  const orderStatus = isManualSettlementMethod(paymentMethod) ? 'pending_payment' : 'confirmed';
 
   try {
     const inserted = await sql`

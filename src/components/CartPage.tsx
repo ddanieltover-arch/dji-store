@@ -271,7 +271,7 @@ export const CartPage: React.FC = () => {
 
               <div className="flex items-center justify-center gap-2 text-[10px] text-gray-400 text-center">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>No password required • SEPA Wire & Web3 Crypto</span>
+                <span>No password required • SEPA, Revolut & Web3 Crypto</span>
               </div>
             </div>
           </div>

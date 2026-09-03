@@ -126,9 +126,9 @@ export const Footer: React.FC = () => {
                 <CreditCard className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-white font-semibold text-sm">SEPA & Web3 Crypto</h4>
+                <h4 className="text-white font-semibold text-sm">SEPA, Revolut & Web3 Crypto</h4>
                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  Official bank wire settlement plus 5% off cryptocurrency checkout.
+                  Official bank wire and Revolut settlement plus 5% off cryptocurrency checkout.
                 </p>
               </div>
             </div>
@@ -176,6 +176,7 @@ export const Footer: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
             <span className="bg-gray-800 px-2 py-1 rounded text-gray-300 font-semibold">SEPA Wire</span>
+            <span className="bg-gray-800 px-2 py-1 rounded text-blue-300 font-semibold">Revolut</span>
             <span className="bg-gray-800 px-2 py-1 rounded text-emerald-400 font-semibold">USDT · BTC · ETH</span>
           </div>
         </div>

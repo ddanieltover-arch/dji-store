@@ -36,12 +36,17 @@ import { MobileNotificationsWorkstation } from './components/mobile/MobileNotifi
 import { ProductionMigrationWorkstation } from './components/migration/ProductionMigrationWorkstation';
 import { ConnectivityBanner, MobileBottomNav } from './components/mobile/MobileChrome';
 import { GdprConsentModal } from './components/security/GdprConsentModal';
+import { TawkToChat } from './components/TawkToChat';
 import { SlideOverCart } from './components/SlideOverCart';
 import { AdvancedSearchModal } from './components/AdvancedSearchModal';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 import { useScrollToTopOnNavigation } from './hooks/useScrollToTopOnNavigation';
 
 const GDPR_CONSENT_KEY = 'dji-eu-gdpr-consent-v1';
+
+function isInternalWorkstation(viewMode: string) {
+  return viewMode === 'admin' || viewMode === 'ai-operations' || viewMode.endsWith('-ops');
+}
 
 const MainLayout: React.FC = () => {
   const { viewMode, toasts, removeToast, setIsSearchOpen } = useStore();
@@ -199,6 +204,7 @@ const MainLayout: React.FC = () => {
       <Footer />
 
       <GdprConsentModal isOpen={gdprOpen} onClose={closeGdpr} />
+      <TawkToChat enabled={!isInternalWorkstation(viewMode)} />
 
       {/* Global Toast Notifications Layer */}
       {toasts.length > 0 && (

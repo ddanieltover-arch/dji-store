@@ -162,7 +162,7 @@ export interface PlacedOrder {
   vatRatePercent: number;
   shippingEur: number;
   totalEur: number;
-  paymentMethod: 'sepa_bank_wire' | 'crypto_usdt' | 'crypto_btc' | 'crypto_eth';
+  paymentMethod: PaymentMethod;
   paymentStatus: 'verifying' | 'confirmed' | 'processing' | 'dispatched' | 'delivered';
   status?: OrderStatus;
   paymentDetails?: {
@@ -433,6 +433,7 @@ export type OrderStatus =
 
 export type PaymentMethod =
   | 'sepa_bank_wire'
+  | 'revolut_bank'
   | 'crypto_usdt'
   | 'crypto_btc'
   | 'crypto_eth';

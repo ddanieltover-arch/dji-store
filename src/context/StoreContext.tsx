@@ -32,7 +32,7 @@ import {
   ReferralRecord,
   LoyaltyTier
 } from '../types';
-import { DJI_PRODUCTS } from '../data/products';
+import { DJI_PRODUCTS, syncRuntimeCatalog } from '../data/products';
 import { pathFromStore, storeFromPath } from '../lib/routing';
 import { LOCALES } from '../data/locales';
 import { INITIAL_REVIEWS } from '../data/reviews';
@@ -125,6 +125,11 @@ interface StoreContextType {
   deleteOrder: (orderNumber: string) => void;
   advanceOrderStatus: (orderNumber: string, status: OrderStatus) => void;
   verifyOrderPayment: (orderNumber: string, verification: Partial<OrderPaymentVerification>) => void;
+
+  // Catalog (admin editable)
+  products: Product[];
+  updateProduct: (productId: string, updates: Partial<Product>) => void;
+  deleteProduct: (productId: string) => void;
 
   // Quick View Modal
   quickViewProduct: Product | null;
@@ -373,6 +378,31 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       return INITIAL_ORDERS;
     }
   });
+
+  const [products, setProducts] = useState<Product[]>(() => {
+    try {
+      const saved = localStorage.getItem('dji_catalog_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved) as Product[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          syncRuntimeCatalog(parsed);
+          return parsed;
+        }
+      }
+    } catch {
+      /* fall through to seed */
+    }
+    return [...DJI_PRODUCTS];
+  });
+
+  useEffect(() => {
+    syncRuntimeCatalog(products);
+    try {
+      localStorage.setItem('dji_catalog_v1', JSON.stringify(products));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [products]);
 
   const [activeOrderNumber, setActiveOrderNumber] = useState<string | null>('DJI-EU-100239');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -987,6 +1017,32 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       type: 'info',
       title: 'Order Deleted',
       message: `Order #${orderNumber} was removed from the system.`
+    });
+  };
+
+  const updateProduct = (productId: string, updates: Partial<Product>) => {
+    setProducts((prev) =>
+      prev.map((product) => (product.id === productId ? { ...product, ...updates, id: product.id } : product))
+    );
+    addToast({
+      type: 'success',
+      title: 'Product Updated',
+      message: 'Catalog changes are live on the storefront.'
+    });
+  };
+
+  const deleteProduct = (productId: string) => {
+    setProducts((prev) => prev.filter((product) => product.id !== productId));
+    if (selectedProductId === productId) {
+      setSelectedProductId('');
+      setViewMode('plp');
+    }
+    setCompareList((prev) => prev.filter((id) => id !== productId));
+    setWishlist((prev) => prev.filter((id) => id !== productId));
+    addToast({
+      type: 'info',
+      title: 'Product Deleted',
+      message: 'The product was removed from the catalog.'
     });
   };
 
@@ -1669,6 +1725,9 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         updateOrderStatus,
         updateOrder,
         deleteOrder,
+        products,
+        updateProduct,
+        deleteProduct,
         quickViewProduct,
         setQuickViewProduct,
         toasts,

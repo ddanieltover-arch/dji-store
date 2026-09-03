@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { formatPrice } from '../data/currency';
+import { paymentMethodDisplayName } from '../lib/payments/checkoutTotals';
 
 export const TrackOrderPage: React.FC = () => {
   const { orders, activeOrderNumber } = useStore();
@@ -112,7 +113,7 @@ export const TrackOrderPage: React.FC = () => {
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" /> 2. Payment Verified
                 </span>
                 <p className="text-emerald-700 text-[10px]">
-                  {searchedOrder.paymentMethod === 'sepa_bank_wire' ? 'SEPA Wire' : 'Crypto USDT'}
+                  {paymentMethodDisplayName(searchedOrder.paymentMethod)}
                 </p>
               </div>
 

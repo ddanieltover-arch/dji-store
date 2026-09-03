@@ -40,7 +40,6 @@ import {
   LogOut
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { DJI_PRODUCTS } from '../data/products';
 import { formatPrice } from '../data/currency';
 import { EUROPEAN_WAREHOUSES } from '../data/warehouses';
 import { SEARCH_SYNONYMS, TYPO_DICTIONARY } from '../data/searchSynonyms';
@@ -50,13 +49,17 @@ import { CdpIntelligenceConsole } from './crm/CdpIntelligenceConsole';
 import { MarketingAutomationCenter } from './crm/MarketingAutomationCenter';
 import { LoyaltyRewardsAdmin } from './crm/LoyaltyRewardsAdmin';
 import { AdminOrderEditModal } from './admin/AdminOrderEditModal';
+import { AdminProductEditModal } from './admin/AdminProductEditModal';
 import { useAuth } from '../context/AuthContext';
+import { isCryptoPaymentMethod, paymentMethodDisplayName } from '../lib/payments/checkoutTotals';
+import type { Product } from '../types';
 
 type AdminSection = 'orders' | 'products' | 'settings';
 
 type AdminSubTab =
   | 'orders'
   | 'returns_rma'
+  | 'catalog'
   | 'inventory_wms'
   | 'reviews_moderation'
   | 'sync_engine'
@@ -68,6 +71,7 @@ type AdminSubTab =
 const TAB_SECTION: Record<AdminSubTab, AdminSection> = {
   orders: 'orders',
   returns_rma: 'orders',
+  catalog: 'products',
   inventory_wms: 'products',
   reviews_moderation: 'products',
   sync_engine: 'products',
@@ -79,7 +83,7 @@ const TAB_SECTION: Record<AdminSubTab, AdminSection> = {
 
 const DEFAULT_SUB_TAB: Record<AdminSection, AdminSubTab> = {
   orders: 'orders',
-  products: 'inventory_wms',
+  products: 'catalog',
   settings: 'search_intelligence'
 };
 
@@ -89,6 +93,9 @@ export const AdminDashboard: React.FC = () => {
     updateOrderStatus,
     updateOrder,
     deleteOrder,
+    products,
+    updateProduct,
+    deleteProduct,
     advanceOrderStatus,
     verifyOrderPayment,
     rmas,
@@ -117,6 +124,9 @@ export const AdminDashboard: React.FC = () => {
   const [orderFilter, setOrderFilter] = useState<'all' | 'payment_verifying' | 'confirmed' | 'dispatched'>('all');
   const [searchOrder, setSearchOrder] = useState('');
   const [editingOrder, setEditingOrder] = useState<PlacedOrder | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [catalogSearch, setCatalogSearch] = useState('');
+  const [catalogCategory, setCatalogCategory] = useState<'all' | Product['category']>('all');
   const [reviewFilter, setReviewFilter] = useState<'all' | 'pending_moderation' | 'approved' | 'rejected'>('all');
 
   // Document Modal state
@@ -142,6 +152,20 @@ export const AdminDashboard: React.FC = () => {
     }
     return true;
   });
+
+  const filteredCatalog = products.filter((product) => {
+    if (catalogCategory !== 'all' && product.category !== catalogCategory) return false;
+    if (!catalogSearch.trim()) return true;
+    const q = catalogSearch.toLowerCase();
+    return (
+      product.modelName.toLowerCase().includes(q) ||
+      product.sku.toLowerCase().includes(q) ||
+      product.slug.toLowerCase().includes(q) ||
+      product.id.toLowerCase().includes(q)
+    );
+  });
+
+  const catalogCategories = Array.from(new Set(products.map((p) => p.category))).sort();
 
   const filteredReviews = reviews.filter((r) => {
     if (reviewFilter !== 'all' && r.status !== reviewFilter) return false;
@@ -324,6 +348,9 @@ export const AdminDashboard: React.FC = () => {
 
             {activeSection === 'products' && (
               <>
+                <button type="button" onClick={() => selectSubTab('catalog')} className={subNavClass('catalog')}>
+                  Catalog ({products.length})
+                </button>
                 <button type="button" onClick={() => selectSubTab('inventory_wms')} className={subNavClass('inventory_wms')}>
                   WMS logistics ({EUROPEAN_WAREHOUSES.length} depots)
                 </button>
@@ -441,7 +468,9 @@ export const AdminDashboard: React.FC = () => {
                     </td>
                     <td className="p-4">
                       <span className="font-semibold text-gray-700 block">
-                        {order.paymentMethod === 'bank_transfer_sepa' || order.paymentMethod === 'sepa_bank_wire' ? '🏦 SEPA Bank Wire' : '⚡ Web3 USDT/BTC'}
+                        {isCryptoPaymentMethod(order.paymentMethod)
+                          ? `⚡ ${paymentMethodDisplayName(order.paymentMethod)}`
+                          : `🏦 ${paymentMethodDisplayName(order.paymentMethod)}`}
                       </span>
                       {order.paymentVerification?.senderMatched && (
                         <span className="text-[10px] text-emerald-600 font-semibold">✓ Verified Match</span>
@@ -614,6 +643,128 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
+      {/* TAB: PRODUCT CATALOG */}
+      {activeTab === 'catalog' && (
+        <div className="space-y-4">
+          <div className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="search"
+                value={catalogSearch}
+                onChange={(e) => setCatalogSearch(e.target.value)}
+                placeholder="Search model, SKU, or slug…"
+                className="w-full rounded-xl border border-gray-200 pl-10 pr-3 py-2.5 text-sm"
+              />
+            </div>
+            <select
+              value={catalogCategory}
+              onChange={(e) =>
+                setCatalogCategory(e.target.value as 'all' | Product['category'])
+              }
+              className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm"
+            >
+              <option value="all">All categories</option>
+              {catalogCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+            <span className="text-xs text-gray-500 font-semibold">
+              {filteredCatalog.length} of {products.length} products
+            </span>
+          </div>
+
+          <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xs">
+            <table className="w-full text-xs text-left">
+              <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase text-[10px]">
+                <tr>
+                  <th className="p-4">Product</th>
+                  <th className="p-4">SKU</th>
+                  <th className="p-4">Category</th>
+                  <th className="p-4">Price</th>
+                  <th className="p-4">Variants</th>
+                  <th className="p-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {filteredCatalog.map((product) => (
+                  <tr key={product.id} className="hover:bg-gray-50">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={product.images.cutout || product.images.hero}
+                          alt=""
+                          className="w-12 h-12 rounded-xl object-contain bg-gray-50 border border-gray-100"
+                        />
+                        <div className="min-w-0">
+                          <p className="font-bold text-gray-900 truncate">{product.modelName}</p>
+                          <p className="text-[11px] text-gray-400 truncate">{product.slug}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-4 font-mono text-gray-600">{product.sku}</td>
+                    <td className="p-4">
+                      <span className="px-2 py-1 rounded-lg bg-gray-100 text-gray-700 font-semibold">
+                        {product.category}
+                      </span>
+                    </td>
+                    <td className="p-4 font-bold text-gray-900">
+                      {formatPrice(product.basePriceEur, currency)}
+                    </td>
+                    <td className="p-4 text-gray-600">{product.variants.length}</td>
+                    <td className="p-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => navigateToPdp(product.id)}
+                          className="px-2.5 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600"
+                          title="View on storefront"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingProduct(product)}
+                          className="px-2.5 py-1.5 rounded-lg border border-gray-200 hover:bg-blue-50 text-blue-700 inline-flex items-center gap-1 font-semibold"
+                        >
+                          <Edit className="w-3.5 h-3.5" />
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                `Delete “${product.modelName}” from the catalog? This cannot be undone.`
+                              )
+                            ) {
+                              deleteProduct(product.id);
+                            }
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-700 inline-flex items-center gap-1 font-semibold"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {filteredCatalog.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center text-gray-400">
+                      No products match your filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* TAB 2: MULTI-DEPOT WMS INVENTORY */}
       {activeTab === 'inventory_wms' && (
         <div className="space-y-6">
@@ -660,7 +811,7 @@ export const AdminDashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {DJI_PRODUCTS.slice(0, 7).flatMap((prod) =>
+                {products.slice(0, 7).flatMap((prod) =>
                   prod.variants.map((v) => {
                     const stocks = depotStocks[v.id] || [];
                     const fra = stocks.find((s) => s.depotId === 'depot-fra-01')?.stockUnits ?? v.stockQuantity;
@@ -1103,6 +1254,14 @@ export const AdminDashboard: React.FC = () => {
           order={editingOrder}
           onClose={() => setEditingOrder(null)}
           onSave={updateOrder}
+        />
+      )}
+
+      {editingProduct && (
+        <AdminProductEditModal
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+          onSave={updateProduct}
         />
       )}
     </div>

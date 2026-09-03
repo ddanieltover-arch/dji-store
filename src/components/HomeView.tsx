@@ -614,9 +614,9 @@ export const HomeView: React.FC = () => {
             <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
               <Zap className="w-6 h-6" />
             </div>
-            <h3 className="font-bold text-base text-[#1D1D1F]">SEPA Wire & Web3 Crypto</h3>
+            <h3 className="font-bold text-base text-[#1D1D1F]">SEPA, Revolut & Web3 Crypto</h3>
             <p className="text-xs text-gray-500 leading-relaxed">
-              Direct commercial bank transfer with a European IBAN or instant Web3 USDT/BTC settlement with zero foreign exchange fees.
+              Direct commercial bank transfer, Revolut business account, or instant Web3 USDT/BTC settlement with zero foreign exchange fees.
             </p>
           </div>
         </div>
