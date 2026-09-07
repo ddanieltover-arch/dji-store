@@ -27,7 +27,7 @@ function ProductColumnCard({ card }: { card: HomeProductColumnCard }) {
         <button
           type="button"
           onClick={() => navigateToPdp(card.productId)}
-          className="absolute inset-0 z-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
+          className="absolute inset-0 z-0 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
           aria-label={card.displayName}
         >
           <img
@@ -80,7 +80,7 @@ function ProductColumnCard({ card }: { card: HomeProductColumnCard }) {
       <button
         type="button"
         onClick={() => navigateToPdp(card.productId)}
-        className="flex flex-1 flex-col px-4 pb-5 pt-1 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
+        className="flex flex-1 flex-col px-4 pb-5 pt-1 text-left cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
       >
         <span className="line-clamp-2 min-h-[32px] text-[12px] leading-4 text-[rgba(0,0,0,0.45)]">
           {card.tagline}
@@ -119,7 +119,7 @@ export const HomeHandheldProShooting: React.FC = () => {
         <button
           type="button"
           onClick={() => navigateToPdp(primary.productId)}
-          className="group relative mb-4 sm:mb-5 block w-full overflow-hidden rounded-md text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
+          className="group relative mb-4 sm:mb-5 block w-full overflow-hidden rounded-md text-left cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
         >
           <div className="relative aspect-[16/7] sm:aspect-[21/8] w-full bg-[#eceff1]">
             <img
@@ -167,7 +167,7 @@ export const HomeHandheldProShooting: React.FC = () => {
                     key={link.id}
                     type="button"
                     onClick={onClick}
-                    className="relative flex min-h-[180px] flex-[1.6] overflow-hidden rounded-md bg-black text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
+                    className="relative flex min-h-[180px] flex-[1.6] overflow-hidden rounded-md bg-black text-left cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
                   >
                     {link.imageSrc && (
                       <img
@@ -195,7 +195,7 @@ export const HomeHandheldProShooting: React.FC = () => {
                   key={link.id}
                   type="button"
                   onClick={onClick}
-                  className="flex min-h-[88px] flex-1 items-center justify-center gap-2 rounded-md bg-[#f7f8f9] px-4 text-[16px] font-semibold tracking-[-0.02em] text-[rgba(0,0,0,0.85)] hover:bg-[#eef0f2] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
+                  className="flex min-h-[88px] flex-1 items-center justify-center gap-2 rounded-md bg-[#f7f8f9] px-4 text-[16px] font-semibold tracking-[-0.02em] text-[rgba(0,0,0,0.85)] hover:bg-[#eef0f2] cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
                 >
                   {link.title}
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black text-white">

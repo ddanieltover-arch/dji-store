@@ -23,6 +23,7 @@ import { HomeHeroCarousel } from './home/HomeHeroCarousel';
 import { HomeCategoryStrip } from './home/HomeCategoryStrip';
 import { HomeWhyShop } from './home/HomeWhyShop';
 import { HomeHandheldProShooting } from './home/HomeHandheldProShooting';
+import { HomeBuyerFaq } from './home/HomeBuyerFaq';
 import { runWave5Merchandising } from '../lib/merch/wave5Merchandising';
 import { runWave6Personalization } from '../lib/personalization/wave6Personalization';
 import { PersonalizationContext } from '../types/wave6Personalization';
@@ -575,6 +576,9 @@ export const HomeView: React.FC = () => {
 
       {/* Official store.dji.com “Why shop with DJI Store” mosaic */}
       <HomeWhyShop />
+
+      {/* Netherlands buyer-intent FAQ (how to buy / where / how much) */}
+      <HomeBuyerFaq />
 
       {/* 7. Creator Showcase & Community Social Proof */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

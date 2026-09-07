@@ -21,7 +21,7 @@ export const HomeCategoryStrip: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigateToPlp(item.category, item.series)}
-                className="group block w-full text-center tracking-[-0.02em] text-[rgba(0,0,0,0.85)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
+                className="group cursor-pointer block w-full text-center tracking-[-0.02em] text-[rgba(0,0,0,0.85)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
               >
                 <img
                   src={item.imageSrc}

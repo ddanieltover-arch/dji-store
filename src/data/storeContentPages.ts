@@ -128,6 +128,11 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     summary: 'Standard Netherlands shipping via PostNL, DHL, DPD and regional partners — free express on qualifying orders.',
     sections: [
       {
+        heading: 'How much for shipping when I buy DJI in the Netherlands?',
+        body: 'Checkout shows the exact shipping fee before you pay. Qualifying carts over €500 unlock free Standard Shipping across the Netherlands and many EU destinations.',
+        bullets: ['Fee preview in cart and checkout Step 3', 'Express upgrades when available', 'Enterprise freight quoted separately']
+      },
+      {
         heading: 'Standard Shipping',
         body: 'All checkout orders use Standard Shipping with tracked door-to-door delivery. Carriers include DHL, FedEx, DPD, GLS, PostNL, and Hermes depending on destination and parcel size.',
         bullets: ['Carrier shown at checkout (Step 3)', 'Signature required on aircraft kits', 'Insurance included on orders above €500']
@@ -197,8 +202,18 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/shipping-faq',
     title: 'Logistics and Order FAQ',
     eyebrow: 'Help & Support',
-    summary: 'Common questions about Netherlands delivery, customs, and order changes.',
+    summary: 'Common questions about buying DJI in the Netherlands — delivery, customs, order changes, and how shipping costs work.',
     sections: [
+      {
+        heading: 'Where can I buy DJI online for delivery in the Netherlands?',
+        body: 'Order on djii.eu for Netherlands and EU delivery. In-stock consumer kits typically leave our Amsterdam hub within 24–48 hours with tracked DHL, PostNL, or partner carriers.',
+        bullets: ['Tracking email after label scan', 'Signature on aircraft kits', 'Guest checkout supported']
+      },
+      {
+        heading: 'How much for shipping in the Netherlands?',
+        body: 'Standard tracked shipping is calculated at checkout. Orders above the free-shipping threshold (currently €500) unlock complimentary Standard Shipping across the Netherlands and qualifying EU destinations.',
+        bullets: ['Threshold visible in the cart bar', 'Oversized cinema kits quoted separately', 'Remote-area surcharges shown before pay']
+      },
       {
         heading: 'Customs & import',
         body: 'Intra-EU shipments include all statutory duties in the invoice price. For Switzerland, Norway, and “Any other country” destinations our team confirms landed cost before dispatch.',
@@ -223,6 +238,11 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     eyebrow: 'Help & Support',
     summary: '14-day EU statutory right of withdrawal for distance sales, plus factory warranty for hardware defects.',
     sections: [
+      {
+        heading: 'How to return a DJI purchase in the Netherlands',
+        body: 'Start a return from Customer Account within the withdrawal window. Unused products in original packaging are eligible for the EU distance-sales withdrawal. We email a prepaid label where the policy allows.',
+        bullets: ['14-day statutory withdrawal for B2C distance sales', 'Keep all seals and accessories', 'Refund after warehouse intake']
+      },
       {
         heading: '14-day withdrawal (B2C)',
         body: 'Dutch consumers may withdraw from a distance contract within 14 days of receipt without giving reasons. Products must be unused, in original OEM sealing where applicable, and include all accessories.',
@@ -392,10 +412,30 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
   {
     slug: 'buying-guides',
     path: '/explore/buying-guides',
-    title: 'Buying Guides',
+    title: 'Buying Guides — How to Buy DJI in the Netherlands',
     eyebrow: 'Explore',
-    summary: 'Choose the right drone, gimbal, or power station for travel, cinema, inspection, and content creation in the Netherlands.',
+    summary:
+      'How to buy the right DJI drone, gimbal, or power station in the Netherlands — plus where to shop and what to budget in euros.',
     sections: [
+      {
+        heading: 'How to buy a DJI drone in the Netherlands',
+        body: 'Start on Camera Drones, filter by EASA class or weight, then choose a combo (aircraft + batteries + controller). Checkout on djii.eu with SEPA or card; we ship from Amsterdam with tracked delivery and EU warranty paperwork.',
+        bullets: [
+          'Use the homepage Drone Matcher for a 30-second recommendation',
+          'Compare up to 4 models side-by-side before you buy',
+          'Add DJI Care Refresh at checkout for accidental damage cover'
+        ]
+      },
+      {
+        heading: 'Where can I buy DJI handhelds and gimbals in the Netherlands?',
+        body: 'Osmo Action, Pocket, Mobile, Mic, RS, and Ronin kits are stocked on djii.eu under Handheld. For cinema stabilizers, open Buying Guides then jump to the matching PLP — partner flagship lounges can demo, while full SKU depth remains online.',
+        bullets: ['RS Mini for creators', 'RS Pro for mirrorless kits', 'Ronin 4D for cinema workflows']
+      },
+      {
+        heading: 'How much for popular DJI products in the Netherlands?',
+        body: 'All prices on DJI Store EU are shown in euros. Mini travel drones, Air dual-camera kits, Mavic flagships, and Power stations list “from” pricing when combos start higher. Free shipping unlocks on qualifying carts over €500.',
+        bullets: ['Live euro prices on every PDP', 'Combo upgrades priced clearly', 'No surprise customs on intra-EU deliveries']
+      },
       {
         heading: 'Drone selector',
         body: 'Under 249g travel (Mini), dual-camera pro (Air), flagship triple-camera (Mavic), immersive FPV (Avata), or 8K cinema (Inspire).',
@@ -454,8 +494,13 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     title: 'Who We Are',
     eyebrow: 'Company',
     summary:
-      'DJI Store EU (djii.eu) is the authorized DJI reseller for the Netherlands for DJI consumer, prosumer, and enterprise aerial systems.',
+      'DJI Store EU (djii.eu) is the authorized DJI reseller for the Netherlands — where Dutch creators and businesses buy genuine DJI products online.',
     sections: [
+      {
+        heading: 'Where can I buy genuine DJI in the Netherlands?',
+        body: 'djii.eu is our online flagship for Dutch and EU customers. Every aircraft, gimbal, and charger is factory-sealed with genuine serials eligible for official firmware and Care Refresh.',
+        bullets: ['No grey imports', 'CE documentation included', 'Localized NL/EU support']
+      },
       {
         heading: 'Our mission',
         body: 'Deliver factory-sealed Netherlands inventory with genuine serial numbers, CE documentation, and localized support — from first unboxing to fleet scale.',
@@ -516,16 +561,22 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/company/flagship-stores',
     title: 'Flagship Stores',
     eyebrow: 'Company',
-    summary: 'Experience DJI products in person at partner demo locations across the Netherlands — hands-on flight sims and pro demos.',
+    summary:
+      'Where can I buy or try DJI in person in the Netherlands? Visit partner demo locations — then complete your order online for full catalog depth.',
     sections: [
       {
-        heading: 'Partner locations',
-        body: 'Official DJI branded experiences in Dutch cities including Amsterdam and Rotterdam. Store EU online orders can be collected where partner click-and-collect is enabled.',
+        heading: 'Where can I see DJI products in the Netherlands?',
+        body: 'Partner demo lounges in Dutch cities including Amsterdam and Rotterdam offer hands-on flight sims and pro demos. Appointments are recommended for cinema and enterprise kits.',
         bullets: ['Amsterdam demo lounge (by appointment)', 'Rotterdam creator pop-up', 'Schiphol transit demo desk (seasonal)']
       },
       {
+        heading: 'How to buy after a demo',
+        body: 'Most partners do not stock every SKU. Check live Netherlands availability on djii.eu, place your order online, and choose delivery or click-and-collect where enabled.',
+        bullets: ['Full catalog online', 'Euro pricing with Care Refresh', 'Tracked dispatch from Amsterdam']
+      },
+      {
         heading: 'Online-first',
-        body: 'djii.eu remains our primary storefront for full catalog depth, crypto discount, and EU-wide DHL delivery. Flagship partners may not stock every SKU — check online availability first.'
+        body: 'djii.eu remains our primary storefront for full catalog depth, SEPA checkout, and EU-wide DHL delivery. Flagship partners may not stock every SKU — check online availability first.'
       }
     ],
     cta: { label: 'Shop Online', action: 'home' }

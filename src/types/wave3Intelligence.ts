@@ -29,7 +29,7 @@ export type KnowledgeEdgeType =
   | 'RECOMMENDED_WITH'
   | 'BELONGS_TO';
 
-export type FaqTopic = 'flight' | 'camera' | 'battery' | 'regulations' | 'compatibility';
+export type FaqTopic = 'flight' | 'camera' | 'battery' | 'regulations' | 'compatibility' | 'purchase';
 
 export type AccessoryMerchBucket = 'essential' | 'recommended' | 'professional' | 'travel';
 

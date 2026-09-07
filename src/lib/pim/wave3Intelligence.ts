@@ -126,6 +126,29 @@ export function generateProductFaqs(product: Product, locale: Locale = 'en'): Wa
         ? `${name} is listed with ${product.compatibleAccessories.length} official accessory SKUs (controllers, batteries, filters, Care).`
         : `${name} compatibility is inferred from series and the Product Intelligence relationship graph.`,
       locale
+    },
+    {
+      productId: product.id,
+      topic: 'purchase',
+      question: `Where can I buy ${name} in the Netherlands?`,
+      answer: `${name} is available on DJI Store EU (djii.eu) with Netherlands stock, euro pricing, and dispatch from Amsterdam. Factory-sealed kits include EU warranty documentation.`,
+      locale
+    },
+    {
+      productId: product.id,
+      topic: 'purchase',
+      question: `How much for ${name} in the Netherlands?`,
+      answer: `Current euro pricing for ${name} starts from the live product page${
+        product.basePriceEur ? ` (from €${Math.round(product.basePriceEur)})` : ''
+      }. Combos and Care Refresh may change the total — check the buy box for the exact configuration.`,
+      locale
+    },
+    {
+      productId: product.id,
+      topic: 'purchase',
+      question: `How to buy ${name} in the Netherlands?`,
+      answer: `Open the ${name} product page, choose your combo, optionally add Care Refresh, then checkout with SEPA or card. In-stock orders typically leave our Amsterdam hub within 24–48 hours.`,
+      locale
     }
   ];
   return faqs;

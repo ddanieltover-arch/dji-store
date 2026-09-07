@@ -26,6 +26,7 @@ import { rankCatalog, buildCommerceSignals } from '../lib/merch/wave5Merchandisi
 import { initializeInventoryFromCatalog } from '../lib/pim/wave1Execution';
 import { buildPersonalizedPlp, personalizeRanking } from '../lib/personalization/wave6Personalization';
 import { PersonalizationContext } from '../types/wave6Personalization';
+import { netherlandsPlpIntro } from '../data/netherlandsBuyerFaq';
 
 export const ProductListingPage: React.FC = () => {
   const {
@@ -195,8 +196,11 @@ export const ProductListingPage: React.FC = () => {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1D1D1F] tracking-tight">
             {categories.find((c) => c.id === selectedCategory)?.label || 'All Products'}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Official Netherlands stock with 2-Year statutory EU warranty and rapid DHL express dispatch.
+          <p className="text-sm text-gray-500 mt-1 max-w-3xl">
+            {netherlandsPlpIntro(
+              categories.find((c) => c.id === selectedCategory)?.label || 'DJI products'
+            )}{' '}
+            How much for each model? Live euro prices are on every card — free shipping on qualifying orders over €500.
           </p>
         </div>
 

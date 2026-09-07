@@ -18,7 +18,7 @@ function WhyShopTile({ card }: { card: HomeWhyShopCard }) {
       type="button"
       onClick={onClick}
       style={{ flex: `${card.flex} 1 0` }}
-      className="group relative flex min-h-0 flex-col overflow-hidden rounded-md bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
+      className="group relative flex min-h-0 flex-col overflow-hidden rounded-md bg-white cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D1D1F]"
     >
       {/* Title above the visual — matches store.dji.com InterestsCard title placement */}
       <div className="relative z-[2] flex shrink-0 items-start justify-center px-3 pt-3 pb-1 sm:px-6 sm:pt-4 lg:px-8 lg:pt-4">

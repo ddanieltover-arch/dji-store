@@ -80,7 +80,7 @@ export const EXPLORE_NAV: ContentNavSection = {
       items: [
         { slug: 'pilot-gallery', label: 'Pilot Gallery' },
         { slug: 'community', label: 'Community Forum' },
-        { slug: 'buying-guides', label: 'Buying Guides' },
+        { slug: 'buying-guides', label: 'Buying Guides (Netherlands)' },
         { slug: 'fly-safe', label: 'Fly Safe' },
         { slug: 'flying-tips', label: 'Flying Tips' }
       ]
