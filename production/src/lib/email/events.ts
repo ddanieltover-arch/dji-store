@@ -130,6 +130,16 @@ export type OrderEmailPayload = EmailPayload & {
   orderNumber?: string;
   customerName?: string;
   customerEmail?: string;
+  customerPhone?: string;
+  companyName?: string;
+  shippingAddress?: string;
+  shippingStreet?: string;
+  shippingPostalCode?: string;
+  shippingCity?: string;
+  shippingCountry?: string;
+  shippingCountryCode?: string;
+  vatId?: string;
+  notes?: string;
   productName?: string;
   paymentMethod?: string;
   trackingNumber?: string;

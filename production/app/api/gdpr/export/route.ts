@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { badRequest, getLocale, requireFields } from '@/lib/api/helpers';
 import { createDb } from '@/lib/db/client';
+import { extractClientDetails } from '@/lib/email/clientDetails';
 import { dispatchDualEmail, siteUrl } from '@/lib/email/send';
 
 export async function POST(req: NextRequest) {
@@ -18,7 +19,11 @@ export async function POST(req: NextRequest) {
     VALUES (${requestId}, ${email}, 'export', 'ready')
   `;
 
-  const payload = { customerEmail: email, requestId };
+  const payload = {
+    ...extractClientDetails(body),
+    customerEmail: email,
+    requestId
+  };
 
   await dispatchDualEmail({
     userTemplateId: 'gdpr.export_ready',

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { badRequest, getLocale, requireFields } from '@/lib/api/helpers';
 import { createDb } from '@/lib/db/client';
+import { extractClientDetails } from '@/lib/email/clientDetails';
 import { dispatchDualEmail, siteUrl } from '@/lib/email/send';
 
 export async function POST(req: NextRequest) {
@@ -23,7 +24,10 @@ export async function POST(req: NextRequest) {
     ON CONFLICT (customer_email) DO UPDATE SET marketing_consent = TRUE, product_restocks = TRUE, updated_at = now()
   `;
 
-  const payload = { customerEmail: email };
+  const payload = {
+    ...extractClientDetails({ ...body, customerEmail: email }),
+    customerEmail: email
+  };
 
   await dispatchDualEmail({
     userTemplateId: 'newsletter.welcome',

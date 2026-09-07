@@ -60,7 +60,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
               {docType === 'vat_invoice' && 'Commercial Invoice'}
               {docType === 'packing_slip' && 'WMS Logistics Warehouse Packing Slip'}
               {docType === 'ce_declaration' && 'EU EASA CE Declaration of Conformity'}
-              {docType === 'dhl_shipping_label' && 'DHL Express European Air Waybill'}
+              {docType === 'dhl_shipping_label' && 'Netherlands Express Air Waybill'}
               {docType === 'rma_return_label' && 'Prepaid DHL Return Shipping Label'}
               {docType === 'b2b_proforma_quote' && 'Enterprise B2B Pro-Forma Quotation'}
             </span>
@@ -107,10 +107,10 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                     </span>
                   </div>
                   <p className="text-gray-500 text-[11px] mt-1">
-                    European Distribution Operations Hub<br />
+                    Netherlands Distribution Operations Hub<br />
                     Flughafenstraße 100, Gateway Gardens<br />
-                    60549 Frankfurt am Main, Germany<br />
-                    EU Company Reg: <strong>HRB 108920 Frankfurt</strong>
+                    1118 CP Schiphol, Netherlands<br />
+                    Chamber of Commerce (KvK): <strong>NL — Amsterdam</strong>
                   </p>
                 </div>
 
@@ -208,7 +208,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                     <span>{formatPrice(order.subtotalEur, 'EUR')}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <span>Express European Air Shipping:</span>
+                    <span>Netherlands Express Shipping:</span>
                     <span className="text-emerald-700 font-bold">FREE (€0.00)</span>
                   </div>
                   <div className="flex justify-between font-black text-sm text-gray-900 pt-2 border-t border-gray-300">
@@ -222,13 +222,13 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
               <div className="pt-4 border-t border-gray-200 text-[10px] text-gray-500 flex flex-col sm:flex-row justify-between gap-2">
                 <div>
                   <p>
-                    Bank: Commerzbank Frankfurt am Main • BIC/SWIFT: COBADEFFXXX<br />
-                    IBAN: DE89 5004 0000 0123 4567 89 • Account Holder: DJI Store Europe BV
+                    Bank: Dutch SEPA business account • BIC/SWIFT: provided after order<br />
+                    IBAN: DE89 5004 0000 0123 4567 89 • Account Holder: DJI Store EU
                   </p>
                 </div>
                 <div className="text-right">
                   <p>
-                    24 Months Statutory European Warranty Applicable.<br />
+                    24 Months Statutory EU Warranty Applicable.<br />
                     EASA Class-Compliant Aircraft Hardware.
                   </p>
                 </div>
@@ -247,7 +247,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                     WMS PICK & PACK MANIFEST
                   </span>
                   <h3 className="text-lg font-black text-gray-900 mt-1">
-                    Hub: {order.allocation?.warehouseName || 'Frankfurt Central Hub (FRA-01)'}
+                    Hub: {order.allocation?.warehouseName || 'Amsterdam Schiphol Hub (AMS-02)'}
                   </h3>
                 </div>
                 <div className="text-right font-mono text-xs">
@@ -323,7 +323,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
 
               <div className="space-y-3">
                 <p><strong>Manufacturer:</strong> SZ DJI TECHNOLOGY CO., LTD.</p>
-                <p><strong>EU Authorized Representative:</strong> DJI Store Europe BV, Frankfurt am Main, Germany</p>
+                <p><strong>Authorized Reseller:</strong> DJI Store EU, Amsterdam Schiphol, Netherlands</p>
                 <p><strong>Object of Declaration:</strong> Unmanned Aircraft System (UAS) / Drone Hardware</p>
                 <p><strong>Applicable Model:</strong> {warranty?.productModel || 'DJI Mavic 4 Pro / Mini 4 Pro Series'}</p>
                 <p><strong>Class Identification Label:</strong> EASA Class C1 (Mavic 4 Pro) / EASA Class C0 (Mini 4 Pro &lt;249g)</p>
@@ -342,11 +342,11 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
               <div className="flex justify-between items-end pt-6 border-t border-gray-200 text-xs">
                 <div>
                   <p className="text-gray-500">Place and Date of Issue:</p>
-                  <p className="font-bold text-gray-900">Frankfurt am Main, European Union</p>
+                  <p className="font-bold text-gray-900">Amsterdam, Netherlands</p>
                 </div>
                 <div className="text-right">
                   <p className="font-serif italic text-sm text-gray-700">Dr. M. Lindner</p>
-                  <p className="font-bold text-gray-900">VP European Regulatory & Aviation Affairs</p>
+                  <p className="font-bold text-gray-900">VP NL Regulatory & Aviation Affairs</p>
                 </div>
               </div>
             </div>
@@ -381,7 +381,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                       <>
                         DJI STORE EUROPE BV (FRA-01)<br />
                         Flughafenstraße 100<br />
-                        60549 Frankfurt am Main, DE
+                        1118 CP Schiphol, NL
                       </>
                     )}
                   </p>
@@ -394,7 +394,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                       <>
                         DJI EU RETURNS REPAIR HUB<br />
                         RMA REF: {rma?.rmaNumber || 'RMA-EU-0891'}<br />
-                        Gateway Gardens, 60549 Frankfurt, DE
+                        Schiphol Logistics Park, 1118 CP Schiphol, NL
                       </>
                     ) : (
                       <>
@@ -438,7 +438,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                     </span>
                   </div>
                   <p className="text-gray-500 text-[11px] mt-1">
-                    B2B Commercial Accounts Division • Frankfurt am Main
+                    B2B Commercial Accounts Division • Amsterdam
                   </p>
                 </div>
 

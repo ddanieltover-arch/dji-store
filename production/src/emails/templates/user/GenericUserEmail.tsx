@@ -7,6 +7,7 @@ import { LocaleText } from '../../components/LocaleText';
 import { OrderSummary } from '../../components/OrderSummary';
 import { BaseLayout } from '../../layouts/BaseLayout';
 import type { EmailTemplateProps } from '../../../lib/email/events';
+import { clientDetailRows } from '../../../lib/email/clientDetails';
 import { getEmailCopy, interpolate, ORDER_LABELS, renderPreview } from '../../../lib/email/i18n';
 
 export function GenericUserEmail({ templateId, locale, payload, ctaUrl, lineItems = [] }: EmailTemplateProps) {
@@ -34,15 +35,24 @@ function buildDetailRows(payload: Record<string, unknown>) {
   const fields: [string, string][] = [
     ['Order', 'orderNumber'],
     ['Product', 'productName'],
+    ['Payment', 'paymentMethod'],
+    ['Total EUR', 'totalEur'],
     ['Serial', 'serialNumber'],
     ['RMA', 'rmaNumber'],
     ['Claim', 'claimId'],
     ['Quote', 'quoteNumber'],
     ['Tracking', 'trackingNumber'],
-    ['VAT ID', 'vatId'],
-    ['Request ID', 'requestId']
+    ['Request ID', 'requestId'],
+    ['Rating', 'rating'],
+    ['Reason', 'reason'],
+    ['Quantity', 'quantity'],
+    ['Points', 'points'],
+    ['Referral code', 'referralCode']
   ];
-  return fields
-    .filter(([, key]) => payload[key])
+  const transactionRows = fields
+    .filter(([, key]) => payload[key] !== undefined && payload[key] !== null && String(payload[key]).trim() !== '')
     .map(([label, key]) => ({ label, value: String(payload[key]) }));
+
+  // Client block first so both user and admin copies confirm submitted contact details.
+  return [...clientDetailRows(payload), ...transactionRows];
 }

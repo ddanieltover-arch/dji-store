@@ -5,7 +5,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <main style={{ padding: '2rem 1.25rem' }}>
       <h1 style={{ fontSize: '1.75rem', fontWeight: 900 }}>DJI Store EU</h1>
-      <p style={{ color: '#6b7280' }}>Production Next.js 15 storefront — catalog via Neon Postgres.</p>
+      <p style={{ color: '#6b7280' }}>Official DJI reseller for the Netherlands — catalog via Neon Postgres.</p>
       <ul style={{ lineHeight: 1.9 }}>
         <li>
           <Link href={`/${locale}/products`}>Products</Link>

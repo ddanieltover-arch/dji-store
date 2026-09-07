@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { badRequest, getLocale, requireFields } from '@/lib/api/helpers';
+import { extractClientDetails } from '@/lib/email/clientDetails';
 import { dispatchDualEmail, dispatchEmail, siteUrl } from '@/lib/email/send';
 
 export async function POST(req: NextRequest) {
@@ -10,10 +11,12 @@ export async function POST(req: NextRequest) {
   const locale = getLocale(body, req);
   const email = String(body.customerEmail);
   const quoteNumber = String(body.quoteNumber ?? `Q-${Date.now()}`);
+  const client = extractClientDetails(body);
 
   const payload = {
+    ...client,
     customerEmail: email,
-    companyName: String(body.companyName ?? 'Enterprise customer'),
+    companyName: String(body.companyName ?? client.companyName ?? 'Enterprise customer'),
     productName: String(body.productName ?? body.productId),
     quantity: String(body.quantity),
     quoteNumber
@@ -46,6 +49,8 @@ export async function PUT(req: NextRequest) {
     locale,
     to: email,
     payload: {
+      ...extractClientDetails(body),
+      customerEmail: email,
       vatId: String(body.vatId),
       validationStatus: String(body.validationStatus)
     },

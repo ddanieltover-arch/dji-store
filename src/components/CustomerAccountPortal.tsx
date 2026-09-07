@@ -159,14 +159,14 @@ export const CustomerAccountPortal: React.FC = () => {
       orderNumber: newWarrantyOrder,
       productId: 'prod-registered',
       productModel: newWarrantyModel,
-      variantComboName: 'Official European Unit',
+      variantComboName: 'Official Netherlands Unit',
       aircraftSerial: newWarrantySerial.toUpperCase(),
       remoteSerial: newWarrantyRemote.toUpperCase() || undefined,
       purchaseDate: new Date().toISOString().split('T')[0],
       warrantyExpiryDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 2).toISOString().split('T')[0], // 24-month statutory EU warranty
       status: 'active',
       invoiceUrl: 'https://djii.eu/invoices/statutory_warranty.pdf',
-      countryCode: 'DE'
+      countryCode: 'NL'
     };
 
     registerWarranty(reg);
@@ -226,13 +226,13 @@ export const CustomerAccountPortal: React.FC = () => {
     } else if (testVatId.toUpperCase().startsWith('FR') || testVatId.toUpperCase().startsWith('NL')) {
       setViesCheckResult({
         status: 'valid',
-        company: 'European Aerial Media SARL',
+        company: 'Dutch Aerial Media B.V.',
         reverseCharge: true // Intra-community 0% VAT
       });
     } else {
       setViesCheckResult({
         status: 'valid',
-        company: 'Verified European Business Entity',
+        company: 'Verified Dutch Business Entity',
         reverseCharge: true
       });
     }
@@ -457,7 +457,7 @@ export const CustomerAccountPortal: React.FC = () => {
                     {primaryOrder.items[0]?.productName} ({primaryOrder.items[0]?.comboName})
                   </h3>
                   <p className="text-xs text-gray-500">
-                    Dispatched from {primaryOrder.allocation?.warehouseName || 'Frankfurt Hub (FRA-01)'} • Estimated Delivery:{' '}
+                    Dispatched from {primaryOrder.allocation?.warehouseName || 'Amsterdam Hub (AMS-02)'} • Estimated Delivery:{' '}
                     <strong className="text-gray-900">
                       {primaryOrder.dhlShipment?.estimatedDeliveryDate || 'Tomorrow by 12:00 CET'}
                     </strong>
@@ -536,7 +536,7 @@ export const CustomerAccountPortal: React.FC = () => {
                   Register Aircraft Serial
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Activate statutory 2-year European warranty & instant service validation.
+                  Activate statutory 2-year EU warranty & instant service validation.
                 </p>
               </div>
               <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
@@ -611,7 +611,7 @@ export const CustomerAccountPortal: React.FC = () => {
             <div>
               <h3 className="font-black text-lg text-gray-900">Your Complete Order History</h3>
               <p className="text-xs text-gray-500">
-                All hardware shipments are fulfilled from our certified European logistics network with DHL Express.
+                All hardware shipments are fulfilled from our Amsterdam logistics hub with PostNL & DHL Express.
               </p>
             </div>
 
@@ -742,13 +742,13 @@ export const CustomerAccountPortal: React.FC = () => {
           <div className="bg-white p-6 rounded-3xl border border-gray-200 space-y-4">
             <div className="max-w-xl mx-auto text-center space-y-2">
               <span className="text-xs font-bold text-blue-600 uppercase tracking-widest block">
-                European Courier Telemetry
+                Netherlands Courier Telemetry
               </span>
               <h3 className="text-2xl font-black text-gray-900">
                 Live DHL Express Shipment Tracker
               </h3>
               <p className="text-xs text-gray-500">
-                Real-time milestone scans across European air hubs and final destination depots.
+                Real-time milestone scans across Dutch sorting hubs and final destination depots.
               </p>
 
               <div className="flex gap-2 pt-2">
@@ -764,7 +764,7 @@ export const CustomerAccountPortal: React.FC = () => {
                     addToast({
                       type: 'info',
                       title: 'Live Carrier Scans Synced',
-                      message: 'Latest DHL Express telemetry fetched from Frankfurt Air Hub.'
+                      message: 'Latest DHL Express telemetry fetched from Amsterdam Schiphol Hub.'
                     });
                   }}
                   className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-colors shadow-xs"
@@ -781,7 +781,7 @@ export const CustomerAccountPortal: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
                 <div>
                   <span className="text-[10px] font-bold uppercase bg-yellow-100 text-yellow-900 px-2 py-0.5 rounded">
-                    DHL Express European Direct Air
+                    PostNL / DHL Netherlands Express
                   </span>
                   <h3 className="text-xl font-black text-gray-900 mt-1">
                     Waybill #{primaryOrder.dhlShipment.waybillNumber}
@@ -848,7 +848,7 @@ export const CustomerAccountPortal: React.FC = () => {
               <div>
                 <h3 className="font-black text-lg text-gray-900">Your Registered Aircraft Hardware</h3>
                 <p className="text-xs text-gray-500">
-                  Protected under the statutory 24-Month European Union Product Guarantee.
+                  Protected under the statutory 24-Month EU Product Guarantee.
                 </p>
               </div>
             </div>
@@ -922,7 +922,7 @@ export const CustomerAccountPortal: React.FC = () => {
                   addToast({
                     type: 'success',
                     title: 'Care Claim Initialized',
-                    message: 'DJI European Service Center Frankfurt has received your priority replacement claim.'
+                    message: 'DJI Store EU Service Desk Amsterdam has received your priority replacement claim.'
                   });
                 }}
                 className="px-4 py-2.5 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs transition-colors shadow-xs"
@@ -1358,7 +1358,7 @@ export const CustomerAccountPortal: React.FC = () => {
                 EU VIES VAT System
               </span>
               <h3 className="text-xl font-black text-gray-900 mt-1">
-                European VAT Validation & Reverse Charge Engine
+                Dutch / EU VAT Validation & Reverse Charge Engine
               </h3>
               <p className="text-xs text-gray-500">
                 Verify any EU VAT ID to unlock 0% Intra-Community Reverse Charge invoicing across EU member states.
@@ -1561,7 +1561,7 @@ export const CustomerAccountPortal: React.FC = () => {
       {activeTab === 'settings' && (
         <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 space-y-6 shadow-xs">
           <div>
-            <h3 className="font-black text-lg text-gray-900">Saved European Shipping & Billing Profile</h3>
+            <h3 className="font-black text-lg text-gray-900">Saved Netherlands Shipping & Billing Profile</h3>
             <p className="text-xs text-gray-500">
               Primary delivery address for express DHL air freight shipments.
             </p>
@@ -1575,7 +1575,7 @@ export const CustomerAccountPortal: React.FC = () => {
                 Maximilianstraße 35B<br />
                 80539 Munich, Germany
               </p>
-              <p className="text-blue-700 font-mono text-[11px]">Assigned Hub: FRA-01 Frankfurt (1 Day Transit)</p>
+              <p className="text-blue-700 font-mono text-[11px]">Assigned Hub: AMS-02 Amsterdam (Next-Day Transit)</p>
             </div>
 
             <div className="p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-2">

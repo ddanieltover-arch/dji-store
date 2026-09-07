@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { badRequest, getLocale, requireFields } from '@/lib/api/helpers';
 import { getAdminEmail } from '@/lib/email/config';
-import { dispatchDualEmail, dispatchEmail, siteUrl } from '@/lib/email/send';
+import { extractClientDetails } from '@/lib/email/clientDetails';
+import { dispatchEmail, siteUrl } from '@/lib/email/send';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -12,10 +13,12 @@ export async function POST(req: NextRequest) {
   const referrerEmail = String(body.customerEmail);
   const refereeEmail = String(body.refereeEmail);
   const referralCode = String(body.referralCode ?? `REF-${Date.now()}`);
+  const client = extractClientDetails(body);
 
   const payload = {
+    ...client,
     customerEmail: referrerEmail,
-    referrerName: String(body.referrerName ?? body.customerName ?? 'A Flight Club member'),
+    referrerName: String(body.referrerName ?? body.customerName ?? client.customerName ?? 'A Flight Club member'),
     refereeName: String(body.refereeName),
     refereeEmail,
     productName: String(body.productName ?? 'DJI Store EU'),
@@ -57,6 +60,7 @@ export async function PUT(req: NextRequest) {
     locale,
     to: String(body.customerEmail),
     payload: {
+      ...extractClientDetails(body),
       refereeName: String(body.refereeName),
       points: String(body.points)
     },

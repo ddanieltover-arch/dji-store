@@ -2,12 +2,35 @@ import { WarehouseDepot, VariantDepotStock } from '../types';
 
 export const EUROPEAN_WAREHOUSES: WarehouseDepot[] = [
   {
+    id: 'depot-ams-02',
+    code: 'AMS-02',
+    name: 'Amsterdam Schiphol Aviation Logistics',
+    countryCode: 'NL',
+    city: 'Amsterdam',
+    isPrimaryHub: true,
+    transitDaysToEu: {
+      DE: 1,
+      FR: 2,
+      NL: 1,
+      BE: 1,
+      IT: 3,
+      ES: 3,
+      AT: 2,
+      CH: 2,
+      DK: 1,
+      SE: 2,
+      PL: 2
+    },
+    carrierService: 'PostNL & DPD Netherlands Priority',
+    cutoffTimeUtc: '17:30'
+  },
+  {
     id: 'depot-fra-01',
     code: 'FRA-01',
     name: 'Frankfurt Central Distribution Center',
     countryCode: 'DE',
     city: 'Frankfurt am Main',
-    isPrimaryHub: true,
+    isPrimaryHub: false,
     transitDaysToEu: {
       DE: 1,
       FR: 2,
@@ -23,29 +46,6 @@ export const EUROPEAN_WAREHOUSES: WarehouseDepot[] = [
     },
     carrierService: 'DHL Express European Direct Air',
     cutoffTimeUtc: '16:00'
-  },
-  {
-    id: 'depot-ams-02',
-    code: 'AMS-02',
-    name: 'Amsterdam Schiphol Aviation Logistics',
-    countryCode: 'NL',
-    city: 'Amsterdam',
-    isPrimaryHub: false,
-    transitDaysToEu: {
-      DE: 1,
-      FR: 2,
-      NL: 1,
-      BE: 1,
-      IT: 3,
-      ES: 3,
-      AT: 2,
-      CH: 2,
-      DK: 1,
-      SE: 2,
-      PL: 2
-    },
-    carrierService: 'DPD Benelux Priority Cargo',
-    cutoffTimeUtc: '17:30'
   },
   {
     id: 'depot-cdg-03',
@@ -138,17 +138,17 @@ export const INITIAL_DEPOT_STOCK: Record<string, VariantDepotStock[]> = {
   ]
 };
 
-export function getEstimatedDeliveryTime(destinationCountry: string = 'DE'): {
+export function getEstimatedDeliveryTime(destinationCountry: string = 'NL'): {
   dispatchHours: number;
   deliveryDaysText: string;
   optimalDepot: WarehouseDepot;
 } {
-  const dest = (destinationCountry || 'DE').toUpperCase() as keyof WarehouseDepot['transitDaysToEu'];
-  const primary = EUROPEAN_WAREHOUSES[0]; // Frankfurt
+  const dest = (destinationCountry || 'NL').toUpperCase() as keyof WarehouseDepot['transitDaysToEu'];
+  const primary = EUROPEAN_WAREHOUSES.find((w) => w.isPrimaryHub) ?? EUROPEAN_WAREHOUSES[0];
   const transitDays = primary.transitDaysToEu[dest] || 2;
 
   return {
-    dispatchHours: 3, // Dispatches within 3 hours from Frankfurt
+    dispatchHours: 3, // Dispatches within 3 hours from Amsterdam
     deliveryDaysText: transitDays === 1 ? 'Next Business Day (24h)' : `${transitDays} Business Days (48h)`,
     optimalDepot: primary
   };

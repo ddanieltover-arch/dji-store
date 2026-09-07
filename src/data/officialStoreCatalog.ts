@@ -45,7 +45,7 @@ export function sku(partial: SkuInput): Product {
     features: [
       {
         title: 'Official DJI Store EU',
-        description: 'Mapped from the canonical store.dji.com catalog into the certified PIM.'
+        description: 'Mapped from the canonical store.dji.com catalog for the Netherlands storefront.'
       }
     ],
     specifications: [
@@ -86,7 +86,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
     categoryLabel: 'Selfie & Beginner Drone',
     tagline: 'Palm Takeoff. Cinematic Vlog in Your Pocket.',
     description:
-      'Ultra-light palm takeoff drone for European beginners. Sub-250g class with voice control, subject tracking, and 4K video — no remote required for first flights.',
+      'Ultra-light palm takeoff drone for Dutch beginners. Sub-250g class with voice control, subject tracking, and 4K video — no remote required for first flights.',
     basePriceEur: 199,
     easaClass: 'C0 (<249g)',
     flightTimeMinutes: 18,
@@ -168,7 +168,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
     category: 'camera-drones',
     categoryLabel: 'Travel Camera Drone',
     tagline: 'True Vertical 4K. True Lightweight.',
-    description: 'True vertical shooting, 38-minute flight time class, and under-249g C0 compliance for European holidays.',
+    description: 'True vertical shooting, 38-minute flight time class, and under-249g C0 compliance for Dutch holidays.',
     basePriceEur: 419,
     easaClass: 'C0 (<249g)',
     flightTimeMinutes: 38,
@@ -204,7 +204,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
     category: 'camera-drones',
     categoryLabel: 'Triple-Camera Flagship',
     tagline: 'Hasselblad Triple Cam. Cinema Reach.',
-    description: 'Hasselblad wide plus dual telephoto cameras with Apple ProRes option on Cine, C2 class for European professional ops.',
+    description: 'Hasselblad wide plus dual telephoto cameras with Apple ProRes option on Cine, C2 class for Dutch professional ops.',
     basePriceEur: 1899,
     easaClass: 'C2',
     flightTimeMinutes: 43,
@@ -293,7 +293,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
     category: 'handheld',
     categoryLabel: '360 Camera',
     tagline: '8K 360. Invisible Selfie Stick Ready.',
-    description: 'Dual-lens 360 camera for European creators — 8K capture, waterproof housing options, and DJI Mic pairing.',
+    description: 'Dual-lens 360 camera for Dutch creators — 8K capture, waterproof housing options, and DJI Mic pairing.',
     basePriceEur: 499,
     weightGrams: 183,
     maxVideoRes: '8K 360',
@@ -382,7 +382,7 @@ export const OFFICIAL_STORE_EXPANSION: Product[] = [
     category: 'accessories',
     categoryLabel: 'Filters',
     tagline: 'ND 8/16/32/64 for Mini.',
-    description: 'Official ND set for Mini 4 Pro / Mini 4K European daylight control.',
+    description: 'Official ND set for Mini 4 Pro / Mini 4K Netherlands daylight control.',
     basePriceEur: 79,
     weightGrams: 40
   }),

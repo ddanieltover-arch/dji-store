@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'DJI Store EU',
-    short_name: 'DJI EU',
+    short_name: 'DJI NL',
     start_url: '/',
     display: 'standalone',
     background_color: '#F8F9FB',

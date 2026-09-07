@@ -45,7 +45,7 @@ export const ShippingMethodSection: React.FC<ShippingMethodSectionProps> = ({
 
         <div
           className="grid grid-cols-3 gap-1.5 shrink-0 sm:max-w-[240px] w-full sm:w-auto"
-          aria-label="European shipping partners"
+          aria-label="Netherlands shipping partners"
         >
           {CHECKOUT_CARRIERS.map((carrier) => (
             <div

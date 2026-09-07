@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { badRequest, getLocale, requireFields } from '@/lib/api/helpers';
 import { getAdminEmail } from '@/lib/email/config';
+import { extractClientDetails } from '@/lib/email/clientDetails';
 import { dispatchEmail, siteUrl } from '@/lib/email/send';
 
 export async function POST(req: NextRequest) {
@@ -11,6 +12,7 @@ export async function POST(req: NextRequest) {
   const locale = getLocale(body, req);
   const email = String(body.customerEmail);
   const payload = {
+    ...extractClientDetails(body),
     customerEmail: email,
     points: String(body.points),
     reason: String(body.reason)

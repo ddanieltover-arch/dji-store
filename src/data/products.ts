@@ -26,7 +26,7 @@ const RAW_DJI_PRODUCTS_SEED: Product[] = [
     categoryLabel: 'Flagship Camera Drone',
     tagline: 'Master Every Angle in 8K HDR',
     description:
-      'The definitive flagship aerial imaging tool. Powered by a triple-camera system with a 4/3 CMOS Hasselblad sensor, 46-minute maximum flight time, and omnidirectional obstacle sensing with APAS 5.0. Engineered for European airspace with Class C1 certification.',
+      'The definitive flagship aerial imaging tool. Powered by a triple-camera system with a 4/3 CMOS Hasselblad sensor, 46-minute maximum flight time, and omnidirectional obstacle sensing with APAS 5.0. Engineered for Dutch / EASA airspace with Class C1 certification.',
     basePriceEur: 2099,
     compareAtPriceEur: 2299,
     badgeLabel: 'New 2026 Flagship',
@@ -117,7 +117,7 @@ const RAW_DJI_PRODUCTS_SEED: Product[] = [
       },
       {
         title: 'DJI O4 Flagship Transmission',
-        description: 'Up to 20 km range with crystal clear 1080p/60fps low-latency live feed in European CE environments.'
+        description: 'Up to 20 km range with crystal clear 1080p/60fps low-latency live feed in Netherlands CE environments.'
       },
       {
         title: 'Omnidirectional APAS 5.0',
@@ -271,7 +271,7 @@ const RAW_DJI_PRODUCTS_SEED: Product[] = [
     categoryLabel: 'Ultralight Regulation-Free Drone',
     tagline: 'Under 249g Freedom: No Flight License Exam in EU',
     description:
-      'The most advanced mini camera drone in the world. Weighing under 249 grams, it is classified under EASA Class C0, permitting legal flight in Open Category A1 without complex certifications across Europe.',
+      'The most advanced mini camera drone in the world. Weighing under 249 grams, it is classified under EASA Class C0, permitting legal flight in Open Category A1 without complex certifications across the Netherlands.',
     basePriceEur: 799,
     compareAtPriceEur: 859,
     badgeLabel: '<249g No License',
@@ -749,7 +749,7 @@ const RAW_DJI_PRODUCTS_SEED: Product[] = [
     features: [
       {
         title: 'Built-in 700-Nit Display',
-        description: 'Eliminates phone overheating and glare during bright direct summer sunlight in Europe.'
+        description: 'Eliminates phone overheating and glare during bright direct summer sunlight in the Netherlands.'
       }
     ],
     specifications: [
@@ -769,7 +769,7 @@ const RAW_DJI_PRODUCTS_SEED: Product[] = [
     categoryLabel: 'Accidental Damage Protection',
     tagline: 'Up to 4 Low-Cost Aircraft Replacements Including Water & Flyaway',
     description:
-      'Official European protection plan providing peace of mind with replacement service for accidental water damage, collisions, flyaways, and natural wear.',
+      'Official protection plan for Dutch pilots providing peace of mind with replacement service for accidental water damage, collisions, flyaways, and natural wear.',
     basePriceEur: 299,
     weightGrams: 0,
     rating: 5.0,

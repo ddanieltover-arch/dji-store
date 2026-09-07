@@ -19,10 +19,10 @@ export const EasaGuidePage: React.FC = () => {
       {/* Header Banner */}
       <div className="bg-[#111113] text-white rounded-3xl p-8 sm:p-12 border border-gray-800 shadow-xl space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-xs uppercase tracking-wider">
-          <Award className="w-3.5 h-3.5" /> Official European Aviation Safety Agency (EASA) Standard
+          <Award className="w-3.5 h-3.5" /> EASA Standard for Flying in the Netherlands
         </div>
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          European Drone Regulation & Class Guide (2026)
+          Netherlands Drone Regulation & EASA Class Guide (2026)
         </h1>
         <p className="text-sm text-gray-300 max-w-3xl leading-relaxed">
           All drones sold on <strong>DJI Store EU (djii.eu)</strong> are 100% compliant with EU Regulations 2019/947 and 2019/945. Review this reference guide to understand flight category rights, certification labels, and registration duties across all 27 EU member states.

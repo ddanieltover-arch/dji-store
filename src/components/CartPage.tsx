@@ -105,7 +105,7 @@ export const CartPage: React.FC = () => {
           </div>
           <p className="text-lg font-bold text-gray-900">Your shopping bag is empty</p>
           <p className="text-sm text-gray-500 max-w-md mx-auto">
-            Explore our European stock of camera drones, gimbals, and OEM batteries.
+            Explore our Netherlands stock of camera drones, gimbals, and OEM batteries.
           </p>
           <button
             type="button"
@@ -123,7 +123,7 @@ export const CartPage: React.FC = () => {
                 {isFreeShipping ? (
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-700">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>You have unlocked FREE European DHL Express Shipping!</span>
+                    <span>You have unlocked FREE Netherlands Express Shipping!</span>
                   </div>
                 ) : (
                   <div className="space-y-2">

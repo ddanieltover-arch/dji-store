@@ -58,7 +58,7 @@ export const CheckoutPage: React.FC = () => {
   const [street, setStreet] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [city, setCity] = useState('');
-  const [countryCode, setCountryCode] = useState('DE');
+  const [countryCode, setCountryCode] = useState('NL');
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,7 +136,7 @@ export const CheckoutPage: React.FC = () => {
 
         <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
           <Lock className="w-3.5 h-3.5 text-emerald-600" />
-          <span>256-Bit SSL Encrypted European Checkout</span>
+          <span>256-Bit SSL Encrypted Netherlands Checkout</span>
         </div>
       </div>
 
@@ -205,14 +205,14 @@ export const CheckoutPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 2. European Shipping Address */}
+          {/* 2. Netherlands Shipping Address */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-4">
             <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
               <div className="w-6 h-6 rounded-full bg-[#1D1D1F] text-white text-xs font-bold flex items-center justify-center">
                 2
               </div>
               <h2 className="font-extrabold text-base text-gray-900">
-                European Delivery Address
+                Netherlands Delivery Address
               </h2>
             </div>
 
@@ -262,7 +262,7 @@ export const CheckoutPage: React.FC = () => {
                   type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  placeholder="Frankfurt am Main"
+                  placeholder="Amsterdam"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:border-[#E30613]"
                   required
                 />
@@ -283,7 +283,7 @@ export const CheckoutPage: React.FC = () => {
                 4
               </div>
               <h2 className="font-extrabold text-base text-gray-900">
-                Official European Payment Method
+                Official Netherlands Payment Method
               </h2>
             </div>
 
@@ -307,7 +307,7 @@ export const CheckoutPage: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-gray-500 text-[11px]">
-                  Official European corporate bank account. Payment instructions provided after order placement.
+                  Official Dutch SEPA business account. Payment instructions provided after order placement.
                 </p>
               </button>
 

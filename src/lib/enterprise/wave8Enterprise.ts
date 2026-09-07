@@ -306,7 +306,11 @@ export function preferDepotForLocation(countryCode: string): string {
   const code = countryCode.toUpperCase();
   if (code === 'NL' || code === 'BE') return EUROPEAN_WAREHOUSES.find((d) => d.code.startsWith('AMS'))!.code;
   if (code === 'FR') return EUROPEAN_WAREHOUSES.find((d) => d.code.startsWith('CDG'))!.code;
-  return EUROPEAN_WAREHOUSES.find((d) => d.code.startsWith('FRA'))!.code;
+  if (code === 'DE' || code === 'AT' || code === 'CH') {
+    return EUROPEAN_WAREHOUSES.find((d) => d.code.startsWith('FRA'))!.code;
+  }
+  // Netherlands-first storefront: default allocation to Amsterdam
+  return EUROPEAN_WAREHOUSES.find((d) => d.isPrimaryHub)?.code ?? EUROPEAN_WAREHOUSES.find((d) => d.code.startsWith('AMS'))!.code;
 }
 
 export function runWave8Enterprise(catalog: Product[] = DJI_PRODUCTS): Wave8EnterpriseBundle {

@@ -58,7 +58,7 @@ export const OrderSuccessPage: React.FC = () => {
           Thank you, {currentOrder.customer.firstName}!
         </h1>
         <p className="text-sm text-emerald-100 max-w-lg mx-auto leading-relaxed">
-          Your order has been recorded in our European distribution center in Frankfurt.
+          Your order has been recorded in our Amsterdam Schiphol distribution hub.
           {currentOrder.serverSynced === false ? (
             <>
               {' '}
@@ -76,7 +76,7 @@ export const OrderSuccessPage: React.FC = () => {
 
         <div className="inline-block bg-black/40 border border-emerald-500/30 rounded-2xl px-6 py-3 text-center">
           <span className="text-[11px] text-emerald-300 font-bold uppercase tracking-wider block">
-            European Order Reference:
+            Netherlands Order Reference:
           </span>
           <span className="text-xl sm:text-2xl font-mono font-black text-white">
             {currentOrder.orderNumber}
@@ -88,7 +88,7 @@ export const OrderSuccessPage: React.FC = () => {
       <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-sm space-y-6">
         <div className="flex items-center justify-between border-b border-gray-100 pb-4">
           <span className="font-extrabold text-sm text-gray-900 flex items-center gap-2">
-            <Truck className="w-4 h-4 text-blue-600" /> DHL European Express Timeline
+            <Truck className="w-4 h-4 text-blue-600" /> Netherlands Express Timeline
           </span>
           <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full">
             Tracking: {currentOrder.trackingNumber || 'DHL-PENDING'}
@@ -100,7 +100,7 @@ export const OrderSuccessPage: React.FC = () => {
             <span className="font-bold text-emerald-800 flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" /> 1. Order Received
             </span>
-            <p className="text-emerald-700 text-[11px]">Recorded in Frankfurt WMS</p>
+            <p className="text-emerald-700 text-[11px]">Recorded in Amsterdam WMS</p>
           </div>
 
           <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 space-y-1">

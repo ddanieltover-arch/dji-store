@@ -91,7 +91,7 @@ export const TrackOrderPage: React.FC = () => {
                       ? 'Delivered'
                       : searchedOrder.shippingStatus === 'dispatched'
                       ? 'In Transit (DHL Express)'
-                      : 'Processing in Frankfurt Hub'}
+                      : 'Processing in Amsterdam Hub'}
                   </span>
                 </div>
               </div>
@@ -119,9 +119,9 @@ export const TrackOrderPage: React.FC = () => {
 
               <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 space-y-1">
                 <span className="font-bold text-blue-800 flex items-center gap-1.5">
-                  <Truck className="w-4 h-4 text-blue-600" /> 3. DHL Hub Frankfurt
+                  <Truck className="w-4 h-4 text-blue-600" /> 3. PostNL / DHL Hub Amsterdam
                 </span>
-                <p className="text-blue-700 text-[10px]">Sorting Center Frankfurt Süd</p>
+                <p className="text-blue-700 text-[10px]">Sorting Center Schiphol</p>
               </div>
 
               <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 space-y-1">

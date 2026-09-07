@@ -44,11 +44,11 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     title: 'Payment Methods',
     eyebrow: 'Help & Support',
     summary:
-      'DJI Store EU supports official European bank settlement, Revolut banking, and Web3 cryptocurrency with an automatic 5% discount on crypto checkout.',
+      'DJI Store EU supports Dutch SEPA bank settlement, Revolut banking, and Web3 cryptocurrency with an automatic 5% discount on crypto checkout.',
     sections: [
       {
         heading: 'SEPA Bank Wire',
-        body: 'Pay via official European SEPA bank settlement. Banking instructions are provided by our admin team after you place your order — include your order reference when requesting details.',
+        body: 'Pay via Dutch SEPA bank settlement. Banking instructions are provided by our admin team after you place your order — include your order reference when requesting details.',
         bullets: ['EUR settlement only', 'Corporate invoice available', '1-hour dispatch after payment verification']
       },
       {
@@ -73,7 +73,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/order-information',
     title: 'Order Information',
     eyebrow: 'Help & Support',
-    summary: 'How orders are registered, confirmed, and allocated from our Frankfurt European distribution hub.',
+    summary: 'How orders are registered, confirmed, and allocated from our Amsterdam Schiphol distribution hub.',
     sections: [
       {
         heading: 'Order confirmation',
@@ -83,7 +83,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
       {
         heading: 'Allocation & serial numbers',
         body: 'Every aircraft and battery ships with factory OEM serial numbers eligible for DJI firmware activation and Care Refresh registration in the EU.',
-        bullets: ['Frankfurt WMS allocation', 'CE conformity documentation included', 'Pre-flight activation guide in box']
+        bullets: ['Amsterdam WMS allocation', 'CE conformity documentation included', 'Pre-flight activation guide in box']
       },
       {
         heading: 'Modify or cancel',
@@ -97,11 +97,11 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/shipping-time',
     title: 'Shipping Time',
     eyebrow: 'Help & Support',
-    summary: 'When your order leaves our European distribution hubs and how transit times are calculated.',
+    summary: 'When your order leaves our Amsterdam distribution hub and how transit times are calculated.',
     sections: [
       {
         heading: 'Dispatch hubs',
-        body: 'Inventory ships from Frankfurt CargoCity Süd and Amsterdam Schiphol Logistics for optimal EU transit times.',
+        body: 'Inventory ships from Amsterdam Schiphol and Amsterdam Schiphol Logistics for optimal EU transit times.',
         bullets: ['24–48h dispatch after payment clearance', 'Business-day handling Mon–Fri', 'SMS updates via DHL Express']
       },
       {
@@ -125,7 +125,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/shipping-fees',
     title: 'Delivery and Shipping Fee',
     eyebrow: 'Help & Support',
-    summary: 'Standard European shipping via DHL, FedEx, DPD, GLS and regional partners — free express on qualifying orders.',
+    summary: 'Standard Netherlands shipping via PostNL, DHL, DPD and regional partners — free express on qualifying orders.',
     sections: [
       {
         heading: 'Standard Shipping',
@@ -134,7 +134,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
       },
       {
         heading: 'Free shipping threshold',
-        body: 'Orders above the cart free-shipping threshold qualify for complimentary Standard Shipping across all EU member states, EFTA, and UK.',
+        body: 'Orders above the cart free-shipping threshold qualify for complimentary Standard Shipping across the Netherlands (with EU shipping partners where needed), EFTA, and UK.',
         bullets: ['Threshold shown in cart summary', 'Applies to standard parcel weight bands', 'Oversized cinema kits quoted separately']
       },
       {
@@ -173,7 +173,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/delivery-inspection',
     title: 'Inspection and Sign',
     eyebrow: 'Help & Support',
-    summary: 'What to check when your DJI hardware arrives and how carrier signature rules apply in Europe.',
+    summary: 'What to check when your DJI hardware arrives and how carrier signature rules apply in the Netherlands.',
     sections: [
       {
         heading: 'On delivery',
@@ -197,7 +197,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/shipping-faq',
     title: 'Logistics and Order FAQ',
     eyebrow: 'Help & Support',
-    summary: 'Common questions about European delivery, customs, and order changes.',
+    summary: 'Common questions about Netherlands delivery, customs, and order changes.',
     sections: [
       {
         heading: 'Customs & import',
@@ -225,7 +225,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     sections: [
       {
         heading: '14-day withdrawal (B2C)',
-        body: 'European consumers may withdraw from a distance contract within 14 days of receipt without giving reasons. Products must be unused, in original OEM sealing where applicable, and include all accessories.',
+        body: 'Dutch consumers may withdraw from a distance contract within 14 days of receipt without giving reasons. Products must be unused, in original OEM sealing where applicable, and include all accessories.',
         bullets: ['Return initiation via Customer Account', 'Prepaid DHL return label where eligible', 'Refund within 14 days of goods receipt']
       },
       {
@@ -245,7 +245,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/technical-support',
     title: 'Technical Support',
     eyebrow: 'Help & Support',
-    summary: 'Firmware, activation, flight app setup, and European regulatory guidance from certified support engineers.',
+    summary: 'Firmware, activation, flight app setup, and Dutch / EASA regulatory guidance from certified support engineers.',
     sections: [
       {
         heading: 'Before you contact us',
@@ -255,7 +255,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
       {
         heading: 'What we cover',
         body: 'Store EU support handles activation errors, RTH failures, gimbal calibration, Care Refresh enrollment, and EASA registration questions for EU operators.',
-        bullets: ['Live chat & email Mon–Sat', 'Remote diagnostic logs (with consent)', 'Escalation to DJI Europe R&D when required']
+        bullets: ['Live chat & email Mon–Sat', 'Remote diagnostic logs (with consent)', 'Escalation to DJI support when required']
       },
       {
         heading: 'Response times',
@@ -269,7 +269,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/repair-services',
     title: 'Repair Services',
     eyebrow: 'Help & Support',
-    summary: 'Authorized European repair pipeline with genuine parts, traceable RMA, and Care Refresh express lanes.',
+    summary: 'Authorized Netherlands repair pipeline with genuine parts, traceable RMA, and Care Refresh express lanes.',
     sections: [
       {
         heading: 'Repair intake',
@@ -293,7 +293,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/help/after-sales-policies',
     title: 'After-Sales Service Policies',
     eyebrow: 'Help & Support',
-    summary: 'Warranty, Care Refresh, data privacy, and service level commitments for DJI Store EU customers.',
+    summary: 'Warranty, Care Refresh, data privacy, and service level commitments for DJI Store EU customers in the Netherlands.',
     sections: [
       {
         heading: '2-year EU statutory warranty',
@@ -317,7 +317,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/programs/store-credit',
     title: 'Store EU Credit',
     eyebrow: 'Programs',
-    summary: 'Earn and redeem Store EU Credit on accessories, Care plans, and upgrade bundles across the European catalog.',
+    summary: 'Earn and redeem Store EU Credit on accessories, Care plans, and upgrade bundles across the Netherlands catalog.',
     sections: [
       {
         heading: 'How you earn',
@@ -356,11 +356,11 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/explore/pilot-gallery',
     title: 'Pilot Gallery',
     eyebrow: 'Explore',
-    summary: 'Curated aerial cinema, FPV, and mapping work from European DJI pilots — submit your flights to be featured.',
+    summary: 'Curated aerial cinema, FPV, and mapping work from Dutch DJI pilots — submit your flights to be featured.',
     sections: [
       {
         heading: 'Featured categories',
-        body: 'Mountain FPV, coastal mapping, wedding cinema, and infrastructure inspection reels from creators in Germany, France, Italy, and the Nordics.',
+        body: 'Coastal mapping, canal city cinema, Wadden Sea FPV, and infrastructure inspection reels from creators across the Netherlands.',
         bullets: ['4K/8K ProRes showcases', 'Monthly editor picks', 'Creator gear lists linked to catalog']
       },
       {
@@ -375,7 +375,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/explore/community',
     title: 'Community Forum',
     eyebrow: 'Explore',
-    summary: 'Connect with European pilots, share LUTs, discuss EASA airspace changes, and get peer advice on cinematic setups.',
+    summary: 'Connect with Dutch pilots, share LUTs, discuss EASA airspace changes, and get peer advice on cinematic setups.',
     sections: [
       {
         heading: 'Discussion channels',
@@ -394,7 +394,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/explore/buying-guides',
     title: 'Buying Guides',
     eyebrow: 'Explore',
-    summary: 'Choose the right drone, gimbal, or power station for travel, cinema, inspection, and content creation in Europe.',
+    summary: 'Choose the right drone, gimbal, or power station for travel, cinema, inspection, and content creation in the Netherlands.',
     sections: [
       {
         heading: 'Drone selector',
@@ -413,7 +413,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/explore/fly-safe',
     title: 'Fly Safe',
     eyebrow: 'Explore',
-    summary: 'European operational safety: geofencing, Remote ID, weather limits, and pre-flight checklists for DJI aircraft.',
+    summary: 'Dutch operational safety: geofencing, Remote ID, weather limits, and pre-flight checklists for DJI aircraft.',
     sections: [
       {
         heading: 'Regulatory basics',
@@ -433,7 +433,7 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/explore/flying-tips',
     title: 'Flying Tips',
     eyebrow: 'Explore',
-    summary: 'Cinematic movement, battery care, ND filter selection, and European seasonal flying advice from our pilot team.',
+    summary: 'Cinematic movement, battery care, ND filter selection, and Dutch seasonal flying advice from our pilot team.',
     sections: [
       {
         heading: 'Cinematic moves',
@@ -454,16 +454,16 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     title: 'Who We Are',
     eyebrow: 'Company',
     summary:
-      'DJI Store EU (djii.eu) is the authorized European distribution portal for DJI consumer, prosumer, and enterprise aerial systems.',
+      'DJI Store EU (djii.eu) is the authorized DJI reseller for the Netherlands for DJI consumer, prosumer, and enterprise aerial systems.',
     sections: [
       {
         heading: 'Our mission',
-        body: 'Deliver factory-sealed European inventory with genuine serial numbers, CE documentation, and localized support — from first unboxing to fleet scale.',
-        bullets: ['Frankfurt headquarters & WMS', 'Amsterdam secondary hub', 'Enterprise cinema & survey verticals']
+        body: 'Deliver factory-sealed Netherlands inventory with genuine serial numbers, CE documentation, and localized support — from first unboxing to fleet scale.',
+        bullets: ['Amsterdam headquarters & WMS', 'Amsterdam primary hub', 'Enterprise cinema & survey verticals']
       },
       {
         heading: 'Authorisation',
-        body: 'We operate as an independent authorized distributor within the European DJI commercial network. Products are sourced through official supply channels only — no grey imports.'
+        body: 'We operate as an independent authorized reseller focused on the Dutch market. Products are sourced through official supply channels only — no grey imports.'
       }
     ],
     cta: { label: 'Browse Catalog', action: 'plp', target: 'all' }
@@ -473,16 +473,16 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/company/contact',
     title: 'Contact Us',
     eyebrow: 'Company',
-    summary: 'Sales, payment instructions, technical support, and B2B fleet enquiries for the European market.',
+    summary: 'Sales, payment instructions, technical support, and B2B fleet enquiries for the Dutch market.',
     sections: [
       {
         heading: 'General & sales',
         body: `Email ${SUPPORT_EMAIL} for product availability, payment instructions, and order amendments. Include your order reference when applicable.`,
-        bullets: ['Mon–Sat 09:00–18:00 CET', 'English, German, French support', 'B2B fleet quotes within 24h']
+        bullets: ['Mon–Sat 09:00–18:00 CET', 'Dutch, English support', 'B2B fleet quotes within 24h']
       },
       {
         heading: 'Visit our hub',
-        body: 'DJI Store EU Distribution — Frankfurt CargoCity Süd, 60549 Frankfurt am Main, Germany. Visits by appointment for enterprise clients and press.',
+        body: 'DJI Store EU — Amsterdam Schiphol Aviation Logistics, 1118 CP Schiphol, Netherlands. Visits by appointment for enterprise clients and press.',
         bullets: ['EORI: DE884210992', 'DHL Express pickup daily', 'No walk-in retail at logistics hub']
       },
       {
@@ -497,12 +497,12 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/company/careers',
     title: 'Careers',
     eyebrow: 'Company',
-    summary: 'Join our European ecommerce, logistics, and aerial solutions team based in Frankfurt and remote across the EU.',
+    summary: 'Join our Netherlands ecommerce, logistics, and aerial solutions team based in Amsterdam.',
     sections: [
       {
         heading: 'Open disciplines',
         body: 'We hire for commerce engineering, warehouse operations, enterprise sales, content production, and customer support — drone experience a plus, not always required.',
-        bullets: ['Hybrid Frankfurt / remote EU', 'English working language', 'Employee drone discount program']
+        bullets: ['Amsterdam HQ / hybrid NL', 'Dutch & English working languages', 'Employee drone discount program']
       },
       {
         heading: 'Apply',
@@ -516,12 +516,12 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/company/flagship-stores',
     title: 'Flagship Stores',
     eyebrow: 'Company',
-    summary: 'Experience DJI products in person at partner flagship locations across Europe — hands-on flight sims and pro demos.',
+    summary: 'Experience DJI products in person at partner demo locations across the Netherlands — hands-on flight sims and pro demos.',
     sections: [
       {
         heading: 'Partner locations',
-        body: 'Official DJI branded experiences in select European capitals. Store EU online orders can be collected where partner click-and-collect is enabled.',
-        bullets: ['Frankfurt partner lounge (by appointment)', 'Paris Champs-Élysées partner zone', 'Amsterdam Schiphol transit pop-up (seasonal)']
+        body: 'Official DJI branded experiences in Dutch cities including Amsterdam and Rotterdam. Store EU online orders can be collected where partner click-and-collect is enabled.',
+        bullets: ['Amsterdam demo lounge (by appointment)', 'Rotterdam creator pop-up', 'Schiphol transit demo desk (seasonal)']
       },
       {
         heading: 'Online-first',

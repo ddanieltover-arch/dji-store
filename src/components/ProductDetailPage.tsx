@@ -251,7 +251,7 @@ export const ProductDetailPage: React.FC = () => {
                   <span className="text-gray-300">•</span>
                   <span className="text-emerald-600 font-bold flex items-center gap-1">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    In Stock (Frankfurt Depot)
+                    In Stock (Amsterdam Depot)
                   </span>
                 </div>
               </div>
@@ -376,7 +376,7 @@ export const ProductDetailPage: React.FC = () => {
                     <Building2 className="w-4 h-4 text-blue-700 shrink-0" />
                     <div>
                       <span className="font-bold block">
-                        🟢 European Depots (FRA, AMS, CDG): {activeVariant.stockQuantity} Units In Stock
+                        🟢 Netherlands Hub (AMS) + EU Partners: {activeVariant.stockQuantity} Units In Stock
                       </span>
                       <span className="text-[10px] text-blue-700">
                         Check local warehouse dispatch & replenishment schedule →
@@ -553,7 +553,7 @@ export const ProductDetailPage: React.FC = () => {
                   {product.modelName} — {activeVariant.comboName}
                 </span>
                 <span className="text-xs text-emerald-600 font-semibold">
-                  🟢 In Stock (Frankfurt Hub)
+                  🟢 In Stock (Amsterdam Hub)
                 </span>
               </div>
             </div>

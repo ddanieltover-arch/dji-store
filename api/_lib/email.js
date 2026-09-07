@@ -98,14 +98,44 @@ function formatMoney(value) {
 function buildPayload(body) {
   const lineItems = Array.isArray(body.lineItems) ? body.lineItems : [];
   const productName = String(body.productName || lineItems[0]?.name || 'DJI products');
+  const customer = body.customer && typeof body.customer === 'object' ? body.customer : {};
+  const shipping =
+    (body.shippingAddress && typeof body.shippingAddress === 'object' && body.shippingAddress) ||
+    (body.placedOrder && body.placedOrder.shippingAddress) ||
+    {};
+  const firstName = String(body.firstName || customer.firstName || '').trim();
+  const lastName = String(body.lastName || customer.lastName || '').trim();
+  const customerName = String(
+    body.customerName || `${firstName} ${lastName}`.trim() || customer.name || ''
+  ).trim();
+  const customerEmail = String(body.customerEmail || body.email || customer.email || '').trim();
+  const customerPhone = String(body.phone || body.customerPhone || customer.phone || '').trim();
+  const companyName = String(body.companyName || body.company || customer.company || '').trim();
+  const street = String(shipping.street || shipping.line1 || body.street || '').trim();
+  const postalCode = String(shipping.postalCode || shipping.zip || body.postalCode || '').trim();
+  const city = String(shipping.city || body.city || '').trim();
+  const countryName = String(shipping.countryName || shipping.country || body.countryName || body.country || '').trim();
+  const countryCode = String(shipping.countryCode || body.countryCode || '').trim();
+  const shippingAddress = [street, postalCode, city, countryName || countryCode].filter(Boolean).join(', ');
+
   return {
     orderNumber: String(body.orderNumber || ''),
-    customerName: String(body.customerName || `${body.firstName || ''} ${body.lastName || ''}`.trim()),
-    customerEmail: String(body.customerEmail || body.email || ''),
+    customerName,
+    customerEmail,
+    customerPhone,
+    companyName,
+    shippingAddress,
+    shippingStreet: street,
+    shippingPostalCode: postalCode,
+    shippingCity: city,
+    shippingCountry: countryName,
+    shippingCountryCode: countryCode,
     productName,
     paymentMethod: paymentMethodDisplayName(body.paymentMethod || 'card'),
     totalEur: formatMoney(body.totalEur ?? ''),
     trackingNumber: String(body.trackingNumber || body.trackingToken || ''),
+    vatId: String(body.vatId || body.vatNumber || '').trim(),
+    notes: String(body.notes || body.message || body.description || '').trim(),
     lineItems
   };
 }
@@ -165,20 +195,32 @@ function renderBrandedEmail({ audience, templateId, payload, ctaUrl }) {
       </div>`
       : '';
 
+  const clientRows = [
+    ['Name', payload.customerName],
+    ['Email', payload.customerEmail],
+    ['Phone', payload.customerPhone],
+    ['Company', payload.companyName],
+    ['Shipping address', payload.shippingAddress],
+    ['VAT ID', payload.vatId],
+    ['Notes', payload.notes]
+  ].filter(([, v]) => v);
+
   const detailRows =
     audience === 'admin'
       ? [
-          ['Customer', payload.customerName],
-          ['Email', payload.customerEmail],
+          ...clientRows,
           ['Order', payload.orderNumber],
           ['Product', payload.productName],
           ['Total EUR', payload.totalEur],
-          ['Payment', payload.paymentMethod]
+          ['Payment', payload.paymentMethod],
+          ['Tracking', payload.trackingNumber]
         ].filter(([, v]) => v)
       : [
+          ...clientRows,
           ['Order', payload.orderNumber],
           ['Product', payload.productName],
           ['Payment', payload.paymentMethod],
+          ['Total EUR', payload.totalEur],
           ['Tracking', payload.trackingNumber]
         ].filter(([, v]) => v);
 
@@ -215,7 +257,7 @@ function renderBrandedEmail({ audience, templateId, payload, ctaUrl }) {
               }
               <hr style="border:none;border-top:1px solid ${COLORS.border};margin:32px 0 24px;" />
               <p style="color:${COLORS.muted};font-family:${FONT};font-size:12px;line-height:1.6;margin:0 0 8px;">Questions? Contact us at ${escapeHtml(adminEmail())}</p>
-              <p style="color:${COLORS.muted};font-family:${FONT};font-size:12px;line-height:1.6;margin:0 0 8px;">DJI Store EU · Certified European Distribution</p>
+              <p style="color:${COLORS.muted};font-family:${FONT};font-size:12px;line-height:1.6;margin:0 0 8px;">DJI Store EU · Official Reseller for the Netherlands</p>
               <p style="margin:0;">
                 <a href="${escapeHtml(siteUrl('/'))}" style="color:${COLORS.accent};font-size:12px;margin-right:12px;text-decoration:none;">Visit store</a>
                 <a href="${escapeHtml(siteUrl('/privacy'))}" style="color:${COLORS.accent};font-size:12px;text-decoration:none;">Privacy</a>
@@ -239,6 +281,12 @@ function renderBrandedEmail({ audience, templateId, payload, ctaUrl }) {
       (item) => `- ${item.quantity}x ${item.name || item.sku} — EUR ${formatMoney(item.priceEur ?? 0)}`
     ),
     payload.totalEur ? `Total: EUR ${payload.totalEur}` : '',
+    payload.customerName ? `Name: ${payload.customerName}` : '',
+    payload.customerEmail ? `Email: ${payload.customerEmail}` : '',
+    payload.customerPhone ? `Phone: ${payload.customerPhone}` : '',
+    payload.companyName ? `Company: ${payload.companyName}` : '',
+    payload.shippingAddress ? `Shipping address: ${payload.shippingAddress}` : '',
+    payload.vatId ? `VAT ID: ${payload.vatId}` : '',
     cta && ctaUrl ? `${cta}: ${ctaUrl}` : ''
   ]
     .filter(Boolean)

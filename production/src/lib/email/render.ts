@@ -60,6 +60,32 @@ function buildPlainText(
     lines.push('');
   }
 
+  const detailPairs: Array<[string, string]> = [
+    ['Name', 'customerName'],
+    ['Email', 'customerEmail'],
+    ['Phone', 'customerPhone'],
+    ['Company', 'companyName'],
+    ['Shipping address', 'shippingAddress'],
+    ['VAT ID', 'vatId'],
+    ['Order', 'orderNumber'],
+    ['Product', 'productName'],
+    ['Payment', 'paymentMethod'],
+    ['Tracking', 'trackingNumber'],
+    ['Serial', 'serialNumber'],
+    ['RMA', 'rmaNumber'],
+    ['Claim', 'claimId'],
+    ['Quote', 'quoteNumber'],
+    ['Request ID', 'requestId'],
+    ['Notes', 'notes']
+  ];
+  for (const [label, key] of detailPairs) {
+    const value = payload[key];
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      lines.push(`${label}: ${String(value)}`);
+    }
+  }
+  if (detailPairs.some(([, key]) => payload[key])) lines.push('');
+
   if (copy.cta && ctaUrl) {
     lines.push(`${interpolate(copy.cta, payload)}: ${ctaUrl}`);
     lines.push('');

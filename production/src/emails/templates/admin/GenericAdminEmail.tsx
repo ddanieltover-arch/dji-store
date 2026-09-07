@@ -7,6 +7,7 @@ import { LocaleText } from '../../components/LocaleText';
 import { OrderSummary } from '../../components/OrderSummary';
 import { BaseLayout } from '../../layouts/BaseLayout';
 import type { EmailTemplateProps } from '../../../lib/email/events';
+import { clientDetailRows } from '../../../lib/email/clientDetails';
 import { ADMIN_BANNER, getEmailCopy, interpolate, ORDER_LABELS, renderPreview } from '../../../lib/email/i18n';
 
 export function GenericAdminEmail({ templateId, locale, payload, ctaUrl, lineItems = [] }: EmailTemplateProps) {
@@ -33,8 +34,6 @@ export function GenericAdminEmail({ templateId, locale, payload, ctaUrl, lineIte
 
 function buildAdminRows(payload: Record<string, unknown>) {
   const fields: [string, string][] = [
-    ['Customer', 'customerName'],
-    ['Email', 'customerEmail'],
     ['Order', 'orderNumber'],
     ['Product', 'productName'],
     ['Total EUR', 'totalEur'],
@@ -43,15 +42,19 @@ function buildAdminRows(payload: Record<string, unknown>) {
     ['RMA', 'rmaNumber'],
     ['Reason', 'reason'],
     ['Claim', 'claimId'],
-    ['Company', 'companyName'],
     ['Quantity', 'quantity'],
     ['Referee', 'refereeEmail'],
     ['Referral code', 'referralCode'],
     ['Points', 'points'],
     ['Request ID', 'requestId'],
-    ['Rating', 'rating']
+    ['Rating', 'rating'],
+    ['Tracking', 'trackingNumber'],
+    ['Status', 'statusLabel'],
+    ['Payment status', 'paymentStatusLabel']
   ];
-  return fields
-    .filter(([, key]) => payload[key] !== undefined && payload[key] !== null && payload[key] !== '')
+  const transactionRows = fields
+    .filter(([, key]) => payload[key] !== undefined && payload[key] !== null && String(payload[key]).trim() !== '')
     .map(([label, key]) => ({ label, value: String(payload[key]) }));
+
+  return [...clientDetailRows(payload), ...transactionRows];
 }

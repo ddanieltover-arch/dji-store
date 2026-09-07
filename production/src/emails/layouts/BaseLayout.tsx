@@ -44,7 +44,7 @@ export function BaseLayout({ preview, children, footer, showUnsubscribe, unsubsc
             {footer ?? `Questions? Contact us at ${SITE_EMAIL}`}
           </Text>
           <Text style={{ color: emailColors.muted, fontFamily: emailFonts.base, fontSize: '12px', lineHeight: '1.6', margin: '0 0 8px' }}>
-            DJI Store EU · Certified European Distribution
+            DJI Store EU · Official Reseller for the Netherlands
           </Text>
           <Section>
             <Link href={siteUrl} style={{ color: emailColors.accent, fontSize: '12px', marginRight: '12px' }}>

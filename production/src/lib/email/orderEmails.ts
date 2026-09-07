@@ -1,9 +1,28 @@
 import type { EmailLocale, EmailPayload, OrderLineItem, TemplateId } from './events';
+import { extractClientDetails } from './clientDetails';
 import { getAdminEmail } from './config';
 import { dispatchDualEmail, dispatchEmail, siteUrl } from '../email/send';
 
 function formatStatusLabel(value: string): string {
   return value.replace(/_/g, ' ').trim() || 'updated';
+}
+
+function paymentMethodDisplayName(method: string): string {
+  switch (method) {
+    case 'sepa_bank_wire':
+    case 'bank_transfer_sepa':
+      return 'SEPA Bank Wire';
+    case 'revolut_bank':
+      return 'Revolut Banking';
+    case 'crypto_usdt':
+    case 'crypto_btc':
+    case 'crypto_eth':
+      return 'Web3 Cryptocurrency';
+    case 'card':
+      return 'Card';
+    default:
+      return method || 'Payment';
+  }
 }
 
 export function resolveStatusEmailTemplates(args: {
@@ -47,14 +66,20 @@ export function buildOrderPayload(body: Record<string, unknown>): EmailPayload {
   const lineItems = Array.isArray(body.lineItems) ? (body.lineItems as OrderLineItem[]) : [];
   const orderStatus = String(body.orderStatus ?? body.status ?? '');
   const paymentStatus = String(body.paymentStatus ?? '');
+  const client = extractClientDetails(body);
+  const totalRaw = body.totalEur;
+  const totalEur =
+    typeof totalRaw === 'number'
+      ? totalRaw.toFixed(2)
+      : String(totalRaw ?? '').trim();
+
   return {
+    ...client,
     orderNumber: String(body.orderNumber ?? body.orderId ?? ''),
-    customerName: String(body.customerName ?? `${body.firstName ?? ''} ${body.lastName ?? ''}`.trim()),
-    customerEmail: String(body.customerEmail ?? body.email ?? ''),
     productName: String(body.productName ?? lineItems[0]?.name ?? 'DJI products'),
-    paymentMethod: String(body.paymentMethod ?? 'card'),
-    totalEur: String(body.totalEur ?? ''),
-    trackingNumber: String(body.trackingNumber ?? ''),
+    paymentMethod: paymentMethodDisplayName(String(body.paymentMethod ?? 'card')),
+    totalEur,
+    trackingNumber: String(body.trackingNumber ?? body.trackingToken ?? ''),
     statusLabel: formatStatusLabel(orderStatus),
     paymentStatusLabel: formatStatusLabel(paymentStatus),
     previousStatusLabel: formatStatusLabel(String(body.previousOrderStatus ?? '')),

@@ -104,7 +104,7 @@ export const Footer: React.FC = () => {
               <div>
                 <h4 className="text-white font-semibold text-sm">2-Year Official EU Warranty</h4>
                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  Full statutory 24-month European warranty with certified authorized technicians.
+                  Full statutory 24-month EU consumer warranty with certified authorized technicians.
                 </p>
               </div>
             </div>
@@ -114,9 +114,9 @@ export const Footer: React.FC = () => {
                 <Truck className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-white font-semibold text-sm">24h–48h European Express</h4>
+                <h4 className="text-white font-semibold text-sm">Fast Netherlands Express</h4>
                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  Dispatched from Frankfurt and Amsterdam via DHL, FedEx, DPD, GLS & partners.
+                  Dispatched from Amsterdam Schiphol via PostNL, DHL, DPD & partners across the Netherlands.
                 </p>
               </div>
             </div>
@@ -138,9 +138,9 @@ export const Footer: React.FC = () => {
                 <Award className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-white font-semibold text-sm">EASA European Compliance</h4>
+                <h4 className="text-white font-semibold text-sm">EASA / NL Flight Ready</h4>
                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                  CE-certified aircraft aligned with EU Regulations 2019/947 and 2019/945.
+                  CE-certified aircraft aligned with EASA rules for flying in the Netherlands.
                 </p>
               </div>
             </div>
@@ -182,8 +182,8 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="mt-6 text-[11px] text-gray-500 space-y-1">
-          <p>🏢 Frankfurt CargoCity Süd, 60549 Frankfurt am Main, Germany · EORI: DE884210992</p>
-          <p>© 2026 DJI Store EU (djii.eu). Authorized European Distribution Network.</p>
+          <p>🏢 Amsterdam Schiphol Aviation Logistics, 1118 CP Schiphol, Netherlands</p>
+          <p>© 2026 DJI Store EU (djii.eu). Official DJI reseller focused on the Netherlands.</p>
         </div>
       </div>
     </footer>

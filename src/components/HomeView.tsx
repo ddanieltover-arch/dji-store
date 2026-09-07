@@ -1,13 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import {
   ShieldCheck,
-  Truck,
   ChevronRight,
   Heart,
   Scale,
   ShoppingBag,
-  Zap,
-  Award,
   Video,
   BatteryCharging,
   Compass,
@@ -23,6 +20,9 @@ import { formatPrice } from '../data/currency';
 import { productListingImage } from '../lib/pim/productListingImage';
 import { Product } from '../types';
 import { HomeHeroCarousel } from './home/HomeHeroCarousel';
+import { HomeCategoryStrip } from './home/HomeCategoryStrip';
+import { HomeWhyShop } from './home/HomeWhyShop';
+import { HomeHandheldProShooting } from './home/HomeHandheldProShooting';
 import { runWave5Merchandising } from '../lib/merch/wave5Merchandising';
 import { runWave6Personalization } from '../lib/personalization/wave6Personalization';
 import { PersonalizationContext } from '../types/wave6Personalization';
@@ -79,7 +79,7 @@ export const HomeView: React.FC = () => {
     addToast({
       type: 'success',
       title: 'Welcome to Flight Club',
-      message: 'You have been registered for exclusive European stock alerts & firmware updates.'
+      message: 'You have been registered for exclusive Netherlands stock alerts & firmware updates.'
     });
   };
 
@@ -115,9 +115,11 @@ export const HomeView: React.FC = () => {
   }, [locale, currency, wishlist, compareList, cart]);
 
   return (
-    <div className="w-full space-y-16 lg:space-y-24 pb-20">
+    <div className="w-full pb-20">
       <HomeHeroCarousel />
+      <HomeCategoryStrip />
 
+      <div className="space-y-16 lg:space-y-24 mt-16 lg:mt-24">
       {/* Interactive 30-Second Drone Matcher Recommender */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-blue-900/20 via-indigo-900/15 to-purple-900/20 rounded-3xl p-6 sm:p-10 border border-blue-200/40 shadow-sm">
@@ -127,10 +129,10 @@ export const HomeView: React.FC = () => {
                 <Compass className="w-4 h-4" /> AI Drone Matcher
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1D1D1F] tracking-tight">
-                Find Your Ideal European Drone in 30 Seconds
+                Find Your Ideal Netherlands Drone in 30 Seconds
               </h2>
               <p className="text-sm text-gray-600 leading-relaxed">
-                Answer two quick questions to get the exact model matched to your European flight license, travel weight, and creative ambitions.
+                Answer two quick questions to get the exact model matched to Dutch flight rules, travel weight, and creative ambitions.
               </p>
             </div>
 
@@ -296,7 +298,7 @@ export const HomeView: React.FC = () => {
               <Flame className="w-4 h-4" /> Bestsellers & New Releases
             </div>
             <h2 className="text-3xl font-extrabold text-[#1D1D1F] tracking-tight mt-1">
-              European Flagship Lineup
+              Netherlands Flagship Lineup
             </h2>
           </div>
 
@@ -525,19 +527,19 @@ export const HomeView: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. DJI Care & European Protection Promotion Layer */}
+      {/* 5. DJI Care & Netherlands Protection Promotion Layer */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl bg-gradient-to-r from-[#111113] via-[#1a1a20] to-[#111113] text-white p-8 sm:p-12 border border-gray-800 shadow-xl relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             <div className="lg:col-span-8 space-y-4">
               <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-                <ShieldCheck className="w-5 h-5" /> Official European Protection Service
+                <ShieldCheck className="w-5 h-5" /> Official Protection for Dutch Pilots
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                 Fly with Total Peace of Mind: DJI Care Refresh
               </h2>
               <p className="text-sm text-gray-300 max-w-2xl leading-relaxed">
-                Accidental water damage, collision replacements, flyaway incident coverage, and free DHL express round-trip shipping across all 27 European Union member states.
+                Accidental water damage, collision replacements, flyaway incident coverage, and free DHL express round-trip shipping across the Netherlands with EU Care coverage.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
@@ -551,7 +553,7 @@ export const HomeView: React.FC = () => {
                 </div>
                 <div className="bg-gray-900/80 p-3.5 rounded-xl border border-gray-800">
                   <span className="font-bold text-white block text-sm">⚡ VIP Fast Track</span>
-                  <span className="text-gray-400">Priority European factory queue</span>
+                  <span className="text-gray-400">Priority NL service queue</span>
                 </div>
               </div>
             </div>
@@ -568,69 +570,21 @@ export const HomeView: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. The 5 Pillars of European Trust */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold text-[#E30613] uppercase tracking-widest block">
-            Why Choose DJI Store EU
-          </span>
-          <h2 className="text-3xl font-extrabold text-[#1D1D1F] tracking-tight mt-1">
-            Built for European Creators & Commercial Operators
-          </h2>
-        </div>
+      {/* Official store.dji.com Handheld · Pro Shooting module */}
+      <HomeHandheldProShooting />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-base text-[#1D1D1F]">2-Year EU Statutory Warranty</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Every aircraft, gimbal, and charger is protected by full 24-month statutory European consumer warranty with factory technicians.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-              <Truck className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-base text-[#1D1D1F]">24h-48h DHL Express Dispatch</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Dispatched same day from our Frankfurt & Nuremberg logistics centers. Free shipping on all orders over €500.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-              <Award className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-base text-[#1D1D1F]">100% Genuine OEM Serials</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Factory-sealed European stock with genuine serial numbers eligible for official firmware updates and flight activations.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-              <Zap className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-base text-[#1D1D1F]">SEPA, Revolut & Web3 Crypto</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Direct commercial bank transfer, Revolut business account, or instant Web3 USDT/BTC settlement with zero foreign exchange fees.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Official store.dji.com “Why shop with DJI Store” mosaic */}
+      <HomeWhyShop />
 
       {/* 7. Creator Showcase & Community Social Proof */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block">
-              European Community
+              Dutch Creator Community
             </span>
             <h2 className="text-3xl font-extrabold text-[#1D1D1F] tracking-tight mt-1">
-              Captured with DJI in Europe
+              Captured with DJI in the Netherlands
             </h2>
           </div>
           <span className="text-xs text-gray-500 font-medium">#ShotOnDJI • 8K ProRes</span>
@@ -678,18 +632,18 @@ export const HomeView: React.FC = () => {
         </div>
       </section>
 
-      {/* 8. European Flight Club Newsletter Block */}
+      {/* 8. Netherlands Flight Club Newsletter Block */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#1D1D1F] rounded-3xl p-8 sm:p-12 text-white text-center relative overflow-hidden border border-gray-800">
           <div className="max-w-2xl mx-auto space-y-4 relative z-10">
             <span className="text-xs font-bold text-red-500 uppercase tracking-widest">
-              Exclusive European Member Network
+              Exclusive Netherlands Member Network
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              Join the DJI Europe Flight Club
+              Join the DJI Netherlands Flight Club
             </h2>
             <p className="text-sm text-gray-300 leading-relaxed">
-              Receive instant firmware release notifications, limited stock allocation radar, European airspace regulation briefings, and VIP private bundle discounts.
+              Receive instant firmware release notifications, limited stock allocation radar, Dutch / EASA airspace regulation briefings, and VIP private bundle discounts.
             </p>
 
             {newsletterSubscribed ? (
@@ -721,6 +675,7 @@ export const HomeView: React.FC = () => {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 };

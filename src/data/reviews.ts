@@ -11,7 +11,7 @@ export const INITIAL_REVIEWS: ProductReview[] = [
     rating: 5,
     title: 'Hasselblad 8K HDR is a generational leap for commercial aerial cinematography',
     content:
-      'We shoot commercial tourism and architectural projects across Bavaria and the Alps. Upgrading from the Mavic 3 Pro to Mavic 4 Pro was an immediate game-changer: the dual-telephoto sharpness at 7x and 28x is unbelievably crisp, O4+ transmission penetrated heavy valley interference with zero lag, and the C1 label makes filing authorizations in European Open Category A1 hassle-free.',
+      'We shoot commercial tourism and architectural projects across Bavaria and the Alps. Upgrading from the Mavic 3 Pro to Mavic 4 Pro was an immediate game-changer: the dual-telephoto sharpness at 7x and 28x is unbelievably crisp, O4+ transmission penetrated heavy valley interference with zero lag, and the C1 label makes filing authorizations in Dutch Open Category A1 hassle-free.',
     pros: [
       'Stunning Hasselblad 8K 60fps ProRes colors',
       'True 46-minute real-world battery endurance',
@@ -43,7 +43,7 @@ export const INITIAL_REVIEWS: ProductReview[] = [
     status: 'approved',
     createdAt: '2026-07-28T14:22:00Z',
     adminResponse: {
-      author: 'DJI Store EU Technical Support (Frankfurt)',
+      author: 'DJI Store EU Technical Support (Amsterdam)',
       date: '2026-07-29T09:15:00Z',
       message:
         'Thank you Lukas! We are thrilled to hear that the Class C1 approval and Hasselblad color profiles are streamlining your Bavarian productions. Safe flights!'
@@ -58,7 +58,7 @@ export const INITIAL_REVIEWS: ProductReview[] = [
     rating: 5,
     title: 'Flawless 4K 120fps slow-motion and rock-solid wind resistance in Rhone valley',
     content:
-      'Arrived in 24 hours via DHL Express from Frankfurt. Unboxed, updated firmware in 5 minutes, and did our first vineyard flight in 35 km/h gusts. The gimbal stayed rock solid without micro-jitters. The DJI RC 2 built-in 700-nit screen is super readable under direct midday sun.',
+      'Arrived in 24 hours via PostNL / DHL Express from Amsterdam. Unboxed, updated firmware in 5 minutes, and did our first vineyard flight in 35 km/h gusts. The gimbal stayed rock solid without micro-jitters. The DJI RC 2 built-in 700-nit screen is super readable under direct midday sun.',
     pros: [
       'Ultra-bright 700-nit screen eliminates phone overheating',
       'Whisper-quiet propellers compared to older generations',
@@ -117,7 +117,7 @@ export const INITIAL_REVIEWS: ProductReview[] = [
     rating: 5,
     title: 'The king of sub-249g travel drones. Zero license exam needed in EU!',
     content:
-      'I take this on every European weekend trip. Being strictly under 249 grams with the standard battery means I can fly in Class C0 Open A1 right over parks and canals without having to pass a pilot test. The true vertical shooting is a godsend for Instagram Reels and TikTok.',
+      'I take this on every Dutch weekend trip. Being strictly under 249 grams with the standard battery means I can fly in Class C0 Open A1 right over parks and canals without having to pass a pilot test. The true vertical shooting is a godsend for Instagram Reels and TikTok.',
     pros: [
       '249g ultralight weight',
       'True 90-degree vertical sensor rotation',
@@ -156,7 +156,7 @@ export const INITIAL_REVIEWS: ProductReview[] = [
     content:
       'FPV flying used to be intimidating and required soldering irons. Avata 2 is turnkey: one-push acrobatics (flip/roll/180 drift), turtle mode flips the drone over if you crash on grass, and Goggles 3 lets you see your surroundings without taking off the headset.',
     pros: ['Built-in propeller guards', 'One-push acro stunts', 'Real View PiP camera in Goggles 3'],
-    cons: ['Needs an observer with you to comply with European VLOS rules'],
+    cons: ['Needs an observer with you to comply with Dutch / EASA VLOS rules'],
     verifiedPurchase: true,
     verifiedSerialNumber: '1581FAVAT209AT',
     pilotCertification: 'A1/A3 Open',

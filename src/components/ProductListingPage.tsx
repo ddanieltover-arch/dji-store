@@ -196,7 +196,7 @@ export const ProductListingPage: React.FC = () => {
             {categories.find((c) => c.id === selectedCategory)?.label || 'All Products'}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Official European stock with 2-Year statutory EU warranty and rapid DHL express dispatch.
+            Official Netherlands stock with 2-Year statutory EU warranty and rapid DHL express dispatch.
           </p>
         </div>
 
@@ -240,7 +240,7 @@ export const ProductListingPage: React.FC = () => {
             {/* EASA Drone Flight Class Filter */}
             <div className="space-y-2">
               <span className="text-xs font-bold text-gray-900 uppercase tracking-wider block">
-                EASA European Drone Class
+                EASA / NL Drone Class
               </span>
               <div className="space-y-1.5 text-xs">
                 {(['C0 (<249g)', 'C1', 'Open Category'] as EasaClass[]).map((easa) => (
@@ -354,7 +354,7 @@ export const ProductListingPage: React.FC = () => {
             {/* In Stock Only Toggle */}
             <div className="pt-3 border-t border-gray-100">
               <label className="flex items-center justify-between cursor-pointer text-xs">
-                <span className="font-bold text-gray-900">In-Stock Only (Frankfurt Depot)</span>
+                <span className="font-bold text-gray-900">In-Stock Only (Amsterdam Depot)</span>
                 <input
                   type="checkbox"
                   checked={inStockOnly}

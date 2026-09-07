@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { badRequest, getLocale, requireFields } from '@/lib/api/helpers';
 import { createDb } from '@/lib/db/client';
+import { extractClientDetails } from '@/lib/email/clientDetails';
 import { dispatchDualEmail, siteUrl } from '@/lib/email/send';
 
 export async function POST(req: NextRequest) {
@@ -21,6 +22,7 @@ export async function POST(req: NextRequest) {
   `;
 
   const payload = {
+    ...extractClientDetails(body),
     customerEmail: email,
     productName: String(body.productName ?? productId),
     serialNumber

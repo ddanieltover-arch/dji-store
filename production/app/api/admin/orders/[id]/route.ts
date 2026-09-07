@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { badRequest, getLocale, requireFields } from '@/lib/api/helpers';
 import { requireAdmin } from '@/lib/auth/guards';
 import { createDb } from '@/lib/db/client';
+import { extractClientDetails } from '@/lib/email/clientDetails';
 import { sendOrderStatusEmail } from '@/lib/email/orderEmails';
 import { dispatchEmail, siteUrl } from '@/lib/email/send';
 
@@ -101,6 +102,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       locale,
       to: String(body.customerEmail),
       payload: {
+        ...extractClientDetails(body),
         rmaNumber: String(body.rmaNumber),
         productName: String(body.productName)
       },
@@ -118,7 +120,10 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       audience: 'user',
       locale,
       to: String(body.customerEmail),
-      payload: { productName: String(body.productName) },
+      payload: {
+        ...extractClientDetails(body),
+        productName: String(body.productName)
+      },
       ctaUrl: siteUrl(`/${locale}/products/${body.productSlug ?? ''}`)
     });
     return NextResponse.json({ ok: true });
