@@ -28,6 +28,7 @@ import { InventoryDepotDrawer } from './InventoryDepotDrawer';
 import { Wave3PdpModules } from './pim/Wave3PdpModules';
 import { ProductMediaStage } from './pdp/ProductMediaStage';
 import { productListingImage } from '../lib/pim/productListingImage';
+import { productBuyerDescription, productBuyerTitle } from '../lib/seo/productBuyerCopy';
 
 export const ProductDetailPage: React.FC = () => {
   const {
@@ -45,6 +46,20 @@ export const ProductDetailPage: React.FC = () => {
   } = useStore();
 
   const product = products.find((p) => p.id === selectedProductId) || products[0];
+
+  const buyerTitle = product ? productBuyerTitle(product.id, product.modelName) : '';
+  const buyerDescription = product
+    ? productBuyerDescription(product.id, product.modelName, product.description)
+    : '';
+
+  useEffect(() => {
+    if (!product) return;
+    const previous = document.title;
+    document.title = `${buyerTitle} | DJI Store EU`;
+    return () => {
+      document.title = previous;
+    };
+  }, [product?.id, buyerTitle]);
 
   // Variant / Combo selection
   const [selectedVariantId, setSelectedVariantId] = useState<string>(product?.variants[0]?.id || '');
@@ -235,10 +250,10 @@ export const ProductDetailPage: React.FC = () => {
                 </div>
 
                 <h1 className="text-2xl sm:text-3xl font-black text-[#1D1D1F] tracking-tight">
-                  {product.modelName}
+                  {buyerTitle}
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
-                  {product.description}
+                  {buyerDescription}
                 </p>
 
                 {/* Rating & Stock */}

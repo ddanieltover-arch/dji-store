@@ -19,6 +19,7 @@ import { generateSeoPack } from './catalogIntelligence';
 import { certifyWave1Catalog, initializeInventoryFromCatalog } from './wave1Execution';
 import { FIRMWARE_HISTORY } from '../../data/productIntelligenceData';
 import { OFFICIAL_DOWNLOADS } from '../../data/officialStoreConnectorData';
+import { productBuyerTitle } from '../seo/productBuyerCopy';
 
 const LOCALES: Locale[] = ['en', 'de', 'fr', 'es', 'it', 'nl'];
 
@@ -349,14 +350,17 @@ export function enhanceSeo(product: Product, related: Wave3Relationship[], local
     productId: product.id,
     locale,
     longTailKeywords: [
+      `buy ${product.modelName} Netherlands`,
+      `where to buy ${product.modelName} in the Netherlands`,
+      `how to buy ${product.modelName} in the Netherlands`,
+      `how much for ${product.modelName} in the Netherlands`,
       `buy ${product.modelName} EU`,
       `${product.modelName} ${product.easaClass ?? 'EASA'}`,
-      `${product.modelName} vs DJI`,
       `${product.modelName} official store EU`
     ],
-    structuredSnippet: `${base.title}. ${product.tagline}`,
+    structuredSnippet: `${productBuyerTitle(product.id, product.modelName)}. ${product.tagline}`,
     comparisonSnippet: `Compare ${product.modelName} camera, flight time, weight, transmission, battery, price, and EASA class.`,
-    buyingGuide: `Choose ${product.modelName} if you need ${product.tagline.toLowerCase()} Official source store.dji.com, fulfilled by DJI Store EU.`,
+    buyingGuide: `How to buy ${product.modelName} in the Netherlands: choose ${product.tagline.toLowerCase()} Official source store.dji.com, fulfilled by DJI Store EU.`,
     internalLinkSlugs: links
   };
 }
