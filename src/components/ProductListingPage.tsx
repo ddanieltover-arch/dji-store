@@ -106,6 +106,11 @@ export const ProductListingPage: React.FC = () => {
       0;
 
     return products.filter((product) => {
+      // Keep accessories off the main All Products grid; they remain on
+      // Accessories PLP, PDP compatible lists, and search.
+      if (selectedCategory === 'all' && product.category === 'accessories') {
+        return false;
+      }
       if (selectedCategory !== 'all' && product.category !== selectedCategory) {
         return false;
       }
@@ -204,7 +209,31 @@ export const ProductListingPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        {/* Mobile: full-width category dropdown */}
+        <div className="relative md:hidden">
+          <label htmlFor="plp-category-select" className="sr-only">
+            Product category
+          </label>
+          <select
+            id="plp-category-select"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full appearance-none rounded-xl border border-gray-200 bg-white py-3 pl-4 pr-10 text-sm font-semibold text-[#1D1D1F] shadow-sm focus:border-[#1D1D1F] focus:outline-none focus:ring-1 focus:ring-[#1D1D1F]"
+          >
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+            aria-hidden
+          />
+        </div>
+
+        {/* Desktop: category pills */}
+        <div className="hidden md:flex flex-wrap gap-2">
           {categories.map((cat) => (
             <button
               key={cat.id}
