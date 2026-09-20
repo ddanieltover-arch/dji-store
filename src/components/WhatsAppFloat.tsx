@@ -42,7 +42,7 @@ export const WhatsAppFloat: React.FC<{ enabled?: boolean }> = ({ enabled = true 
   };
 
   return (
-    <div className="fixed bottom-[5.5rem] right-5 z-40 flex flex-col items-center gap-3 md:bottom-24">
+    <div className="fixed bottom-[5.5rem] left-5 z-40 flex flex-col items-center gap-3 md:bottom-24">
       <button
         type="button"
         onClick={scrollToTop}
