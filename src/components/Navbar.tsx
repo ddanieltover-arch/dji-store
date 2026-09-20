@@ -90,12 +90,20 @@ export const Navbar: React.FC = () => {
     <header className="sticky top-0 z-50 w-full bg-[#F5F5F7] border-b border-black/8">
       <div
         role="status"
-        className="bg-[#1D1D1F] text-white text-center text-[11px] sm:text-xs leading-snug py-2 px-4"
+        className="bg-[#1D1D1F] text-white text-[11px] sm:text-xs leading-snug py-2 overflow-hidden"
       >
-        <span className="inline-flex items-center justify-center gap-2 max-w-5xl mx-auto">
-          <Truck className="w-3.5 h-3.5 shrink-0 opacity-80" aria-hidden />
-          <span className="truncate sm:whitespace-normal">{t.announcement}</span>
-        </span>
+        <div className="announcement-marquee-track gap-12 px-4">
+          {[0, 1].map((copy) => (
+            <span
+              key={copy}
+              className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap"
+              aria-hidden={copy === 1 ? true : undefined}
+            >
+              <Truck className="w-3.5 h-3.5 shrink-0 opacity-80" aria-hidden />
+              <span>{t.announcement}</span>
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className="relative">
