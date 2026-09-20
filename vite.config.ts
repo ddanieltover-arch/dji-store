@@ -11,6 +11,25 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      // Keep the first paint lighter on mobile — a single ~2.6MB module often whitescreens on slow links.
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (
+              id.includes('officialStoreMediaCache') ||
+              id.includes('productDatabaseMediaCache') ||
+              id.includes('officialUsdPriceCache')
+            ) {
+              return 'media-cache';
+            }
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+          },
+        },
+      },
+    },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.

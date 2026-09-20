@@ -33,7 +33,17 @@ export class ErrorBoundary extends React.Component<Props, State> {
               } catch {
                 /* ignore */
               }
-              window.location.reload();
+              const reload = () => window.location.reload();
+              if (!('serviceWorker' in navigator)) {
+                reload();
+                return;
+              }
+              void navigator.serviceWorker
+                .getRegistrations()
+                .then((regs) => Promise.all(regs.map((r) => r.unregister())))
+                .then(() => ('caches' in window ? caches.keys() : Promise.resolve([] as string[])))
+                .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+                .finally(reload);
             }}
           >
             Clear cache & reload
