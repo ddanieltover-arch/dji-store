@@ -38,6 +38,7 @@ import { ProductionMigrationWorkstation } from './components/migration/Productio
 import { ConnectivityBanner, MobileBottomNav } from './components/mobile/MobileChrome';
 import { GdprConsentModal } from './components/security/GdprConsentModal';
 import { TawkToChat } from './components/TawkToChat';
+import { WhatsAppFloat } from './components/WhatsAppFloat';
 import { SlideOverCart } from './components/SlideOverCart';
 import { AdvancedSearchModal } from './components/AdvancedSearchModal';
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
@@ -208,6 +209,7 @@ const MainLayout: React.FC = () => {
 
       <GdprConsentModal isOpen={gdprOpen} onClose={closeGdpr} />
       <TawkToChat enabled={!isInternalWorkstation(viewMode)} />
+      <WhatsAppFloat enabled={!isInternalWorkstation(viewMode)} />
 
       {/* Global Toast Notifications Layer */}
       {toasts.length > 0 && (

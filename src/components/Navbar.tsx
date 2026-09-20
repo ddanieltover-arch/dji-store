@@ -88,6 +88,16 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#F5F5F7] border-b border-black/8">
+      <div
+        role="status"
+        className="bg-[#1D1D1F] text-white text-center text-[11px] sm:text-xs leading-snug py-2 px-4"
+      >
+        <span className="inline-flex items-center justify-center gap-2 max-w-5xl mx-auto">
+          <Truck className="w-3.5 h-3.5 shrink-0 opacity-80" aria-hidden />
+          <span className="truncate sm:whitespace-normal">{t.announcement}</span>
+        </span>
+      </div>
+
       <div className="relative">
         <div className="flex h-14 items-center px-4 sm:px-6 lg:px-8 gap-4 lg:gap-8">
           <button
@@ -353,7 +363,7 @@ export const Navbar: React.FC = () => {
       {mega.openId && (
         <button
           type="button"
-          className="hidden xl:block fixed inset-0 top-14 z-30 bg-black/25"
+          className="hidden xl:block fixed inset-0 top-[5.75rem] z-30 bg-black/25"
           aria-label="Close navigation overlay"
           onClick={mega.closeNow}
         />

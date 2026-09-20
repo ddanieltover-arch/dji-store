@@ -63,7 +63,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       trackOrder: 'Track Order',
       adminPortal: 'Admin Console'
     },
-    announcement: '⚡ Official DJI Stock for the Netherlands • 2-Year Statutory EU Warranty • Free Express on Orders Over €500',
+    announcement: 'We ship internationally as well • Official DJI stock for the Netherlands • 2-Year EU Warranty • Free Express on orders over €500',
     hero: {
       badge: 'New 2026 Flagship Release',
       buyNow: 'Buy Now — From €2,099',
@@ -111,7 +111,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       trackOrder: 'Sendungsverfolgung',
       adminPortal: 'Admin-Portal'
     },
-    announcement: '⚡ Offizieller DJI Reseller für die Niederlande • 2 Jahre gesetzliche Gewährleistung • Kostenloser Express ab 500 €',
+    announcement: 'Wir liefern auch international • Offizieller DJI-Händler für die Niederlande • 2 Jahre EU-Gewährleistung • Kostenloser Express ab 500 €',
     hero: {
       badge: 'Neues Flaggschiff 2026',
       buyNow: 'Jetzt Kaufen — ab 2.099 €',
@@ -159,7 +159,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       trackOrder: 'Suivi de Commande',
       adminPortal: 'Portail Admin'
     },
-    announcement: '⚡ Revendeur DJI officiel pour les Pays-Bas • Garantie 2 Ans UE • Livraison Express Gratuite dès 500 €',
+    announcement: 'Nous livrons aussi à l’international • Revendeur DJI officiel pour les Pays-Bas • Garantie 2 ans UE • Express gratuit dès 500 €',
     hero: {
       badge: 'Nouveau Fleuron 2026',
       buyNow: 'Commander — dès 2 099 €',
@@ -207,7 +207,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       trackOrder: 'Seguimiento',
       adminPortal: 'Administración'
     },
-    announcement: '⚡ Distribuidor Oficial DJI en Países Bajos • 2 Años de Garantía • Envío Express Gratis desde 500 €',
+    announcement: 'También enviamos internacionalmente • Distribuidor oficial DJI en Países Bajos • 2 años de garantía UE • Envío express gratis desde 500 €',
     hero: {
       badge: 'Nuevo Buque Insignia 2026',
       buyNow: 'Comprar — Desde 2.099 €',
@@ -255,7 +255,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       trackOrder: 'Traccia Ordine',
       adminPortal: 'Pannello Admin'
     },
-    announcement: '⚡ Rivenditore Ufficiale DJI per i Paesi Bassi • 2 Anni di Garanzia • Spedizione Gratuita oltre 500 €',
+    announcement: 'Spediamo anche a livello internazionale • Rivenditore ufficiale DJI per i Paesi Bassi • 2 anni di garanzia UE • Spedizione gratuita oltre 500 €',
     hero: {
       badge: 'Nuovo Flagship 2026',
       buyNow: 'Acquista Ora — da 2.099 €',
@@ -303,7 +303,7 @@ export const LOCALES: Record<Locale, TranslationDict> = {
       trackOrder: 'Bestelling Volgen',
       adminPortal: 'Beheerderspaneel'
     },
-    announcement: '⚡ Officiële DJI voorraad voor Nederland • 2 Jaar Wettelijke Garantie • Gratis Express vanaf €500',
+    announcement: 'Wij verzenden ook internationaal • Officiële DJI voorraad voor Nederland • 2 jaar wettelijke garantie • Gratis express vanaf €500',
     hero: {
       badge: 'Nieuw Vlaggenschip 2026',
       buyNow: 'Bestel Nu — vanaf € 2.099',
