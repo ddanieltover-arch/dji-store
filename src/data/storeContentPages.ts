@@ -1,3 +1,8 @@
+import {
+  US_CA_PHONE_DISPLAY,
+  US_CA_PHONE_LABEL
+} from './contactChannels';
+
 export type ContentPageCtaAction =
   | 'plp'
   | 'account'
@@ -34,6 +39,7 @@ export const CONTENT_PATH_ALIASES: Record<string, string> = {
 };
 
 const SUPPORT_EMAIL = 'sales@djii.eu';
+const US_CA_LINE = `${US_CA_PHONE_DISPLAY} — ${US_CA_PHONE_LABEL} (WhatsApp or phone)`;
 
 export { SUPPORT_EMAIL };
 
@@ -145,6 +151,10 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
       {
         heading: 'Remote area surcharges',
         body: 'Some Alpine, Nordic, and non-contiguous EU regions incur a small logistics surcharge calculated at checkout. “Any other country” destinations receive a custom quote before dispatch.'
+      },
+      {
+        heading: 'USA & Canada shipping questions',
+        body: `For text or call support from the USA or Canada, use ${US_CA_LINE}. Include your destination ZIP/postal code and order reference when asking about international delivery options.`
       }
     ],
     cta: { label: 'View Shipping at Checkout', action: 'home' }
@@ -275,7 +285,12 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
       {
         heading: 'What we cover',
         body: 'Store EU support handles activation errors, RTH failures, gimbal calibration, Care Refresh enrollment, and EASA registration questions for EU operators.',
-        bullets: ['Live chat & email Mon–Sat', 'Remote diagnostic logs (with consent)', 'Escalation to DJI support when required']
+        bullets: [
+          'Live chat & email Mon–Sat',
+          `USA & Canada: ${US_CA_LINE}`,
+          'Remote diagnostic logs (with consent)',
+          'Escalation to DJI support when required'
+        ]
       },
       {
         heading: 'Response times',
@@ -518,12 +533,22 @@ export const STORE_CONTENT_PAGES: ContentPageDefinition[] = [
     path: '/company/contact',
     title: 'Contact Us',
     eyebrow: 'Company',
-    summary: 'Sales, payment instructions, technical support, and B2B fleet enquiries for the Dutch market.',
+    summary: 'Sales, payment instructions, technical support, and B2B fleet enquiries for the Dutch market — plus text or call for USA & Canada clients.',
     sections: [
       {
         heading: 'General & sales',
         body: `Email ${SUPPORT_EMAIL} for product availability, payment instructions, and order amendments. Include your order reference when applicable.`,
         bullets: ['Mon–Sat 09:00–18:00 CET', 'Dutch, English support', 'B2B fleet quotes within 24h']
+      },
+      {
+        heading: 'USA & Canada — text or call',
+        body: `Reach us at ${US_CA_PHONE_DISPLAY} for text messages, phone calls, or WhatsApp. This line is for USA and Canada clients who prefer voice or messaging instead of email.`,
+        bullets: [
+          US_CA_PHONE_DISPLAY,
+          US_CA_PHONE_LABEL,
+          'WhatsApp, SMS, or voice call',
+          'Include your order number when messaging'
+        ]
       },
       {
         heading: 'Visit our hub',

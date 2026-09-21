@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronUp } from 'lucide-react';
+import {
+  US_CA_PHONE_DISPLAY,
+  US_CA_PHONE_LABEL,
+  US_CA_WHATSAPP_HREF
+} from '../data/contactChannels';
 
-/** Digits-only E.164 for wa.me links (no + or spaces). */
-export const WHATSAPP_NUMBER = '14809605245';
-
-const WA_HREF = `https://wa.me/${WHATSAPP_NUMBER}`;
 const SHOW_AFTER_PX = 400;
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -22,7 +23,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
 }
 
 /**
- * Floating storefront actions: Back to Top + WhatsApp (+1 480 960 5245).
+ * Floating storefront actions: Back to Top + WhatsApp for USA & Canada.
  */
 export const WhatsAppFloat: React.FC<{ enabled?: boolean }> = ({ enabled = true }) => {
   const [showTop, setShowTop] = useState(false);
@@ -41,6 +42,8 @@ export const WhatsAppFloat: React.FC<{ enabled?: boolean }> = ({ enabled = true 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const waTitle = `${US_CA_PHONE_DISPLAY} — ${US_CA_PHONE_LABEL}`;
+
   return (
     <div className="fixed bottom-[5.5rem] left-5 z-40 flex flex-col items-center gap-3 md:bottom-24">
       <button
@@ -56,11 +59,11 @@ export const WhatsAppFloat: React.FC<{ enabled?: boolean }> = ({ enabled = true 
       </button>
 
       <a
-        href={WA_HREF}
+        href={US_CA_WHATSAPP_HREF}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp +1 480 960 5245"
-        title="WhatsApp +1 480 960 5245"
+        aria-label={`WhatsApp ${waTitle}`}
+        title={waTitle}
         className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/20 transition-transform hover:scale-105 hover:bg-[#20bd5a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
       >
         <WhatsAppIcon className="h-8 w-8" />

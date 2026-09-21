@@ -1,8 +1,15 @@
 import React from 'react';
-import { ShieldCheck, Truck, CreditCard, Award } from 'lucide-react';
+import { ShieldCheck, Truck, CreditCard, Award, Phone } from 'lucide-react';
 import { BrandLogo } from './brand/BrandLogo';
 import { useStore } from '../context/StoreContext';
 import { hrefFromStoreLink, type StoreLinkHref } from '../lib/routing';
+import {
+  US_CA_CONTACT_BLURB,
+  US_CA_PHONE_DISPLAY,
+  US_CA_PHONE_LABEL,
+  US_CA_TEL_HREF,
+  US_CA_WHATSAPP_HREF
+} from '../data/contactChannels';
 
 type FooterLink = StoreLinkHref & { label: string };
 
@@ -181,8 +188,29 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-6 text-[11px] text-gray-500 space-y-1">
+        <div className="mt-6 text-[11px] text-gray-500 space-y-2">
           <p>🏢 Amsterdam Schiphol Aviation Logistics, 1118 CP Schiphol, Netherlands</p>
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-gray-400">
+            <Phone className="w-3.5 h-3.5 shrink-0 text-emerald-400" aria-hidden />
+            <a
+              href={US_CA_TEL_HREF}
+              className="text-white font-semibold hover:text-emerald-300 transition-colors"
+            >
+              {US_CA_PHONE_DISPLAY}
+            </a>
+            <span aria-hidden>·</span>
+            <span>{US_CA_PHONE_LABEL}</span>
+            <span aria-hidden>·</span>
+            <a
+              href={US_CA_WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors"
+            >
+              WhatsApp
+            </a>
+          </p>
+          <p className="sr-only">{US_CA_CONTACT_BLURB}</p>
           <p>© 2026 DJI Store EU (djii.eu). Official DJI reseller focused on the Netherlands.</p>
         </div>
       </div>
